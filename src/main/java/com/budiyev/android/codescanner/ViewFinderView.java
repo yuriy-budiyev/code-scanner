@@ -25,7 +25,6 @@ package com.budiyev.android.codescanner;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.support.annotation.ColorInt;
@@ -44,13 +43,8 @@ final class ViewFinderView extends View {
     public ViewFinderView(@NonNull Context context) {
         super(context);
         mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mMaskPaint.setColor(0x77000000);
         mFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mFramePaint.setColor(Color.WHITE);
         mFramePaint.setStyle(Paint.Style.STROKE);
-        mFramePaint.setStrokeWidth(5);
-        mFrameCornerSize = 50;
-        mSquareFrame = true;
     }
 
     @Override
@@ -94,7 +88,9 @@ final class ViewFinderView extends View {
         if (mFrameRect != null) {
             mFrameRect = ScannerHelper.getFrameRect(mSquareFrame, getWidth(), getHeight());
         }
-        invalidate();
+        if (ViewCompat.isLaidOut(this)) {
+            invalidate();
+        }
     }
 
     boolean isSquareFrame() {

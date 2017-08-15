@@ -24,16 +24,24 @@
 package com.budiyev.android.codescanner;
 
 import android.content.Context;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.Px;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
 
 public class CodeScannerView extends ViewGroup {
+    private static final boolean DEFAULT_SQUARE_FRAME = false;
+    private static final int DEFAULT_MASK_COLOR = 0x77000000;
+    private static final int DEFAULT_FRAME_COLOR = Color.WHITE;
+    private static final float DEFAULT_FRAME_WIDTH_DP = 3f;
+    private static final float DEFAULT_FRAME_CORNER_SIZE_DP = 20f;
     private SurfaceView mPreviewView;
     private ViewFinderView mViewFinderView;
     private Point mFrameSize;
@@ -55,14 +63,47 @@ public class CodeScannerView extends ViewGroup {
         initialize(context, attrs);
     }
 
-    private void initialize(@NonNull Context context, @Nullable AttributeSet attrs) {
+    private void initialize(@NonNull Context context, @Nullable AttributeSet attributeSet) {
         mPreviewView = new SurfaceView(context);
         mPreviewView.setLayoutParams(
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        addView(mPreviewView);
         mViewFinderView = new ViewFinderView(context);
         mViewFinderView.setLayoutParams(
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        if (attributeSet == null) {
+            mViewFinderView.setSquareFrame(DEFAULT_SQUARE_FRAME);
+            mViewFinderView.setMaskColor(DEFAULT_MASK_COLOR);
+            mViewFinderView.setFrameColor(DEFAULT_FRAME_COLOR);
+            mViewFinderView
+                    .setFrameWidth(Math.round(DEFAULT_FRAME_WIDTH_DP * displayMetrics.density));
+            mViewFinderView.setFrameCornersSize(
+                    Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * displayMetrics.density));
+        } else {
+            TypedArray attributes = null;
+            try {
+                attributes = context.getTheme()
+                        .obtainStyledAttributes(attributeSet, R.styleable.CodeScannerView, 0, 0);
+                mViewFinderView.setSquareFrame(attributes
+                        .getBoolean(R.styleable.CodeScannerView_squareFrame, DEFAULT_SQUARE_FRAME));
+                mViewFinderView.setMaskColor(attributes
+                        .getColor(R.styleable.CodeScannerView_maskColor, DEFAULT_MASK_COLOR));
+                mViewFinderView.setFrameColor(attributes
+                        .getColor(R.styleable.CodeScannerView_frameColor, DEFAULT_FRAME_COLOR));
+                mViewFinderView.setFrameWidth(attributes
+                        .getDimensionPixelSize(R.styleable.CodeScannerView_frameWidth,
+                                Math.round(DEFAULT_FRAME_WIDTH_DP * displayMetrics.density)));
+                mViewFinderView.setFrameCornersSize(attributes
+                        .getDimensionPixelSize(R.styleable.CodeScannerView_frameCornersSize,
+                                Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * displayMetrics.density)));
+            } finally {
+                if (attributes != null) {
+                    attributes.recycle();
+                }
+            }
+        }
+
+        addView(mPreviewView);
         addView(mViewFinderView);
     }
 
