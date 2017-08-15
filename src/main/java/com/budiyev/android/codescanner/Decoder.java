@@ -23,24 +23,34 @@
  */
 package com.budiyev.android.codescanner;
 
+import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
+import com.google.zxing.ReaderException;
+import com.google.zxing.Result;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 final class Decoder {
-    private final DecodeThread mDecodeThread;
+    private final BlockingQueue<DecodeTask> mDecodeQueue = new LinkedBlockingQueue<>();
     private final MultiFormatReader mReader;
+    private final DecoderThread mDecoderThread;
+    private final StateListener mStateListener;
+    private volatile boolean mDecoding;
 
-    public Decoder(@NonNull CodeScanner scanner) {
+    public Decoder(@NonNull StateListener stateListener) {
+        mStateListener = stateListener;
         mReader = new MultiFormatReader();
-        mDecodeThread = new DecodeThread(scanner, mReader);
-        mDecodeThread.start();
+        mDecoderThread = new DecoderThread();
     }
 
     public void setFormats(@NonNull List<BarcodeFormat> formats) {
@@ -50,12 +60,72 @@ final class Decoder {
     }
 
     public void decode(@NonNull byte[] data, int dataWidth, int dataHeight, int frameWidth,
-            int frameHeight, int orientation, boolean squareFrame) {
-        mDecodeThread.decode(new DecodeAction(data, dataWidth, dataHeight, frameWidth, frameHeight,
-                orientation, squareFrame));
+            int frameHeight, int orientation, boolean squareFrame,
+            @NonNull DecodeCallback decodeCallback) {
+        mDecodeQueue.add(new DecodeTask(data, dataWidth, dataHeight, frameWidth, frameHeight,
+                orientation, squareFrame, decodeCallback));
+    }
+
+    public void start() {
+        mDecoderThread.start();
     }
 
     public void shutdown() {
-        mDecodeThread.quit();
+        mDecoderThread.interrupt();
+        mDecodeQueue.clear();
+    }
+
+    public boolean isDecoding() {
+        return mDecoding;
+    }
+
+    private class DecoderThread extends Thread {
+        public DecoderThread() {
+            super("Code scanner decode thread");
+            if (isDaemon()) {
+                setDaemon(false);
+            }
+        }
+
+        @Override
+        public void run() {
+            for (; ; ) {
+                try {
+                    mStateListener.onStateChanged(Decoder.State.IDLE);
+                    Result result = null;
+                    DecodeCallback callback = null;
+                    try {
+                        DecodeTask task = mDecodeQueue.take();
+                        mDecoding = true;
+                        mStateListener.onStateChanged(Decoder.State.DECODING);
+                        result = task.decode(mReader);
+                        callback = task.getCallback();
+                    } catch (ReaderException ignored) {
+                    } finally {
+                        mDecoding = mDecodeQueue.isEmpty();
+                        if (result != null) {
+                            mStateListener.onStateChanged(Decoder.State.DECODED);
+                            if (callback != null) {
+                                callback.onDecoded(result);
+                            }
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+        }
+    }
+
+    public interface StateListener {
+        void onStateChanged(@State int state);
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({State.IDLE, State.DECODING, State.DECODED})
+    public @interface State {
+        int IDLE = 0;
+        int DECODING = 1;
+        int DECODED = 2;
     }
 }

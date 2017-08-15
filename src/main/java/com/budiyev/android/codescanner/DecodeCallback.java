@@ -28,7 +28,7 @@ import android.support.annotation.WorkerThread;
 
 import com.google.zxing.Result;
 
-public interface DecodeListener {
+public interface DecodeCallback {
     @WorkerThread
-    void onDecodeResult(@NonNull Result result);
+    void onDecoded(@NonNull Result result);
 }

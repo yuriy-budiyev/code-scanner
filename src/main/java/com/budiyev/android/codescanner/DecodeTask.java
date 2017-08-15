@@ -33,7 +33,7 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 
-final class DecodeAction {
+final class DecodeTask {
     private final byte[] mData;
     private final int mDataWidth;
     private final int mDataHeight;
@@ -41,9 +41,11 @@ final class DecodeAction {
     private final int mFrameHeight;
     private final int mOrientation;
     private final boolean mSquareFrame;
+    private final DecodeCallback mCallback;
 
-    public DecodeAction(@NonNull byte[] data, int dataWidth, int dataHeight, int frameWidth,
-            int frameHeight, int orientation, boolean squareFrame) {
+    public DecodeTask(@NonNull byte[] data, int dataWidth, int dataHeight, int frameWidth,
+            int frameHeight, int orientation, boolean squareFrame,
+            @NonNull DecodeCallback callback) {
         mData = data;
         mDataWidth = dataWidth;
         mDataHeight = dataHeight;
@@ -51,6 +53,12 @@ final class DecodeAction {
         mFrameHeight = frameHeight;
         mOrientation = orientation;
         mSquareFrame = squareFrame;
+        mCallback = callback;
+    }
+
+    @NonNull
+    public DecodeCallback getCallback() {
+        return mCallback;
     }
 
     @NonNull
