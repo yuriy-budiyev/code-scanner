@@ -23,9 +23,6 @@
  */
 package com.budiyev.android.codescanner;
 
-import android.support.annotation.MainThread;
-
 interface LayoutListener {
-    @MainThread
     void onLayout(int width, int height);
 }
