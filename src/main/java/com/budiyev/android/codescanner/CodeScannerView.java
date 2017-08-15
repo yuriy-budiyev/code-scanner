@@ -25,8 +25,10 @@ package com.budiyev.android.codescanner;
 
 import android.content.Context;
 import android.graphics.Point;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.Px;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
@@ -99,7 +101,23 @@ public class CodeScannerView extends ViewGroup {
         mViewFinderView.setSquareFrame(squareFrame);
     }
 
-    public boolean isSquareFrame() {
+    public void setMaskColor(@ColorInt int color) {
+        mViewFinderView.setMaskColor(color);
+    }
+
+    public void setFrameColor(@ColorInt int color) {
+        mViewFinderView.setFrameColor(color);
+    }
+
+    public void setFrameWidth(@Px int width) {
+        mViewFinderView.setFrameWidth(width);
+    }
+
+    public void setFrameCornersSize(@Px int size) {
+        mViewFinderView.setFrameCornersSize(size);
+    }
+
+    boolean isSquareFrame() {
         return mViewFinderView.isSquareFrame();
     }
 
