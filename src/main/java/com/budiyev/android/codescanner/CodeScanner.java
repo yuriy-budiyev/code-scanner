@@ -36,7 +36,6 @@ import android.view.SurfaceHolder;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -155,12 +154,8 @@ public final class CodeScanner {
             mInitializeLock.unlock();
         }
         if (!mPreviewActive) {
-            mCamera.setPreviewCallback(mPreviewCallback);
             mSurfaceHolder.addCallback(mSurfaceCallback);
-            try {
-                mCamera.startPreview();
-            } catch (Exception ignored) {
-            }
+            startPreviewInternal();
         }
     }
 
@@ -168,12 +163,7 @@ public final class CodeScanner {
     public void stopPreview() {
         if (mInitialized && mPreviewActive) {
             mSurfaceHolder.removeCallback(mSurfaceCallback);
-            mCamera.setPreviewCallback(null);
-            try {
-                mCamera.stopPreview();
-            } catch (Exception ignored) {
-            }
-            mPreviewActive = false;
+            stopPreviewInternal();
         }
     }
 
@@ -184,6 +174,25 @@ public final class CodeScanner {
             mCamera.release();
             mDecoder.shutdown();
         }
+    }
+
+    private void startPreviewInternal() {
+        try {
+            mCamera.setPreviewCallback(mPreviewCallback);
+            mCamera.setPreviewDisplay(mSurfaceHolder);
+            mCamera.startPreview();
+            mPreviewActive = true;
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void stopPreviewInternal() {
+        mCamera.setPreviewCallback(null);
+        try {
+            mCamera.stopPreview();
+        } catch (Exception ignored) {
+        }
+        mPreviewActive = false;
     }
 
     private class ScannerLayoutListener implements LayoutListener {
@@ -210,12 +219,7 @@ public final class CodeScanner {
     private class SurfaceCallback implements SurfaceHolder.Callback {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-            try {
-                mCamera.setPreviewDisplay(holder);
-                mCamera.startPreview();
-                mPreviewActive = true;
-            } catch (IOException ignored) {
-            }
+            startPreviewInternal();
         }
 
         @Override
@@ -224,27 +228,13 @@ public final class CodeScanner {
                 mPreviewActive = false;
                 return;
             }
-            try {
-                mCamera.stopPreview();
-            } catch (Exception ignored) {
-            }
-            mPreviewActive = false;
-            try {
-                mCamera.setPreviewCallback(mPreviewCallback);
-                mCamera.setPreviewDisplay(holder);
-                mCamera.startPreview();
-                mPreviewActive = true;
-            } catch (Exception ignored) {
-            }
+            stopPreviewInternal();
+            startPreviewInternal();
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-            try {
-                mCamera.stopPreview();
-            } catch (Exception ignored) {
-            }
-            mPreviewActive = false;
+            stopPreviewInternal();
         }
     }
 
