@@ -110,7 +110,7 @@ public final class CodeScanner {
     }
 
     public void startPreview() {
-        if (!mInitialized) {
+        if (!isInitialized()) {
             mPreviewRequested = true;
             return;
         }
@@ -125,7 +125,7 @@ public final class CodeScanner {
     public void stopPreview() {
         mPreviewRequested = false;
         SurfaceHolder surfaceHolder = mSurfaceHolder;
-        if (mInitialized && mPreviewActive && surfaceHolder != null) {
+        if (isInitialized() && mPreviewActive && surfaceHolder != null) {
             surfaceHolder.removeCallback(mSurfaceCallback);
             mCamera.setPreviewCallback(null);
             mCamera.stopPreview();
@@ -136,11 +136,29 @@ public final class CodeScanner {
     public void releaseResources() {
         mPreviewRequested = false;
         mPreviewActive = false;
-        if (!mInitialized) {
+        if (!isInitialized()) {
             return;
         }
         mCamera.release();
         mDecoder.shutdown();
+    }
+
+    private boolean isInitialized() {
+        mLock.lock();
+        try {
+            return mInitialized;
+        } finally {
+            mLock.unlock();
+        }
+    }
+
+    private void setInitialized(boolean initialized) {
+        mLock.lock();
+        try {
+            mInitialized = initialized;
+        } finally {
+            mLock.unlock();
+        }
     }
 
     private class ScannerLayoutListener implements LayoutListener {
@@ -155,7 +173,7 @@ public final class CodeScanner {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
             Point previewSize = mPreviewSize;
-            if (previewSize == null || !mInitialized || mDecoder.isDecoding()) {
+            if (previewSize == null || !isInitialized() || mDecoder.isDecoding()) {
                 return;
             }
             int frameWidth = mFrameWidth;
@@ -264,11 +282,11 @@ public final class CodeScanner {
             mFrameHeight = mHeight;
             mCamera = camera;
             mDecoder = new Decoder(new DecoderStateListener());
-            mInitialized = true;
             mMainThreadHandler.post(() -> {
                 if (frameSize != null) {
                     mScannerView.setFrameSize(frameSize);
                 }
+                setInitialized(true);
                 if (mPreviewRequested) {
                     startPreview();
                 }
