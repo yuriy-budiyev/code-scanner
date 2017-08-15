@@ -141,7 +141,7 @@ public final class CodeScanner {
         mInitializeLock.lock();
         try {
             mCamera = camera;
-            mDecoder = new Decoder(new DecoderListener());
+            mDecoder = new Decoder(new DecoderStateListener());
             mDecoder.setFormats(mFormats);
             mDecoder.start();
             mPreviewSize = previewSize;
@@ -282,7 +282,8 @@ public final class CodeScanner {
         }
     }
 
-    private class DecoderListener implements DecoderStateListener {
+    private class DecoderStateListener
+            implements com.budiyev.android.codescanner.DecoderStateListener {
         @Override
         public void onStateChanged(int state) {
             if (state == DecoderState.DECODED) {
