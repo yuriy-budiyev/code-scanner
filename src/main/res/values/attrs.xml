@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CodeScannerView">
+        <attr name="maskColor" format="color"/>
+        <attr name="frameColor" format="color"/>
+        <attr name="squareFrame" format="boolean"/>
+        <attr name="frameCornersSize" format="dimension"/>
+    </declare-styleable>
+</resources>
