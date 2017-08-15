@@ -30,7 +30,6 @@ import android.os.Handler;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.WorkerThread;
 import android.support.v4.view.ViewCompat;
 import android.view.SurfaceHolder;
 
@@ -61,6 +60,7 @@ public final class CodeScanner {
     private final Camera.PreviewCallback mPreviewCallback;
     private final SurfaceHolder mSurfaceHolder;
     private final int mCameraId;
+    private volatile List<BarcodeFormat> mFormats = ALL_FORMATS;
     private volatile DecodeCallback mDecodeCallback;
     private volatile Camera mCamera;
     private volatile Decoder mDecoder;
@@ -85,15 +85,23 @@ public final class CodeScanner {
         mPreviewCallback = new PreviewCallback();
         mSurfaceHolder = view.getPreviewView().getHolder();
         mCameraId = cameraId;
-        setFormats(ALL_FORMATS);
     }
 
     public void setFormats(@NonNull List<BarcodeFormat> formats) {
-        mDecoder.setFormats(formats);
+        mInitializeLock.lock();
+        try {
+            if (mInitialized) {
+                mDecoder.setFormats(formats);
+            } else {
+                mFormats = formats;
+            }
+        } finally {
+            mInitializeLock.unlock();
+        }
     }
 
     public void setFormat(@NonNull BarcodeFormat format) {
-        mDecoder.setFormats(Collections.singletonList(format));
+        setFormats(Collections.singletonList(format));
     }
 
     public void setDecodeCallback(@Nullable DecodeCallback decodeCallback) {
@@ -112,13 +120,14 @@ public final class CodeScanner {
         new InitializeThread(width, height).start();
     }
 
-    @WorkerThread
     private void finishInitialization(@NonNull Camera camera, @NonNull Point previewSize,
             @NonNull Point frameSize, int displayOrientation) {
         mInitializeLock.lock();
         try {
             mCamera = camera;
             mDecoder = new Decoder(new DecoderStateListener());
+            mDecoder.setFormats(mFormats);
+            mDecoder.start();
             mPreviewSize = previewSize;
             mFrameSize = frameSize;
             mDisplayOrientation = displayOrientation;
@@ -133,6 +142,7 @@ public final class CodeScanner {
         });
     }
 
+    @MainThread
     public void startPreview() {
         mInitializeLock.lock();
         try {
@@ -152,6 +162,7 @@ public final class CodeScanner {
         }
     }
 
+    @MainThread
     public void stopPreview() {
         if (mInitialized && mPreviewActive) {
             mSurfaceHolder.removeCallback(mSurfaceCallback);
@@ -161,6 +172,7 @@ public final class CodeScanner {
         }
     }
 
+    @MainThread
     public void releaseResources() {
         mPreviewActive = false;
         if (mInitialized) {
@@ -278,14 +290,14 @@ public final class CodeScanner {
             if (parameters == null) {
                 throw new RuntimeException("Unable to configure camera");
             }
-            boolean portrait = ScannerHelper.isPortrait(mDisplayOrientation);
+            int orientation = ScannerHelper.getDisplayOrientation(mContext, cameraInfo.orientation);
+            boolean portrait = ScannerHelper.isPortrait(orientation);
             Point previewSize = CameraConfigurationUtils.findBestPreviewSizeValue(parameters,
                     portrait ? new Point(mHeight, mWidth) : new Point(mWidth, mHeight));
             parameters.setPreviewSize(previewSize.x, previewSize.y);
             Point frameSize = ScannerHelper.getFrameSize(portrait ? previewSize.y : previewSize.x,
                     portrait ? previewSize.x : previewSize.y, mWidth, mHeight);
             camera.setParameters(ScannerHelper.optimizeParameters(parameters));
-            int orientation = ScannerHelper.getDisplayOrientation(mContext, cameraInfo.orientation);
             camera.setDisplayOrientation(orientation);
             finishInitialization(camera, previewSize, frameSize, orientation);
         }

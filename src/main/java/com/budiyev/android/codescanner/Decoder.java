@@ -102,7 +102,7 @@ final class Decoder {
                         callback = task.getCallback();
                     } catch (ReaderException ignored) {
                     } finally {
-                        mDecoding = mDecodeQueue.isEmpty();
+                        mDecoding = !mDecodeQueue.isEmpty();
                         if (result != null) {
                             mStateListener.onStateChanged(Decoder.State.DECODED);
                             if (callback != null) {
