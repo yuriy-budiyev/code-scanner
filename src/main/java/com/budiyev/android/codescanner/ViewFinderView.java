@@ -56,26 +56,25 @@ final class ViewFinderView extends View {
         int width = canvas.getWidth();
         int height = canvas.getHeight();
         canvas.drawRect(0, 0, width, frameRect.top, mMaskPaint);
-        canvas.drawRect(0, frameRect.top, frameRect.left, frameRect.bottom + 1, mMaskPaint);
-        canvas.drawRect(frameRect.right + 1, frameRect.top, width, frameRect.bottom + 1,
-                mMaskPaint);
-        canvas.drawRect(0, frameRect.bottom + 1, width, height, mMaskPaint);
-        canvas.drawLine(frameRect.left - 1, frameRect.top - 1, frameRect.left - 1,
-                frameRect.top - 1 + mFrameCornerSize, mFramePaint);
-        canvas.drawLine(frameRect.left - 1, frameRect.top - 1,
-                frameRect.left - 1 + mFrameCornerSize, frameRect.top - 1, mFramePaint);
-        canvas.drawLine(frameRect.left - 1, frameRect.bottom + 1, frameRect.left - 1,
-                frameRect.bottom + 1 - mFrameCornerSize, mFramePaint);
-        canvas.drawLine(frameRect.left - 1, frameRect.bottom + 1,
-                frameRect.left - 1 + mFrameCornerSize, frameRect.bottom + 1, mFramePaint);
-        canvas.drawLine(frameRect.right + 1, frameRect.top - 1, frameRect.right + 1,
-                frameRect.top - 1 + mFrameCornerSize, mFramePaint);
-        canvas.drawLine(frameRect.right + 1, frameRect.top - 1,
-                frameRect.right + 1 - mFrameCornerSize, frameRect.top - 1, mFramePaint);
-        canvas.drawLine(frameRect.right + 1, frameRect.bottom + 1, frameRect.right + 1,
-                frameRect.bottom + 1 - mFrameCornerSize, mFramePaint);
-        canvas.drawLine(frameRect.right + 1, frameRect.bottom + 1,
-                frameRect.right + 1 - mFrameCornerSize, frameRect.bottom + 1, mFramePaint);
+        canvas.drawRect(0, frameRect.top, frameRect.left, frameRect.bottom, mMaskPaint);
+        canvas.drawRect(frameRect.right, frameRect.top, width, frameRect.bottom, mMaskPaint);
+        canvas.drawRect(0, frameRect.bottom, width, height, mMaskPaint);
+        canvas.drawLine(frameRect.left, frameRect.top, frameRect.left,
+                frameRect.top + mFrameCornerSize, mFramePaint);
+        canvas.drawLine(frameRect.left, frameRect.top, frameRect.left + mFrameCornerSize,
+                frameRect.top, mFramePaint);
+        canvas.drawLine(frameRect.left, frameRect.bottom, frameRect.left,
+                frameRect.bottom - mFrameCornerSize, mFramePaint);
+        canvas.drawLine(frameRect.left, frameRect.bottom, frameRect.left + mFrameCornerSize,
+                frameRect.bottom, mFramePaint);
+        canvas.drawLine(frameRect.right, frameRect.top, frameRect.right,
+                frameRect.top + mFrameCornerSize, mFramePaint);
+        canvas.drawLine(frameRect.right, frameRect.top, frameRect.right - mFrameCornerSize,
+                frameRect.top, mFramePaint);
+        canvas.drawLine(frameRect.right, frameRect.bottom, frameRect.right,
+                frameRect.bottom - mFrameCornerSize, mFramePaint);
+        canvas.drawLine(frameRect.right, frameRect.bottom, frameRect.right - mFrameCornerSize,
+                frameRect.bottom, mFramePaint);
     }
 
     @Override

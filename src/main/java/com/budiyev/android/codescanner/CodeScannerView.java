@@ -41,7 +41,7 @@ public class CodeScannerView extends ViewGroup {
     private static final int DEFAULT_MASK_COLOR = 0x77000000;
     private static final int DEFAULT_FRAME_COLOR = Color.WHITE;
     private static final float DEFAULT_FRAME_WIDTH_DP = 3f;
-    private static final float DEFAULT_FRAME_CORNER_SIZE_DP = 20f;
+    private static final float DEFAULT_FRAME_CORNER_SIZE_DP = 50f;
     private SurfaceView mPreviewView;
     private ViewFinderView mViewFinderView;
     private Point mFrameSize;
