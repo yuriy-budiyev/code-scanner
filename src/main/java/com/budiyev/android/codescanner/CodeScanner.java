@@ -200,7 +200,6 @@ public final class CodeScanner {
             mCamera.startPreview();
             mStoppingPreview = false;
             mPreviewActive = true;
-            mFocusing = false;
             autoFocusCamera();
         } catch (Exception ignored) {
         }
