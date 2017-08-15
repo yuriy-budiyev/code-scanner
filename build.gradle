@@ -34,7 +34,7 @@ ext {
     siteUrl = 'https://github.com/yuriy-budiyev/code-scanner'
     gitUrl = 'https://github.com/yuriy-budiyev/code-scanner.git'
     bintrayRepo = 'maven'
-    bintrayName = 'image-loader'
+    bintrayName = 'code-scanner'
     licenseName = 'MIT License'
     allLicenses = ['MIT']
 }
