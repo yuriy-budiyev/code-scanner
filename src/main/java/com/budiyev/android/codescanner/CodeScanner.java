@@ -154,11 +154,13 @@ public final class CodeScanner {
         } finally {
             mInitializeLock.unlock();
         }
-        SurfaceHolder surfaceHolder = mSurfaceHolder;
-        if (!mPreviewActive && surfaceHolder != null) {
+        if (!mPreviewActive) {
             mCamera.setPreviewCallback(mPreviewCallback);
-            surfaceHolder.addCallback(mSurfaceCallback);
-            mCamera.startPreview();
+            mSurfaceHolder.addCallback(mSurfaceCallback);
+            try {
+                mCamera.startPreview();
+            } catch (Exception ignored) {
+            }
         }
     }
 
@@ -167,7 +169,10 @@ public final class CodeScanner {
         if (mInitialized && mPreviewActive) {
             mSurfaceHolder.removeCallback(mSurfaceCallback);
             mCamera.setPreviewCallback(null);
-            mCamera.stopPreview();
+            try {
+                mCamera.stopPreview();
+            } catch (Exception ignored) {
+            }
             mPreviewActive = false;
         }
     }
