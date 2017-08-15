@@ -50,6 +50,15 @@ public final class CodeScanner {
                     BarcodeFormat.MAXICODE, BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE,
                     BarcodeFormat.RSS_14, BarcodeFormat.RSS_EXPANDED, BarcodeFormat.UPC_A,
                     BarcodeFormat.UPC_E, BarcodeFormat.UPC_EAN_EXTENSION);
+    public static final List<BarcodeFormat> ONE_DIMENSIONAL_FORMATS =
+            Arrays.asList(BarcodeFormat.CODABAR, BarcodeFormat.CODE_39, BarcodeFormat.CODE_93,
+                    BarcodeFormat.CODE_128, BarcodeFormat.EAN_8, BarcodeFormat.EAN_13,
+                    BarcodeFormat.ITF, BarcodeFormat.PDF_417, BarcodeFormat.RSS_14,
+                    BarcodeFormat.RSS_EXPANDED, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E,
+                    BarcodeFormat.UPC_EAN_EXTENSION);
+    public static final List<BarcodeFormat> TWO_DIMENSIONAL_FORMATS =
+            Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.DATA_MATRIX, BarcodeFormat.MAXICODE,
+                    BarcodeFormat.QR_CODE);
     private static final long AUTO_FOCUS_INTERVAL = 1000L;
     private static final int UNSPECIFIED = -1;
     private final Lock mInitializeLock = new ReentrantLock();
