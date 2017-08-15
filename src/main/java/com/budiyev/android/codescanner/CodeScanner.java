@@ -71,6 +71,7 @@ public final class CodeScanner {
     private volatile int mDisplayOrientation;
     private volatile boolean mInitialization;
     private volatile boolean mInitialized;
+    private volatile boolean mStoppingPreview;
     private boolean mPreviewActive;
     private boolean mSurfaceAvailable;
 
@@ -187,6 +188,7 @@ public final class CodeScanner {
             mCamera.setPreviewCallback(mPreviewCallback);
             mCamera.setPreviewDisplay(mSurfaceHolder);
             mCamera.startPreview();
+            mStoppingPreview = false;
             mPreviewActive = true;
             scheduleAutoFocusTask();
         } catch (Exception ignored) {
@@ -199,6 +201,7 @@ public final class CodeScanner {
             mCamera.stopPreview();
         } catch (Exception ignored) {
         }
+        mStoppingPreview = false;
         mPreviewActive = false;
     }
 
@@ -232,7 +235,7 @@ public final class CodeScanner {
     private class PreviewCallback implements Camera.PreviewCallback {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-            if (!mInitialized || mDecoder.isProcessing()) {
+            if (!mInitialized || mStoppingPreview || mDecoder.isProcessing()) {
                 return;
             }
             Point previewSize = mPreviewSize;
@@ -271,6 +274,7 @@ public final class CodeScanner {
         @Override
         public void onStateChanged(int state) {
             if (state == Decoder.State.DECODED) {
+                mStoppingPreview = true;
                 mMainThreadHandler.post(CodeScanner.this::stopPreview);
             }
         }
