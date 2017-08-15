@@ -70,8 +70,8 @@ public final class CodeScanner {
     private volatile boolean mPreviewActive;
 
     @MainThread
-    public CodeScanner(@NonNull Context context, @NonNull CodeScannerView scannerView) {
-        this(context, scannerView, -1);
+    public CodeScanner(@NonNull Context context, @NonNull CodeScannerView view) {
+        this(context, view, -1);
     }
 
     @MainThread
