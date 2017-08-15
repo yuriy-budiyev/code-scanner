@@ -4,6 +4,7 @@
         <attr name="maskColor" format="color"/>
         <attr name="frameColor" format="color"/>
         <attr name="squareFrame" format="boolean"/>
+        <attr name="frameWidth" format="dimension"/>
         <attr name="frameCornersSize" format="dimension"/>
     </declare-styleable>
 </resources>

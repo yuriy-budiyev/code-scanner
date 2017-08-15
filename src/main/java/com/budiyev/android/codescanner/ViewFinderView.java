@@ -28,7 +28,10 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
+import android.support.annotation.Px;
+import android.support.v4.view.ViewCompat;
 import android.view.View;
 
 final class ViewFinderView extends View {
@@ -96,5 +99,33 @@ final class ViewFinderView extends View {
 
     boolean isSquareFrame() {
         return mSquareFrame;
+    }
+
+    void setMaskColor(@ColorInt int color) {
+        mMaskPaint.setColor(color);
+        if (ViewCompat.isLaidOut(this)) {
+            invalidate();
+        }
+    }
+
+    void setFrameColor(@ColorInt int color) {
+        mFramePaint.setColor(color);
+        if (ViewCompat.isLaidOut(this)) {
+            invalidate();
+        }
+    }
+
+    void setFrameWidth(@Px int width) {
+        mFramePaint.setStrokeWidth(width);
+        if (ViewCompat.isLaidOut(this)) {
+            invalidate();
+        }
+    }
+
+    void setFrameCornersSize(@Px int size) {
+        mFrameCornerSize = size;
+        if (ViewCompat.isLaidOut(this)) {
+            invalidate();
+        }
     }
 }
