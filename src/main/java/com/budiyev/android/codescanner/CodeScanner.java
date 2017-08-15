@@ -282,10 +282,11 @@ public final class CodeScanner {
         }
     }
 
-    private class DecoderStateListener implements Decoder.StateListener {
+    private class DecoderStateListener
+            implements com.budiyev.android.codescanner.DecoderStateListener {
         @Override
         public void onStateChanged(int state) {
-            if (state == Decoder.State.DECODED) {
+            if (state == DecoderState.DECODED) {
                 mStoppingPreview = true;
                 mMainThreadHandler.post(CodeScanner.this::stopPreview);
             }
