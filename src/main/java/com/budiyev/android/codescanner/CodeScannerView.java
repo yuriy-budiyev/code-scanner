@@ -178,4 +178,7 @@ public class CodeScannerView extends ViewGroup {
         mLayoutListener = layoutListener;
     }
 
+    interface LayoutListener {
+        void onLayout(int width, int height);
+    }
 }

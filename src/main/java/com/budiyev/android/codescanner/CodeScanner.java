@@ -236,7 +236,7 @@ public final class CodeScanner {
         mMainThreadHandler.postDelayed(mAutoFocusTask, AUTO_FOCUS_INTERVAL);
     }
 
-    private class ScannerLayoutListener implements LayoutListener {
+    private class ScannerLayoutListener implements CodeScannerView.LayoutListener {
         @Override
         public void onLayout(int width, int height) {
             initialize(width, height);
