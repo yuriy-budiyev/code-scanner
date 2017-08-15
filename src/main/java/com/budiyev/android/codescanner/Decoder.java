@@ -45,7 +45,7 @@ final class Decoder {
     private final MultiFormatReader mReader;
     private final DecoderThread mDecoderThread;
     private final StateListener mStateListener;
-    private volatile boolean mDecoding;
+    private volatile boolean mProcessing;
 
     public Decoder(@NonNull StateListener stateListener) {
         mStateListener = stateListener;
@@ -75,8 +75,8 @@ final class Decoder {
         mDecodeQueue.clear();
     }
 
-    public boolean isDecoding() {
-        return mDecoding;
+    public boolean isProcessing() {
+        return mProcessing;
     }
 
     private class DecoderThread extends Thread {
@@ -96,19 +96,19 @@ final class Decoder {
                     DecodeCallback callback = null;
                     try {
                         DecodeTask task = mDecodeQueue.take();
-                        mDecoding = true;
+                        mProcessing = true;
                         mStateListener.onStateChanged(Decoder.State.DECODING);
                         result = task.decode(mReader);
                         callback = task.getCallback();
                     } catch (ReaderException ignored) {
                     } finally {
-                        mDecoding = !mDecodeQueue.isEmpty();
                         if (result != null) {
                             mStateListener.onStateChanged(Decoder.State.DECODED);
                             if (callback != null) {
                                 callback.onDecoded(result);
                             }
                         }
+                        mProcessing = false;
                     }
                 } catch (InterruptedException e) {
                     break;

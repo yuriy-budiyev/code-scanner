@@ -197,7 +197,7 @@ public final class CodeScanner {
     private class PreviewCallback implements Camera.PreviewCallback {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-            if (!mInitialized || mDecoder.isDecoding()) {
+            if (!mInitialized || mDecoder.isProcessing()) {
                 return;
             }
             Point previewSize = mPreviewSize;

@@ -102,7 +102,6 @@ public class CodeScannerView extends ViewGroup {
                 }
             }
         }
-
         addView(mPreviewView);
         addView(mViewFinderView);
     }
