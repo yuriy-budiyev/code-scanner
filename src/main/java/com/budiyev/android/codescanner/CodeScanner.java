@@ -50,6 +50,7 @@ public final class CodeScanner {
                     BarcodeFormat.MAXICODE, BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE,
                     BarcodeFormat.RSS_14, BarcodeFormat.RSS_EXPANDED, BarcodeFormat.UPC_A,
                     BarcodeFormat.UPC_E, BarcodeFormat.UPC_EAN_EXTENSION);
+    private static final long AUTO_FOCUS_INTERVAL = 1000L;
     private static final int UNSPECIFIED = -1;
     private final Lock mInitializeLock = new ReentrantLock();
     private final Context mContext;
@@ -57,6 +58,8 @@ public final class CodeScanner {
     private final CodeScannerView mScannerView;
     private final SurfaceHolder.Callback mSurfaceCallback;
     private final Camera.PreviewCallback mPreviewCallback;
+    private final Camera.AutoFocusCallback mAutoFocusCallback;
+    private final Runnable mAutoFocusTask;
     private final SurfaceHolder mSurfaceHolder;
     private final int mCameraId;
     private volatile List<BarcodeFormat> mFormats = ALL_FORMATS;
@@ -68,7 +71,8 @@ public final class CodeScanner {
     private volatile int mDisplayOrientation;
     private volatile boolean mInitialization;
     private volatile boolean mInitialized;
-    private volatile boolean mPreviewActive;
+    private boolean mPreviewActive;
+    private boolean mSurfaceAvailable;
 
     @MainThread
     public CodeScanner(@NonNull Context context, @NonNull CodeScannerView view) {
@@ -82,6 +86,8 @@ public final class CodeScanner {
         mScannerView = view;
         mSurfaceCallback = new SurfaceCallback();
         mPreviewCallback = new PreviewCallback();
+        mAutoFocusCallback = new AutoFocusCallback();
+        mAutoFocusTask = new AutoFocusTask();
         mSurfaceHolder = view.getPreviewView().getHolder();
         mCameraId = cameraId;
     }
@@ -182,6 +188,7 @@ public final class CodeScanner {
             mCamera.setPreviewDisplay(mSurfaceHolder);
             mCamera.startPreview();
             mPreviewActive = true;
+            scheduleAutoFocusTask();
         } catch (Exception ignored) {
         }
     }
@@ -193,6 +200,25 @@ public final class CodeScanner {
         } catch (Exception ignored) {
         }
         mPreviewActive = false;
+    }
+
+    private void autoFocusCamera() {
+        if (!mInitialized || !mPreviewActive) {
+            return;
+        }
+        if (!mSurfaceAvailable) {
+            scheduleAutoFocusTask();
+            return;
+        }
+        try {
+            mCamera.autoFocus(mAutoFocusCallback);
+        } catch (Exception e) {
+            scheduleAutoFocusTask();
+        }
+    }
+
+    private void scheduleAutoFocusTask() {
+        mMainThreadHandler.postDelayed(mAutoFocusTask, AUTO_FOCUS_INTERVAL);
     }
 
     private class ScannerLayoutListener implements LayoutListener {
@@ -219,6 +245,7 @@ public final class CodeScanner {
     private class SurfaceCallback implements SurfaceHolder.Callback {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
+            mSurfaceAvailable = true;
             startPreviewInternal();
         }
 
@@ -230,10 +257,12 @@ public final class CodeScanner {
             }
             stopPreviewInternal();
             startPreviewInternal();
+            mSurfaceAvailable = true;
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
+            mSurfaceAvailable = false;
             stopPreviewInternal();
         }
     }
@@ -295,6 +324,20 @@ public final class CodeScanner {
             camera.setParameters(ScannerHelper.optimizeParameters(parameters));
             camera.setDisplayOrientation(orientation);
             finishInitialization(camera, previewSize, frameSize, orientation);
+        }
+    }
+
+    private class AutoFocusCallback implements Camera.AutoFocusCallback {
+        @Override
+        public void onAutoFocus(boolean success, Camera camera) {
+            scheduleAutoFocusTask();
+        }
+    }
+
+    private class AutoFocusTask implements Runnable {
+        @Override
+        public void run() {
+            autoFocusCamera();
         }
     }
 }

@@ -34,6 +34,8 @@ import android.view.WindowManager;
 
 import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
+import java.util.List;
+
 final class ScannerHelper {
     private static float SQUARE_RATIO = 0.75f;
     private static float PORTRAIT_WIDTH_RATIO = 0.75f;
@@ -46,13 +48,16 @@ final class ScannerHelper {
 
     @NonNull
     public static Camera.Parameters optimizeParameters(@NonNull Camera.Parameters parameters) {
-        CameraConfigurationUtils.setFocus(parameters, true, false, false);
         CameraConfigurationUtils.setBestPreviewFPS(parameters);
         CameraConfigurationUtils.setBarcodeSceneMode(parameters);
         CameraConfigurationUtils.setBestExposure(parameters, false);
         CameraConfigurationUtils.setVideoStabilization(parameters);
         CameraConfigurationUtils.setFocusArea(parameters);
         CameraConfigurationUtils.setMetering(parameters);
+        List<String> focusModes = parameters.getSupportedFocusModes();
+        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        }
         parameters.setPreviewFormat(ImageFormat.NV21);
         return parameters;
     }
