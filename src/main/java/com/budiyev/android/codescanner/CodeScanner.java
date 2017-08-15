@@ -83,6 +83,7 @@ public final class CodeScanner {
     private volatile boolean mStoppingPreview;
     private boolean mPreviewActive;
     private boolean mSurfaceAvailable;
+    private boolean mFocusing;
 
     @MainThread
     public CodeScanner(@NonNull Context context, @NonNull CodeScannerView view) {
@@ -199,7 +200,7 @@ public final class CodeScanner {
             mCamera.startPreview();
             mStoppingPreview = false;
             mPreviewActive = true;
-            scheduleAutoFocusTask();
+            autoFocusCamera();
         } catch (Exception ignored) {
         }
     }
@@ -218,13 +219,15 @@ public final class CodeScanner {
         if (!mInitialized || !mPreviewActive) {
             return;
         }
-        if (!mSurfaceAvailable) {
+        if (!mSurfaceAvailable || mFocusing) {
             scheduleAutoFocusTask();
             return;
         }
         try {
             mCamera.autoFocus(mAutoFocusCallback);
+            mFocusing = true;
         } catch (Exception e) {
+            mFocusing = false;
             scheduleAutoFocusTask();
         }
     }
@@ -267,9 +270,9 @@ public final class CodeScanner {
                 mPreviewActive = false;
                 return;
             }
+            mSurfaceAvailable = true;
             stopPreviewInternal();
             startPreviewInternal();
-            mSurfaceAvailable = true;
         }
 
         @Override
@@ -343,6 +346,7 @@ public final class CodeScanner {
     private class AutoFocusCallback implements Camera.AutoFocusCallback {
         @Override
         public void onAutoFocus(boolean success, Camera camera) {
+            mFocusing = false;
             scheduleAutoFocusTask();
         }
     }
