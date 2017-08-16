@@ -128,37 +128,6 @@ public final class CodeScanner {
         return mPreviewActive;
     }
 
-    private void initialize() {
-        if (Utils.isLaidOut(mScannerView)) {
-            initialize(mScannerView.getWidth(), mScannerView.getHeight());
-        } else {
-            mScannerView.setLayoutListener(new ScannerLayoutListener());
-        }
-    }
-
-    private void initialize(int width, int height) {
-        new InitializationThread(width, height).start();
-    }
-
-    private void finishInitialization(@NonNull Camera camera, @NonNull Point previewSize,
-            @NonNull Point frameSize, int displayOrientation) {
-        mInitializeLock.lock();
-        try {
-            mCamera = camera;
-            mDecoder = new Decoder(new DecoderStateListener());
-            mDecoder.setFormats(mFormats);
-            mDecoder.start();
-            mPreviewSize = previewSize;
-            mFrameSize = frameSize;
-            mDisplayOrientation = displayOrientation;
-            mInitialization = false;
-            mInitialized = true;
-        } finally {
-            mInitializeLock.unlock();
-        }
-        mMainThreadHandler.post(new FinishInitializationTask(frameSize));
-    }
-
     @MainThread
     public void startPreview() {
         mInitializeLock.lock();
@@ -192,6 +161,37 @@ public final class CodeScanner {
             mCamera.release();
             mDecoder.shutdown();
         }
+    }
+
+    private void initialize() {
+        if (Utils.isLaidOut(mScannerView)) {
+            initialize(mScannerView.getWidth(), mScannerView.getHeight());
+        } else {
+            mScannerView.setLayoutListener(new ScannerLayoutListener());
+        }
+    }
+
+    private void initialize(int width, int height) {
+        new InitializationThread(width, height).start();
+    }
+
+    private void finishInitialization(@NonNull Camera camera, @NonNull Point previewSize,
+            @NonNull Point frameSize, int displayOrientation) {
+        mInitializeLock.lock();
+        try {
+            mCamera = camera;
+            mDecoder = new Decoder(new DecoderStateListener());
+            mDecoder.setFormats(mFormats);
+            mDecoder.start();
+            mPreviewSize = previewSize;
+            mFrameSize = frameSize;
+            mDisplayOrientation = displayOrientation;
+            mInitialization = false;
+            mInitialized = true;
+        } finally {
+            mInitializeLock.unlock();
+        }
+        mMainThreadHandler.post(new FinishInitializationTask(frameSize));
     }
 
     private void startPreviewInternal() {
