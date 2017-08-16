@@ -23,6 +23,7 @@
  */
 package com.budiyev.android.codescanner;
 
+import android.Manifest;
 import android.content.Context;
 import android.graphics.Point;
 import android.hardware.Camera;
@@ -41,6 +42,12 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Scanner of different codes
+ *
+ * @see CodeScannerView
+ * @see BarcodeFormat
+ */
 public final class CodeScanner {
     public static final List<BarcodeFormat> ALL_FORMATS =
             Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.CODABAR, BarcodeFormat.CODE_39,
@@ -84,11 +91,27 @@ public final class CodeScanner {
     private boolean mSurfaceAvailable;
     private boolean mFocusing;
 
+    /**
+     * CodeScanner, associated with the first back-facing camera on the device
+     *
+     * @param context Context
+     * @param view    A view to display the preview
+     * @see CodeScannerView
+     */
     @MainThread
     public CodeScanner(@NonNull Context context, @NonNull CodeScannerView view) {
         this(context, view, UNSPECIFIED);
     }
 
+    /**
+     * CodeScanner, associated with particular hardware camera
+     *
+     * @param context  Context
+     * @param view     A view to display the preview
+     * @param cameraId Camera id (between {@code 0} and
+     *                 {@link Camera#getNumberOfCameras()} - {@code 1})
+     * @see CodeScannerView
+     */
     @MainThread
     public CodeScanner(@NonNull Context context, @NonNull CodeScannerView view, int cameraId) {
         mContext = context;
@@ -103,6 +126,15 @@ public final class CodeScanner {
         mCameraId = cameraId;
     }
 
+    /**
+     * Set formats, decoder to react to ({@link #ALL_FORMATS} bu default)
+     *
+     * @param formats Formats
+     * @see BarcodeFormat
+     * @see #ALL_FORMATS
+     * @see #ONE_DIMENSIONAL_FORMATS
+     * @see #TWO_DIMENSIONAL_FORMATS
+     */
     public void setFormats(@NonNull List<BarcodeFormat> formats) {
         mInitializeLock.lock();
         try {
@@ -116,18 +148,38 @@ public final class CodeScanner {
         }
     }
 
+    /**
+     * Set format, decoder to react to
+     *
+     * @param format Format
+     * @see BarcodeFormat
+     */
     public void setFormat(@NonNull BarcodeFormat format) {
         setFormats(Collections.singletonList(format));
     }
 
+    /**
+     * Set callback of the decoding process
+     *
+     * @param decodeCallback Callback
+     * @see DecodeCallback
+     */
     public void setDecodeCallback(@Nullable DecodeCallback decodeCallback) {
         mDecodeCallback = decodeCallback;
     }
 
+    /**
+     * Whether if preview is active
+     */
     public boolean isPreviewActive() {
         return mPreviewActive;
     }
 
+    /**
+     * Start camera preview
+     * <br>
+     * Requires {@link Manifest.permission#CAMERA} permission
+     */
     @MainThread
     public void startPreview() {
         mInitializeLock.lock();
@@ -146,6 +198,9 @@ public final class CodeScanner {
         }
     }
 
+    /**
+     * Stop camera preview
+     */
     @MainThread
     public void stopPreview() {
         if (mInitialized && mPreviewActive) {
@@ -154,6 +209,9 @@ public final class CodeScanner {
         }
     }
 
+    /**
+     * Release resources
+     */
     @MainThread
     public void releaseResources() {
         mPreviewActive = false;

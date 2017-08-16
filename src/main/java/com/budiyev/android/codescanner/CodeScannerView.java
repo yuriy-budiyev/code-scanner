@@ -36,6 +36,11 @@ import android.util.DisplayMetrics;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
 
+/**
+ * A view to display code scanner preview
+ *
+ * @see CodeScanner
+ */
 public final class CodeScannerView extends ViewGroup {
     private static final boolean DEFAULT_SQUARE_FRAME = false;
     private static final int DEFAULT_MASK_COLOR = 0x77000000;
@@ -47,16 +52,31 @@ public final class CodeScannerView extends ViewGroup {
     private Point mFrameSize;
     private LayoutListener mLayoutListener;
 
+    /**
+     * A view to display code scanner preview
+     *
+     * @see CodeScanner
+     */
     public CodeScannerView(@NonNull Context context) {
         super(context);
         initialize(context, null);
     }
 
+    /**
+     * A view to display code scanner preview
+     *
+     * @see CodeScanner
+     */
     public CodeScannerView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initialize(context, attrs);
     }
 
+    /**
+     * A view to display code scanner preview
+     *
+     * @see CodeScanner
+     */
     public CodeScannerView(@NonNull Context context, @Nullable AttributeSet attrs,
             int defStyleAttr) {
         super(context, attrs, defStyleAttr);
@@ -137,22 +157,47 @@ public final class CodeScannerView extends ViewGroup {
         }
     }
 
+    /**
+     * Set whether frame is square or a rectangle
+     *
+     * @param squareFrame is {@code true}, the frame will be square, rectangle otherwise
+     */
     public void setSquareFrame(boolean squareFrame) {
         mViewFinderView.setSquareFrame(squareFrame);
     }
 
+    /**
+     * Set color of the space outside of the framing rect
+     *
+     * @param color Mask color
+     */
     public void setMaskColor(@ColorInt int color) {
         mViewFinderView.setMaskColor(color);
     }
 
+    /**
+     * Set color of the frame
+     *
+     * @param color Frame color
+     */
     public void setFrameColor(@ColorInt int color) {
         mViewFinderView.setFrameColor(color);
     }
 
+    /**
+     * Set frame width
+     *
+     * @param width Frame width in pixels
+     */
     public void setFrameWidth(@Px int width) {
         mViewFinderView.setFrameWidth(width);
     }
 
+    /**
+     * Set length on the frame corners
+     *
+     * @param size Length in pixels
+     */
     public void setFrameCornersSize(@Px int size) {
         mViewFinderView.setFrameCornersSize(size);
     }
