@@ -3,7 +3,7 @@
 
 Code scanner library based on ZXing
 
-#### Usage
+### Usage
 Add dependency:
 ```
 dependencies {
