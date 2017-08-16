@@ -79,7 +79,7 @@ final class Decoder {
         return mProcessing;
     }
 
-    private class DecoderThread extends Thread {
+    private final class DecoderThread extends Thread {
         public DecoderThread() {
             super("Code scanner decode thread");
             if (isDaemon()) {

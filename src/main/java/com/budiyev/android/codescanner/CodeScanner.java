@@ -239,7 +239,7 @@ public final class CodeScanner {
         mMainThreadHandler.postDelayed(mAutoFocusTask, AUTO_FOCUS_INTERVAL);
     }
 
-    private class ScannerLayoutListener implements CodeScannerView.LayoutListener {
+    private final class ScannerLayoutListener implements CodeScannerView.LayoutListener {
         @Override
         public void onLayout(int width, int height) {
             initialize(width, height);
@@ -247,7 +247,7 @@ public final class CodeScanner {
         }
     }
 
-    private class PreviewCallback implements Camera.PreviewCallback {
+    private final class PreviewCallback implements Camera.PreviewCallback {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
             if (!mInitialized || mStoppingPreview || mDecoder.isProcessing()) {
@@ -260,7 +260,7 @@ public final class CodeScanner {
         }
     }
 
-    private class SurfaceCallback implements SurfaceHolder.Callback {
+    private final class SurfaceCallback implements SurfaceHolder.Callback {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
             mSurfaceAvailable = true;
@@ -285,7 +285,7 @@ public final class CodeScanner {
         }
     }
 
-    private class DecoderStateListener implements Decoder.StateListener {
+    private final class DecoderStateListener implements Decoder.StateListener {
         @Override
         public void onStateChanged(int state) {
             if (state == Decoder.State.DECODED) {
@@ -295,7 +295,7 @@ public final class CodeScanner {
         }
     }
 
-    private class InitializationThread extends Thread {
+    private final class InitializationThread extends Thread {
         private final int mWidth;
         private final int mHeight;
 
@@ -346,7 +346,7 @@ public final class CodeScanner {
         }
     }
 
-    private class AutoFocusCallback implements Camera.AutoFocusCallback {
+    private final class AutoFocusCallback implements Camera.AutoFocusCallback {
         @Override
         public void onAutoFocus(boolean success, Camera camera) {
             mFocusing = false;
@@ -354,21 +354,21 @@ public final class CodeScanner {
         }
     }
 
-    private class AutoFocusTask implements Runnable {
+    private final class AutoFocusTask implements Runnable {
         @Override
         public void run() {
             autoFocusCamera();
         }
     }
 
-    private class StopPreviewTask implements Runnable {
+    private final class StopPreviewTask implements Runnable {
         @Override
         public void run() {
             stopPreview();
         }
     }
 
-    private class FinishInitializationTask implements Runnable {
+    private final class FinishInitializationTask implements Runnable {
         private final Point mFrameSize;
 
         private FinishInitializationTask(@NonNull Point frameSize) {
