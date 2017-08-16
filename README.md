@@ -6,6 +6,6 @@ Code scanner library based on ZXing
 #### Usage
 ```
 dependencies {
-    implementation 'com.budiyev.android:code-scanner:1.0.1'
+    implementation 'com.budiyev.android:code-scanner:1.0.0'
 }
 ```
