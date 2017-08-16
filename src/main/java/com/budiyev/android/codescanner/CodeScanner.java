@@ -124,6 +124,10 @@ public final class CodeScanner {
         mDecodeCallback = decodeCallback;
     }
 
+    public boolean isPreviewActive() {
+        return mPreviewActive;
+    }
+
     private void initialize() {
         if (Utils.isLaidOut(mScannerView)) {
             initialize(mScannerView.getWidth(), mScannerView.getHeight());
