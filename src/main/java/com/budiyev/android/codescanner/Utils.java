@@ -176,8 +176,8 @@ final class Utils {
         byte[] output = new byte[yuv.length];
         int frameSize = width * height;
         boolean swap = rotation % 180 != 0;
-        boolean xflip = rotation % 270 != 0;
-        boolean yflip = rotation >= 180;
+        boolean flipX = rotation % 270 != 0;
+        boolean flipY = rotation >= 180;
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
                 int yIn = j * width + i;
@@ -187,8 +187,8 @@ final class Utils {
                 int hOut = swap ? width : height;
                 int iSwapped = swap ? j : i;
                 int jSwapped = swap ? i : j;
-                int iOut = xflip ? wOut - iSwapped - 1 : iSwapped;
-                int jOut = yflip ? hOut - jSwapped - 1 : jSwapped;
+                int iOut = flipX ? wOut - iSwapped - 1 : iSwapped;
+                int jOut = flipY ? hOut - jSwapped - 1 : jSwapped;
                 int yOut = jOut * wOut + iOut;
                 int uOut = frameSize + (jOut >> 1) * wOut + (iOut & ~1);
                 int vOut = uOut + 1;
