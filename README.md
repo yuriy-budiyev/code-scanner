@@ -4,8 +4,84 @@
 Code scanner library based on ZXing
 
 #### Usage
+Add dependency:
 ```
 dependencies {
     implementation 'com.budiyev.android:code-scanner:1.0.0'
+}
+```
+Add camera permission to AndroidManifest.xml (Don't forget about dynamic permissions on API >= 23):
+```
+<uses-permission android:name="android.permission.CAMERA"/>
+```
+Define a view in your layout file:
+```
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+
+    <com.budiyev.android.codescanner.CodeScannerView
+        android:id="@+id/scanner_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:frameColor="@android:color/white"
+        app:frameCornersSize="50dp"
+        app:frameWidth="2dp"
+        app:maskColor="#77000000"
+        app:squareFrame="true"/>
+</FrameLayout>
+```
+And add following code to your activity:
+```
+public class MainActivity extends AppCompatActivity {
+    private CodeScanner mCodeScanner;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        CodeScannerView scannerView = findViewById(R.id.scanner_view);
+        mCodeScanner = new CodeScanner(this, scannerView);
+        mCodeScanner.setDecodeCallback(new DecodeCallback() {
+            @Override
+            public void onDecoded(@NonNull final Result result) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, result.getText(), Toast.LENGTH_LONG)
+                                .show();
+                    }
+                });
+            }
+        });
+        scannerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCodeScanner.startPreview();
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mCodeScanner.startPreview();
+    }
+
+    @Override
+    protected void onPause() {
+        mCodeScanner.stopPreview();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mCodeScanner.releaseResources();
+        super.onDestroy();
+    }
 }
 ```
