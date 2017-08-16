@@ -63,12 +63,12 @@ public final class CodeScanner {
     private final Context mContext;
     private final Handler mMainThreadHandler;
     private final CodeScannerView mScannerView;
+    private final SurfaceHolder mSurfaceHolder;
     private final SurfaceHolder.Callback mSurfaceCallback;
     private final Camera.PreviewCallback mPreviewCallback;
     private final Camera.AutoFocusCallback mAutoFocusCallback;
     private final Runnable mAutoFocusTask;
     private final Runnable mStopPreviewTask;
-    private final SurfaceHolder mSurfaceHolder;
     private final int mCameraId;
     private volatile List<BarcodeFormat> mFormats = ALL_FORMATS;
     private volatile DecodeCallback mDecodeCallback;
@@ -92,14 +92,14 @@ public final class CodeScanner {
     @MainThread
     public CodeScanner(@NonNull Context context, @NonNull CodeScannerView view, int cameraId) {
         mContext = context;
-        mMainThreadHandler = new Handler();
         mScannerView = view;
+        mSurfaceHolder = view.getPreviewView().getHolder();
+        mMainThreadHandler = new Handler();
         mSurfaceCallback = new SurfaceCallback();
         mPreviewCallback = new PreviewCallback();
         mAutoFocusCallback = new AutoFocusCallback();
         mAutoFocusTask = new AutoFocusTask();
         mStopPreviewTask = new StopPreviewTask();
-        mSurfaceHolder = view.getPreviewView().getHolder();
         mCameraId = cameraId;
     }
 
