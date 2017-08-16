@@ -137,7 +137,7 @@ public final class CodeScanner {
     }
 
     private void initialize(int width, int height) {
-        new InitializeThread(width, height).start();
+        new InitializationThread(width, height).start();
     }
 
     private void finishInitialization(@NonNull Camera camera, @NonNull Point previewSize,
@@ -295,11 +295,11 @@ public final class CodeScanner {
         }
     }
 
-    private class InitializeThread extends Thread {
+    private class InitializationThread extends Thread {
         private final int mWidth;
         private final int mHeight;
 
-        public InitializeThread(int width, int height) {
+        public InitializationThread(int width, int height) {
             super("Code scanner initialization thread");
             if (isDaemon()) {
                 setDaemon(false);
