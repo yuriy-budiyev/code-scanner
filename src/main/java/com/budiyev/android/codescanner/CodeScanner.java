@@ -30,7 +30,6 @@ import android.os.Handler;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.view.ViewCompat;
 import android.view.SurfaceHolder;
 
 import com.google.zxing.BarcodeFormat;
@@ -124,7 +123,7 @@ public final class CodeScanner {
     }
 
     private void initialize() {
-        if (ViewCompat.isLaidOut(mScannerView)) {
+        if (Utils.isLaidOut(mScannerView)) {
             initialize(mScannerView.getWidth(), mScannerView.getHeight());
         } else {
             mScannerView.setLayoutListener(new ScannerLayoutListener());
@@ -331,14 +330,14 @@ public final class CodeScanner {
             if (parameters == null) {
                 throw new RuntimeException("Unable to configure camera");
             }
-            int orientation = ScannerHelper.getDisplayOrientation(mContext, cameraInfo.orientation);
-            boolean portrait = ScannerHelper.isPortrait(orientation);
+            int orientation = Utils.getDisplayOrientation(mContext, cameraInfo.orientation);
+            boolean portrait = Utils.isPortrait(orientation);
             Point previewSize = CameraConfigurationUtils.findBestPreviewSizeValue(parameters,
                     portrait ? new Point(mHeight, mWidth) : new Point(mWidth, mHeight));
             parameters.setPreviewSize(previewSize.x, previewSize.y);
-            Point frameSize = ScannerHelper.getFrameSize(portrait ? previewSize.y : previewSize.x,
+            Point frameSize = Utils.getFrameSize(portrait ? previewSize.y : previewSize.x,
                     portrait ? previewSize.x : previewSize.y, mWidth, mHeight);
-            camera.setParameters(ScannerHelper.optimizeParameters(parameters));
+            camera.setParameters(Utils.optimizeParameters(parameters));
             camera.setDisplayOrientation(orientation);
             finishInitialization(camera, previewSize, frameSize, orientation);
         }

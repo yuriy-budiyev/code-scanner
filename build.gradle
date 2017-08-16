@@ -25,7 +25,7 @@ apply plugin: 'com.jfrog.bintray'
 ext {
     libraryName = 'CodeScanner'
     libraryDescription = 'Code scanner library based on ZXing'
-    libraryVersion = '1.0.0'
+    libraryVersion = '1.0.1'
     artifact = 'code-scanner'
     developerId = 'yuriy-budiyev'
     developerName = 'Yuriy Budiyev'
@@ -46,7 +46,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 26
-        versionCode 1
+        versionCode 2
         versionName libraryVersion
     }
 
@@ -68,10 +68,10 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    api 'com.google.zxing:core:3.3.0'
-    api 'com.google.zxing:android-core:3.3.0'
-    api 'com.android.support:appcompat-v7:26.0.1'
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.google.zxing:core:3.3.0'
+    implementation 'com.google.zxing:android-core:3.3.0'
+    implementation 'com.android.support:support-annotations:26.0.1'
 }
 
 group = publishedGroupId

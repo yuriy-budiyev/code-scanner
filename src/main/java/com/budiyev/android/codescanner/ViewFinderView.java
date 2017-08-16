@@ -30,7 +30,6 @@ import android.graphics.Rect;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Px;
-import android.support.v4.view.ViewCompat;
 import android.view.View;
 
 final class ViewFinderView extends View {
@@ -79,15 +78,15 @@ final class ViewFinderView extends View {
 
     @Override
     protected void onSizeChanged(int width, int height, int oldW, int oldH) {
-        mFrameRect = ScannerHelper.getFrameRect(mSquareFrame, width, height);
+        mFrameRect = Utils.getFrameRect(mSquareFrame, width, height);
     }
 
     void setSquareFrame(boolean squareFrame) {
         mSquareFrame = squareFrame;
         if (mFrameRect != null) {
-            mFrameRect = ScannerHelper.getFrameRect(mSquareFrame, getWidth(), getHeight());
+            mFrameRect = Utils.getFrameRect(mSquareFrame, getWidth(), getHeight());
         }
-        if (ViewCompat.isLaidOut(this)) {
+        if (Utils.isLaidOut(this)) {
             invalidate();
         }
     }
@@ -98,28 +97,28 @@ final class ViewFinderView extends View {
 
     void setMaskColor(@ColorInt int color) {
         mMaskPaint.setColor(color);
-        if (ViewCompat.isLaidOut(this)) {
+        if (Utils.isLaidOut(this)) {
             invalidate();
         }
     }
 
     void setFrameColor(@ColorInt int color) {
         mFramePaint.setColor(color);
-        if (ViewCompat.isLaidOut(this)) {
+        if (Utils.isLaidOut(this)) {
             invalidate();
         }
     }
 
     void setFrameWidth(@Px int width) {
         mFramePaint.setStrokeWidth(width);
-        if (ViewCompat.isLaidOut(this)) {
+        if (Utils.isLaidOut(this)) {
             invalidate();
         }
     }
 
     void setFrameCornersSize(@Px int size) {
         mFrameCornerSize = size;
-        if (ViewCompat.isLaidOut(this)) {
+        if (Utils.isLaidOut(this)) {
             invalidate();
         }
     }

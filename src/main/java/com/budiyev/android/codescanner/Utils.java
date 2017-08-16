@@ -28,22 +28,24 @@ import android.graphics.ImageFormat;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.view.Surface;
+import android.view.View;
 import android.view.WindowManager;
 
 import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
 import java.util.List;
 
-final class ScannerHelper {
+final class Utils {
     private static float SQUARE_RATIO = 0.75f;
     private static float PORTRAIT_WIDTH_RATIO = 0.75f;
     private static float PORTRAIT_HEIGHT_RATIO = 0.75f;
     private static float LANDSCAPE_WIDTH_RATIO = 1.4f;
     private static float LANDSCAPE_HEIGHT_RATIO = 0.625f;
 
-    private ScannerHelper() {
+    private Utils() {
     }
 
     @NonNull
@@ -95,6 +97,14 @@ final class ScannerHelper {
 
     public static boolean isPortrait(int orientation) {
         return orientation == 90 || orientation == 270;
+    }
+
+    public static boolean isLaidOut(@NonNull View view) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return view.isLaidOut();
+        } else {
+            return view.getWidth() > 0 && view.getHeight() > 0;
+        }
     }
 
     @NonNull

@@ -72,7 +72,7 @@ final class DecodeTask {
             dataWidth = mDataWidth;
             dataHeight = mDataHeight;
         } else {
-            data = ScannerHelper.rotateNV21(mData, mDataWidth, mDataHeight, mOrientation);
+            data = Utils.rotateNV21(mData, mDataWidth, mDataHeight, mOrientation);
             if (mOrientation == 90 || mOrientation == 270) {
                 dataWidth = mDataHeight;
                 dataHeight = mDataWidth;
@@ -81,8 +81,8 @@ final class DecodeTask {
                 dataHeight = mDataHeight;
             }
         }
-        Rect frameRect = ScannerHelper
-                .getImageFrameRect(mSquareFrame, dataWidth, dataHeight, mFrameWidth, mFrameHeight);
+        Rect frameRect = Utils.getImageFrameRect(mSquareFrame, dataWidth, dataHeight, mFrameWidth,
+                mFrameHeight);
         return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(
                 new PlanarYUVLuminanceSource(data, dataWidth, dataHeight, frameRect.left,
                         frameRect.top, frameRect.width(), frameRect.height(), false))));
