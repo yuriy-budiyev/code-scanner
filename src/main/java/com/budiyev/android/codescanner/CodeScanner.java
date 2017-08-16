@@ -67,6 +67,7 @@ public final class CodeScanner {
     private final Camera.PreviewCallback mPreviewCallback;
     private final Camera.AutoFocusCallback mAutoFocusCallback;
     private final Runnable mAutoFocusTask;
+    private final Runnable mStopPreviewTask;
     private final SurfaceHolder mSurfaceHolder;
     private final int mCameraId;
     private volatile List<BarcodeFormat> mFormats = ALL_FORMATS;
@@ -97,6 +98,7 @@ public final class CodeScanner {
         mPreviewCallback = new PreviewCallback();
         mAutoFocusCallback = new AutoFocusCallback();
         mAutoFocusTask = new AutoFocusTask();
+        mStopPreviewTask = new StopPreviewTask();
         mSurfaceHolder = view.getPreviewView().getHolder();
         mCameraId = cameraId;
     }
@@ -150,10 +152,7 @@ public final class CodeScanner {
         } finally {
             mInitializeLock.unlock();
         }
-        mMainThreadHandler.post(() -> {
-            mScannerView.setFrameSize(frameSize);
-            startPreview();
-        });
+        mMainThreadHandler.post(new FinishInitializationTask(frameSize));
     }
 
     @MainThread
@@ -287,7 +286,7 @@ public final class CodeScanner {
         public void onStateChanged(int state) {
             if (state == Decoder.State.DECODED) {
                 mStoppingPreview = true;
-                mMainThreadHandler.post(CodeScanner.this::stopPreview);
+                mMainThreadHandler.post(mStopPreviewTask);
             }
         }
     }
@@ -355,6 +354,27 @@ public final class CodeScanner {
         @Override
         public void run() {
             autoFocusCamera();
+        }
+    }
+
+    private class StopPreviewTask implements Runnable {
+        @Override
+        public void run() {
+            stopPreview();
+        }
+    }
+
+    private class FinishInitializationTask implements Runnable {
+        private final Point mFrameSize;
+
+        private FinishInitializationTask(@NonNull Point frameSize) {
+            mFrameSize = frameSize;
+        }
+
+        @Override
+        public void run() {
+            mScannerView.setFrameSize(mFrameSize);
+            startPreview();
         }
     }
 }
