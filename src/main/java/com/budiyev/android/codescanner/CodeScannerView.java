@@ -36,7 +36,7 @@ import android.util.DisplayMetrics;
 import android.view.SurfaceView;
 import android.view.ViewGroup;
 
-public class CodeScannerView extends ViewGroup {
+public final class CodeScannerView extends ViewGroup {
     private static final boolean DEFAULT_SQUARE_FRAME = false;
     private static final int DEFAULT_MASK_COLOR = 0x77000000;
     private static final int DEFAULT_FRAME_COLOR = Color.WHITE;
