@@ -68,10 +68,10 @@ android {
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.zxing:core:3.3.0'
-    implementation 'com.google.zxing:android-core:3.3.0'
-    implementation 'com.android.support:support-annotations:26.0.1'
+    api fileTree(include: ['*.jar'], dir: 'libs')
+    api 'com.google.zxing:core:3.3.0'
+    api 'com.google.zxing:android-core:3.3.0'
+    api 'com.android.support:support-annotations:26.0.1'
 }
 
 group = publishedGroupId
