@@ -202,7 +202,7 @@ final class Utils {
         return output;
     }
 
-    public static int greatestCommonDivisor(int a, int b) {
+    private static int greatestCommonDivisor(int a, int b) {
         while (a > 0 && b > 0) {
             if (a > b) {
                 a %= b;
