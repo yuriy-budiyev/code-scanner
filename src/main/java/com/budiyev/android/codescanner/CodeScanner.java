@@ -210,14 +210,27 @@ public final class CodeScanner {
     }
 
     /**
-     * Release resources
+     * Release resources, and stop preview if needed
      */
     @MainThread
     public void releaseResources() {
-        mPreviewActive = false;
         if (mInitialized) {
+            if (mPreviewActive) {
+                stopPreview();
+            }
             mCamera.release();
             mDecoder.shutdown();
+            mCamera = null;
+            mDecoder = null;
+            mPreviewSize = null;
+            mFrameSize = null;
+            mDisplayOrientation = 0;
+            mInitialization = false;
+            mInitialized = false;
+            mStoppingPreview = false;
+            mPreviewActive = false;
+            mSurfaceAvailable = false;
+            mFocusing = false;
         }
     }
 
