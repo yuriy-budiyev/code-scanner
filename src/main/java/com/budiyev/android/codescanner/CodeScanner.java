@@ -391,7 +391,7 @@ public final class CodeScanner {
             if (parameters == null) {
                 throw new RuntimeException("Unable to configure camera");
             }
-            int orientation = Utils.getDisplayOrientation(mContext, cameraInfo.orientation);
+            int orientation = Utils.getDisplayOrientation(mContext, cameraInfo);
             boolean portrait = Utils.isPortrait(orientation);
             Point previewSize = CameraConfigurationUtils.findBestPreviewSizeValue(parameters,
                     portrait ? new Point(mHeight, mWidth) : new Point(mWidth, mHeight));

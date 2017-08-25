@@ -64,7 +64,8 @@ final class Utils {
         return parameters;
     }
 
-    public static int getDisplayOrientation(@NonNull Context context, int cameraOrientation) {
+    public static int getDisplayOrientation(@NonNull Context context,
+            @NonNull Camera.CameraInfo cameraInfo) {
         WindowManager windowManager =
                 (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         if (windowManager == null) {
@@ -92,7 +93,8 @@ final class Utils {
                     throw new RuntimeException("Bad rotation: " + rotation);
                 }
         }
-        return (360 + cameraOrientation - degrees) % 360;
+        return ((cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT ? 180 : 360) +
+                cameraInfo.orientation - degrees) % 360;
     }
 
     public static boolean isPortrait(int orientation) {
