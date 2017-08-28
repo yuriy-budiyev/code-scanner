@@ -53,7 +53,6 @@ final class Decoder {
         mReader = new MultiFormatReader();
         mDecoderThread = new DecoderThread();
         mHints = new EnumMap<>(DecodeHintType.class);
-        mHints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
         mHints.put(DecodeHintType.POSSIBLE_FORMATS, formats);
         mReader.setHints(mHints);
     }

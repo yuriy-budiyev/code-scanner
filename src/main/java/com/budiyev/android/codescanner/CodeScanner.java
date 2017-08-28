@@ -89,7 +89,6 @@ public final class CodeScanner {
     private volatile boolean mInitialized;
     private volatile boolean mStoppingPreview;
     private boolean mPreviewActive;
-    private boolean mSurfaceAvailable;
     private boolean mFocusing;
 
     /**
@@ -231,7 +230,6 @@ public final class CodeScanner {
             mInitialized = false;
             mStoppingPreview = false;
             mPreviewActive = false;
-            mSurfaceAvailable = false;
             mFocusing = false;
         }
     }
@@ -294,7 +292,7 @@ public final class CodeScanner {
         if (!mInitialized || !mPreviewActive) {
             return;
         }
-        if (!mSurfaceAvailable || mFocusing) {
+        if (mFocusing) {
             scheduleAutoFocusTask();
             return;
         }
@@ -335,7 +333,6 @@ public final class CodeScanner {
     private final class SurfaceCallback implements SurfaceHolder.Callback {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-            mSurfaceAvailable = true;
             startPreviewInternal();
         }
 
@@ -345,14 +342,12 @@ public final class CodeScanner {
                 mPreviewActive = false;
                 return;
             }
-            mSurfaceAvailable = true;
             stopPreviewInternal();
             startPreviewInternal();
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-            mSurfaceAvailable = false;
             stopPreviewInternal();
         }
     }
