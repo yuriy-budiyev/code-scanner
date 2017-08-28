@@ -272,7 +272,7 @@ public final class CodeScanner {
             mStoppingPreview = false;
             mPreviewActive = true;
             mFocusing = false;
-            autoFocusCamera();
+            scheduleAutoFocusTask();
         } catch (Exception ignored) {
         }
     }
