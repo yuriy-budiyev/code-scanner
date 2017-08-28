@@ -129,7 +129,7 @@ public final class CodeScanner {
     }
 
     /**
-     * Set formats, decoder to react to ({@link #ALL_FORMATS} bu default)
+     * Set formats, decoder to react to ({@link #ALL_FORMATS} by default)
      *
      * @param formats Formats
      * @see BarcodeFormat
