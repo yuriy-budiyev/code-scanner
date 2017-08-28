@@ -45,18 +45,22 @@ final class Decoder {
     private final MultiFormatReader mReader;
     private final DecoderThread mDecoderThread;
     private final StateListener mStateListener;
+    private final Map<DecodeHintType, Object> mHints;
     private volatile boolean mProcessing;
 
-    public Decoder(@NonNull StateListener stateListener) {
+    public Decoder(@NonNull StateListener stateListener, @NonNull List<BarcodeFormat> formats) {
         mStateListener = stateListener;
         mReader = new MultiFormatReader();
         mDecoderThread = new DecoderThread();
+        mHints = new EnumMap<>(DecodeHintType.class);
+        mHints.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+        mHints.put(DecodeHintType.POSSIBLE_FORMATS, formats);
+        mReader.setHints(mHints);
     }
 
     public void setFormats(@NonNull List<BarcodeFormat> formats) {
-        Map<DecodeHintType, Object> hints = new EnumMap<>(DecodeHintType.class);
-        hints.put(DecodeHintType.POSSIBLE_FORMATS, formats);
-        mReader.setHints(hints);
+        mHints.put(DecodeHintType.POSSIBLE_FORMATS, formats);
+        mReader.setHints(mHints);
     }
 
     public void decode(@NonNull byte[] data, int dataWidth, int dataHeight, int frameWidth,

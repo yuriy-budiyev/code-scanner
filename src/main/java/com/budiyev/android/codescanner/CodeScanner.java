@@ -253,8 +253,7 @@ public final class CodeScanner {
         mInitializeLock.lock();
         try {
             mCamera = camera;
-            mDecoder = new Decoder(mDecoderStateListener);
-            mDecoder.setFormats(mFormats);
+            mDecoder = new Decoder(mDecoderStateListener, mFormats);
             mDecoder.start();
             mPreviewSize = previewSize;
             mFrameSize = frameSize;
