@@ -76,6 +76,7 @@ public final class CodeScanner {
     private final Camera.AutoFocusCallback mAutoFocusCallback;
     private final Runnable mAutoFocusTask;
     private final Runnable mStopPreviewTask;
+    private final DecoderStateListener mDecoderStateListener;
     private final int mCameraId;
     private volatile List<BarcodeFormat> mFormats = ALL_FORMATS;
     private volatile DecodeCallback mDecodeCallback;
@@ -123,6 +124,7 @@ public final class CodeScanner {
         mAutoFocusCallback = new AutoFocusCallback();
         mAutoFocusTask = new AutoFocusTask();
         mStopPreviewTask = new StopPreviewTask();
+        mDecoderStateListener = new DecoderStateListener();
         mCameraId = cameraId;
     }
 
@@ -251,7 +253,7 @@ public final class CodeScanner {
         mInitializeLock.lock();
         try {
             mCamera = camera;
-            mDecoder = new Decoder(new DecoderStateListener());
+            mDecoder = new Decoder(mDecoderStateListener);
             mDecoder.setFormats(mFormats);
             mDecoder.start();
             mPreviewSize = previewSize;
