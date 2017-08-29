@@ -66,7 +66,7 @@ public final class CodeScanner {
                     BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE);
     private static final long AUTO_FOCUS_INTERVAL = 1000L;
     private static final int UNSPECIFIED = -1;
-    private static final int FOCUS_ATTEMPTS_THRESHOLD = 3;
+    private static final int FOCUS_ATTEMPTS_THRESHOLD = 2;
     private final Lock mInitializeLock = new ReentrantLock();
     private final Context mContext;
     private final Handler mMainThreadHandler;
