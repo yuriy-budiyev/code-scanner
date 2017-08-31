@@ -119,7 +119,7 @@ final class Utils {
         int imageRatioWidth = imageWidth / imageDivisor;
         int imageRatioHeight = imageHeight / imageDivisor;
         int resultWidth = imageRatioWidth * frameHeight / imageRatioHeight;
-        if (resultWidth < imageWidth) {
+        if (resultWidth < frameWidth) {
             return new Point(frameWidth, imageRatioHeight * frameWidth / imageRatioWidth);
         } else {
             return new Point(resultWidth, frameHeight);
