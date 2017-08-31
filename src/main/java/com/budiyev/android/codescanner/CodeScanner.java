@@ -66,7 +66,6 @@ public final class CodeScanner {
                     BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE);
     private static final long AUTO_FOCUS_INTERVAL = 1000L;
     private static final int UNSPECIFIED = -1;
-    private static final int FOCUS_ATTEMPTS_THRESHOLD = 2;
     private final Lock mInitializeLock = new ReentrantLock();
     private final Context mContext;
     private final Handler mMainThreadHandler;
@@ -91,7 +90,6 @@ public final class CodeScanner {
     private volatile boolean mStoppingPreview;
     private boolean mPreviewActive;
     private boolean mFocusing;
-    private int mFocusAttemptsCount;
 
     /**
      * CodeScanner, associated with the first back-facing camera on the device
@@ -274,7 +272,6 @@ public final class CodeScanner {
             mStoppingPreview = false;
             mPreviewActive = true;
             mFocusing = false;
-            mFocusAttemptsCount = 0;
             scheduleAutoFocusTask();
         } catch (Exception ignored) {
         }
@@ -289,21 +286,18 @@ public final class CodeScanner {
         mStoppingPreview = false;
         mPreviewActive = false;
         mFocusing = false;
-        mFocusAttemptsCount = 0;
     }
 
     private void autoFocusCamera() {
         if (!mInitialized || !mPreviewActive) {
             return;
         }
-        if (mFocusing && mFocusAttemptsCount < FOCUS_ATTEMPTS_THRESHOLD) {
-            mFocusAttemptsCount++;
+        if (mFocusing) {
             scheduleAutoFocusTask();
             return;
         }
         try {
             mCamera.autoFocus(mAutoFocusCallback);
-            mFocusAttemptsCount = 0;
             mFocusing = true;
         } catch (Exception e) {
             mFocusing = false;
@@ -423,7 +417,6 @@ public final class CodeScanner {
         @Override
         public void onAutoFocus(boolean success, Camera camera) {
             mFocusing = false;
-            scheduleAutoFocusTask();
         }
     }
 
