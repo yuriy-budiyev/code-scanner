@@ -34,7 +34,6 @@ import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -407,8 +406,9 @@ public final class CodeScanner {
             }
             int orientation = Utils.getDisplayOrientation(mContext, cameraInfo);
             boolean portrait = Utils.isPortrait(orientation);
-            Point previewSize = CameraConfigurationUtils.findBestPreviewSizeValue(parameters,
-                    portrait ? new Point(mHeight, mWidth) : new Point(mWidth, mHeight));
+            Point previewSize =
+                    Utils.findSuitablePreviewSize(parameters, portrait ? mHeight : mWidth,
+                            portrait ? mWidth : mHeight);
             parameters.setPreviewSize(previewSize.x, previewSize.y);
             Point frameSize = Utils.getFrameSize(portrait ? previewSize.y : previewSize.x,
                     portrait ? previewSize.x : previewSize.y, mWidth, mHeight);

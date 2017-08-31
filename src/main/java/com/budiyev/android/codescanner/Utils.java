@@ -36,6 +36,8 @@ import android.view.WindowManager;
 
 import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 final class Utils {
@@ -44,6 +46,8 @@ final class Utils {
     private static float PORTRAIT_HEIGHT_RATIO = 0.75f;
     private static float LANDSCAPE_WIDTH_RATIO = 1.4f;
     private static float LANDSCAPE_HEIGHT_RATIO = 0.625f;
+    private static float MAX_DISTORTION = 0.5f;
+    private static final int MIN_PREVIEW_PIXELS = 442368;
 
     private Utils() {
     }
@@ -62,6 +66,40 @@ final class Utils {
         }
         parameters.setPreviewFormat(ImageFormat.NV21);
         return parameters;
+    }
+
+    @NonNull
+    public static Point findSuitablePreviewSize(@NonNull Camera.Parameters parameters,
+            int frameWidth, int frameHeight) {
+        List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+        if (sizes == null || sizes.isEmpty()) {
+            return getDefaultPreviewSize(parameters);
+        }
+        Collections.sort(sizes, new CameraSizeComparator());
+        float frameRatio = (float) frameWidth / (float) frameHeight;
+        for (Camera.Size size : sizes) {
+            int width = size.width;
+            int height = size.height;
+            if (width * height < MIN_PREVIEW_PIXELS) {
+                continue;
+            }
+            float ratio = (float) width / (float) height;
+            float distortion = Math.abs(frameRatio - ratio);
+            if (distortion > MAX_DISTORTION) {
+                continue;
+            }
+            return new Point(width, height);
+        }
+        return getDefaultPreviewSize(parameters);
+    }
+
+    @NonNull
+    private static Point getDefaultPreviewSize(@NonNull Camera.Parameters parameters) {
+        Camera.Size defaultSize = parameters.getPreviewSize();
+        if (defaultSize == null) {
+            throw new RuntimeException("Can't get camera preview size");
+        }
+        return new Point(defaultSize.width, defaultSize.height);
     }
 
     public static int getDisplayOrientation(@NonNull Context context,
@@ -211,5 +249,20 @@ final class Utils {
             }
         }
         return a + b;
+    }
+
+    private static final class CameraSizeComparator implements Comparator<Camera.Size> {
+        @Override
+        public int compare(Camera.Size a, Camera.Size b) {
+            int aPixels = a.height * a.width;
+            int bPixels = b.height * b.width;
+            if (bPixels < aPixels) {
+                return -1;
+            } else if (bPixels > aPixels) {
+                return 1;
+            } else {
+                return 0;
+            }
+        }
     }
 }
