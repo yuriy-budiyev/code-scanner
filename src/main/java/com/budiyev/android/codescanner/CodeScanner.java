@@ -298,17 +298,16 @@ public final class CodeScanner {
         }
         if (mFocusing && mFocusAttemptsCount < FOCUS_ATTEMPTS_THRESHOLD) {
             mFocusAttemptsCount++;
-            scheduleAutoFocusTask();
-            return;
+        } else {
+            try {
+                mCamera.autoFocus(mAutoFocusCallback);
+                mFocusAttemptsCount = 0;
+                mFocusing = true;
+            } catch (Exception e) {
+                mFocusing = false;
+            }
         }
-        try {
-            mCamera.autoFocus(mAutoFocusCallback);
-            mFocusAttemptsCount = 0;
-            mFocusing = true;
-        } catch (Exception e) {
-            mFocusing = false;
-            scheduleAutoFocusTask();
-        }
+        scheduleAutoFocusTask();
     }
 
     private void scheduleAutoFocusTask() {
@@ -423,7 +422,6 @@ public final class CodeScanner {
         @Override
         public void onAutoFocus(boolean success, Camera camera) {
             mFocusing = false;
-            scheduleAutoFocusTask();
         }
     }
 
