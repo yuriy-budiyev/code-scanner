@@ -253,7 +253,7 @@ final class Utils {
 
     private static final class CameraSizeComparator implements Comparator<Camera.Size> {
         @Override
-        public int compare(Camera.Size a, Camera.Size b) {
+        public int compare(@NonNull Camera.Size a, @NonNull Camera.Size b) {
             int aPixels = a.height * a.width;
             int bPixels = b.height * b.width;
             if (bPixels < aPixels) {
