@@ -214,7 +214,7 @@ public final class CodeScannerView extends ViewGroup {
         return mViewFinderView;
     }
 
-    void setFrameSize(@NonNull Point frameSize) {
+    void setFrameSize(@Nullable Point frameSize) {
         mFrameSize = frameSize;
         requestLayout();
     }
