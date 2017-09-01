@@ -58,8 +58,6 @@ final class Utils {
         CameraConfigurationUtils.setBarcodeSceneMode(parameters);
         CameraConfigurationUtils.setBestExposure(parameters, false);
         CameraConfigurationUtils.setVideoStabilization(parameters);
-        CameraConfigurationUtils.setFocusArea(parameters);
-        CameraConfigurationUtils.setMetering(parameters);
         List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
             parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
