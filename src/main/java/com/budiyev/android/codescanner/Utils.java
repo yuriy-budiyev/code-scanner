@@ -72,29 +72,23 @@ final class Utils {
     public static Point findSuitablePreviewSize(@NonNull Camera.Parameters parameters,
             int frameWidth, int frameHeight) {
         List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
-        if (sizes == null || sizes.isEmpty()) {
-            return getDefaultPreviewSize(parameters);
-        }
-        Collections.sort(sizes, new CameraSizeComparator());
-        float frameRatio = (float) frameWidth / (float) frameHeight;
-        for (Camera.Size size : sizes) {
-            int width = size.width;
-            int height = size.height;
-            if (width * height < MIN_PREVIEW_PIXELS) {
-                continue;
+        if (sizes != null && !sizes.isEmpty()) {
+            Collections.sort(sizes, new CameraSizeComparator());
+            float frameRatio = (float) frameWidth / (float) frameHeight;
+            for (Camera.Size size : sizes) {
+                int width = size.width;
+                int height = size.height;
+                if (width * height < MIN_PREVIEW_PIXELS) {
+                    continue;
+                }
+                float ratio = (float) width / (float) height;
+                float distortion = Math.abs(frameRatio - ratio);
+                if (distortion > MAX_DISTORTION) {
+                    continue;
+                }
+                return new Point(width, height);
             }
-            float ratio = (float) width / (float) height;
-            float distortion = Math.abs(frameRatio - ratio);
-            if (distortion > MAX_DISTORTION) {
-                continue;
-            }
-            return new Point(width, height);
         }
-        return getDefaultPreviewSize(parameters);
-    }
-
-    @NonNull
-    private static Point getDefaultPreviewSize(@NonNull Camera.Parameters parameters) {
         Camera.Size defaultSize = parameters.getPreviewSize();
         if (defaultSize == null) {
             throw new RuntimeException("Can't get camera preview size");
