@@ -367,6 +367,8 @@ public final class CodeScanner {
     }
 
     private final class InitializationThread extends Thread {
+        private static final long OPEN_ATTEMPTS_INTERVAL = 1000L;
+        private static final int OPEN_ATTEMPTS_LIMIT = 3;
         private final int mWidth;
         private final int mHeight;
 
@@ -389,12 +391,12 @@ public final class CodeScanner {
                 for (int i = 0; i < numberOfCameras; i++) {
                     Camera.getCameraInfo(i, cameraInfo);
                     if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
-                        camera = Camera.open(i);
+                        camera = openCamera(i);
                         break;
                     }
                 }
             } else {
-                camera = Camera.open(mCameraId);
+                camera = openCamera(mCameraId);
                 Camera.getCameraInfo(mCameraId, cameraInfo);
             }
             if (camera == null) {
@@ -415,6 +417,22 @@ public final class CodeScanner {
             camera.setParameters(Utils.optimizeParameters(parameters));
             camera.setDisplayOrientation(orientation);
             finishInitialization(camera, previewSize, frameSize, orientation);
+        }
+
+        @Nullable
+        private Camera openCamera(int id) {
+            for (int a = 0; a < OPEN_ATTEMPTS_LIMIT; a++) {
+                try {
+                    return Camera.open(id);
+                } catch (Exception e) {
+                    try {
+                        sleep(OPEN_ATTEMPTS_INTERVAL);
+                    } catch (InterruptedException ie) {
+                        break;
+                    }
+                }
+            }
+            return null;
         }
     }
 
