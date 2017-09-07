@@ -24,6 +24,7 @@
 package com.budiyev.android.codescanner;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Point;
 import android.hardware.Camera;
@@ -212,7 +213,7 @@ public final class CodeScanner {
     }
 
     /**
-     * Release resources, and stop preview if needed
+     * Release resources, and stop preview if needed; call this method in {@link Activity#onPause()}
      */
     @MainThread
     public void releaseResources() {
