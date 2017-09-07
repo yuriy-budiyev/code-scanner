@@ -73,14 +73,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        mCodeScanner.stopPreview();
-        super.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
         mCodeScanner.releaseResources();
-        super.onDestroy();
+        super.onPause();
     }
 }
 ```
