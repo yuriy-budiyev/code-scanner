@@ -82,6 +82,7 @@ public final class CodeScanner {
     private volatile List<BarcodeFormat> mFormats = ALL_FORMATS;
     private volatile DecodeCallback mDecodeCallback;
     private volatile Camera mCamera;
+    private volatile Camera.CameraInfo mCameraInfo;
     private volatile Decoder mDecoder;
     private volatile Point mPreviewSize;
     private volatile Point mFrameSize;
@@ -224,6 +225,7 @@ public final class CodeScanner {
             mCamera.release();
             mDecoder.shutdown();
             mCamera = null;
+            mCameraInfo = null;
             mDecoder = null;
             mPreviewSize = null;
             mFrameSize = null;
@@ -248,11 +250,12 @@ public final class CodeScanner {
         new InitializationThread(width, height).start();
     }
 
-    private void finishInitialization(@NonNull Camera camera, @NonNull Point previewSize,
-            @NonNull Point frameSize, int displayOrientation) {
+    private void finishInitialization(@NonNull Camera camera, @NonNull Camera.CameraInfo cameraInfo,
+            @NonNull Point previewSize, @NonNull Point frameSize, int displayOrientation) {
         mInitializeLock.lock();
         try {
             mCamera = camera;
+            mCameraInfo = cameraInfo;
             mDecoder = new Decoder(mDecoderStateListener, mFormats);
             mDecoder.start();
             mPreviewSize = previewSize;
@@ -331,7 +334,8 @@ public final class CodeScanner {
             Point previewSize = mPreviewSize;
             Point frameSize = mFrameSize;
             mDecoder.decode(data, previewSize.x, previewSize.y, frameSize.x, frameSize.y,
-                    mDisplayOrientation, mScannerView.isSquareFrame(), mDecodeCallback);
+                    mDisplayOrientation, mScannerView.isSquareFrame(),
+                    mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT, mDecodeCallback);
         }
     }
 
@@ -418,7 +422,7 @@ public final class CodeScanner {
                     portrait ? previewSize.x : previewSize.y, mWidth, mHeight);
             camera.setParameters(Utils.optimizeParameters(parameters));
             camera.setDisplayOrientation(orientation);
-            finishInitialization(camera, previewSize, frameSize, orientation);
+            finishInitialization(camera, cameraInfo, previewSize, frameSize, orientation);
         }
     }
 

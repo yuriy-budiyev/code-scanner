@@ -63,10 +63,10 @@ final class Decoder {
     }
 
     public void decode(@NonNull byte[] data, int dataWidth, int dataHeight, int frameWidth,
-            int frameHeight, int orientation, boolean squareFrame,
+            int frameHeight, int orientation, boolean squareFrame, boolean reverseHorizontal,
             @NonNull DecodeCallback decodeCallback) {
         mDecodeQueue.add(new DecodeTask(data, dataWidth, dataHeight, frameWidth, frameHeight,
-                orientation, squareFrame, decodeCallback));
+                orientation, squareFrame, reverseHorizontal, decodeCallback));
     }
 
     public void start() {
