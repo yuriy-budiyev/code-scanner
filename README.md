@@ -1,5 +1,5 @@
 # Code Scanner
-[ ![Download](https://api.bintray.com/packages/yuriy-budiyev/maven/code-scanner/images/download.svg) ](https://bintray.com/yuriy-budiyev/maven/code-scanner/_latestVersion)
+[ ![Download](https://api.bintray.com/packages/yuriy-budiyev/maven/code-scanner/images/download.svg) ](https://bintray.com/yuriy-budiyev/maven/code-scanner/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Code%20Scanner-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/6095)
 
 Code scanner library based on [ZXing](https://github.com/zxing/zxing)
 
