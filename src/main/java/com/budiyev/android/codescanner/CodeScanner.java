@@ -373,8 +373,8 @@ public final class CodeScanner {
 
         public InitializationThread(int width, int height) {
             super("Code scanner initialization thread");
-            if (getPriority() != Thread.MIN_PRIORITY) {
-                setPriority(Thread.MIN_PRIORITY);
+            if (getPriority() != Thread.NORM_PRIORITY) {
+                setPriority(Thread.NORM_PRIORITY);
             }
             if (isDaemon()) {
                 setDaemon(false);

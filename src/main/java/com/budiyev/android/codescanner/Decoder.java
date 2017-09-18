@@ -85,8 +85,8 @@ final class Decoder {
     private final class DecoderThread extends Thread {
         public DecoderThread() {
             super("Code scanner decode thread");
-            if (getPriority() != Thread.MIN_PRIORITY) {
-                setPriority(Thread.MIN_PRIORITY);
+            if (getPriority() != Thread.NORM_PRIORITY) {
+                setPriority(Thread.NORM_PRIORITY);
             }
             if (isDaemon()) {
                 setDaemon(false);
