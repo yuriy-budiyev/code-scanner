@@ -41,12 +41,12 @@ import java.util.Comparator;
 import java.util.List;
 
 final class Utils {
-    private static float SQUARE_RATIO = 0.75f;
-    private static float PORTRAIT_WIDTH_RATIO = 0.75f;
-    private static float PORTRAIT_HEIGHT_RATIO = 0.75f;
-    private static float LANDSCAPE_WIDTH_RATIO = 1.4f;
-    private static float LANDSCAPE_HEIGHT_RATIO = 0.625f;
-    private static float MAX_DISTORTION = 0.5f;
+    private static final float SQUARE_RATIO = 0.75f;
+    private static final float PORTRAIT_WIDTH_RATIO = 0.75f;
+    private static final float PORTRAIT_HEIGHT_RATIO = 0.75f;
+    private static final float LANDSCAPE_WIDTH_RATIO = 1.4f;
+    private static final float LANDSCAPE_HEIGHT_RATIO = 0.625f;
+    private static final float MAX_DISTORTION = 0.5f;
     private static final int MIN_PREVIEW_PIXELS = 442368;
 
     private Utils() {
@@ -79,9 +79,7 @@ final class Utils {
                 if (width * height < MIN_PREVIEW_PIXELS) {
                     continue;
                 }
-                float ratio = (float) width / (float) height;
-                float distortion = Math.abs(frameRatio - ratio);
-                if (distortion > MAX_DISTORTION) {
+                if (Math.abs(frameRatio - (float) width / (float) height) > MAX_DISTORTION) {
                     continue;
                 }
                 return new Point(width, height);
