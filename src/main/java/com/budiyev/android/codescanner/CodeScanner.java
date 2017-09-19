@@ -223,6 +223,11 @@ public final class CodeScanner {
                 stopPreview();
             }
             mInitialized = false;
+            mInitialization = false;
+            mStoppingPreview = false;
+            mPreviewActive = false;
+            mFocusing = false;
+            mDisplayOrientation = 0;
             mCamera.release();
             mDecoder.shutdown();
             mCamera = null;
@@ -230,11 +235,6 @@ public final class CodeScanner {
             mDecoder = null;
             mPreviewSize = null;
             mFrameSize = null;
-            mDisplayOrientation = 0;
-            mInitialization = false;
-            mStoppingPreview = false;
-            mPreviewActive = false;
-            mFocusing = false;
         }
     }
 
