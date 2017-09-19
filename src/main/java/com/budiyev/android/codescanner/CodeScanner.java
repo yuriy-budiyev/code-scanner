@@ -227,7 +227,7 @@ public final class CodeScanner {
         }
         if (!mPreviewActive) {
             mSurfaceHolder.addCallback(mSurfaceCallback);
-            startPreviewInternal();
+            startPreviewInternal(false);
         }
     }
 
@@ -238,7 +238,7 @@ public final class CodeScanner {
     public void stopPreview() {
         if (mInitialized && mPreviewActive) {
             mSurfaceHolder.removeCallback(mSurfaceCallback);
-            stopPreviewInternal();
+            stopPreviewInternal(false);
         }
     }
 
@@ -275,11 +275,15 @@ public final class CodeScanner {
         new InitializationThread(width, height).start();
     }
 
-    private void startPreviewInternal() {
+    private void startPreviewInternal(boolean internal) {
         try {
-            Camera camera = mDecoderWrapper.getCamera();
+            DecoderWrapper decoderWrapper = mDecoderWrapper;
+            Camera camera = decoderWrapper.getCamera();
             camera.setPreviewCallback(mPreviewCallback);
             camera.setPreviewDisplay(mSurfaceHolder);
+            if (!internal && decoderWrapper.isFlashSupported() && mFlashEnabled) {
+                setFlashEnabledInternal(true);
+            }
             camera.startPreview();
             mStoppingPreview = false;
             mPreviewActive = true;
@@ -291,14 +295,22 @@ public final class CodeScanner {
     }
 
     private void startPreviewInternalSafe() {
-        if (mInitialized) {
-            startPreviewInternal();
+        if (mInitialized && !mPreviewActive) {
+            startPreviewInternal(true);
         }
     }
 
-    private void stopPreviewInternal() {
+    private void stopPreviewInternal(boolean internal) {
         try {
-            Camera camera = mDecoderWrapper.getCamera();
+            DecoderWrapper decoderWrapper = mDecoderWrapper;
+            Camera camera = decoderWrapper.getCamera();
+            if (!internal && decoderWrapper.isFlashSupported() && mFlashEnabled) {
+                Camera.Parameters parameters = camera.getParameters();
+                if (parameters != null &&
+                        Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_OFF)) {
+                    camera.setParameters(parameters);
+                }
+            }
             camera.setPreviewCallback(null);
             camera.stopPreview();
         } catch (Exception ignored) {
@@ -310,12 +322,13 @@ public final class CodeScanner {
     }
 
     private void stopPreviewInternalSafe() {
-        if (mInitialized) {
-            stopPreviewInternal();
+        if (mInitialized && mPreviewActive) {
+            stopPreviewInternal(true);
         }
     }
 
     private void setFlashEnabledInternal(boolean flashEnabled) {
+        Thread.dumpStack();
         try {
             DecoderWrapper decoderWrapper = mDecoderWrapper;
             Camera camera = decoderWrapper.getCamera();
@@ -323,12 +336,15 @@ public final class CodeScanner {
             if (parameters == null) {
                 return;
             }
+            boolean changed;
             if (flashEnabled) {
-                Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_TORCH);
+                changed = Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_TORCH);
             } else {
-                Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_OFF);
+                changed = Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_OFF);
             }
-            camera.setParameters(parameters);
+            if (changed) {
+                camera.setParameters(parameters);
+            }
         } catch (Exception ignored) {
         }
     }
@@ -341,13 +357,16 @@ public final class CodeScanner {
             if (parameters == null) {
                 return;
             }
+            boolean changed;
             if (autoFocusEnabled) {
-                Utils.setFocusMode(parameters, Camera.Parameters.FOCUS_MODE_AUTO);
+                changed = Utils.setFocusMode(parameters, Camera.Parameters.FOCUS_MODE_AUTO);
             } else {
                 camera.cancelAutoFocus();
-                Utils.setFocusMode(parameters, Camera.Parameters.FOCUS_MODE_FIXED);
+                changed = Utils.setFocusMode(parameters, Camera.Parameters.FOCUS_MODE_FIXED);
             }
-            camera.setParameters(parameters);
+            if (changed) {
+                camera.setParameters(parameters);
+            }
             if (autoFocusEnabled) {
                 scheduleAutoFocusTask();
             }
@@ -359,7 +378,7 @@ public final class CodeScanner {
         if (!mInitialized || !mPreviewActive) {
             return;
         }
-        if (!mDecoderWrapper.isAutoFocusSupported()) {
+        if (!mDecoderWrapper.isAutoFocusSupported() || !mAutoFocusEnabled) {
             return;
         }
         if (mFocusing && mFocusAttemptsCount < FOCUS_ATTEMPTS_THRESHOLD) {
@@ -492,22 +511,21 @@ public final class CodeScanner {
             List<String> focusModes = parameters.getSupportedFocusModes();
             boolean autoFocusSupported =
                     focusModes != null && focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO);
-            if (autoFocusSupported) {
+            if (autoFocusSupported && mAutoFocusEnabled) {
                 parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
             }
             List<String> flashModes = parameters.getSupportedFlashModes();
             boolean flashSupported =
                     flashModes != null && flashModes.contains(Camera.Parameters.FLASH_MODE_TORCH);
-            if (flashSupported) {
-                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
-            }
             camera.setParameters(Utils.optimizeParameters(parameters));
             camera.setDisplayOrientation(orientation);
             mInitializeLock.lock();
             try {
-                mDecoderWrapper = new DecoderWrapper(camera, cameraInfo,
-                        new Decoder(mDecoderStateListener, mFormats), previewSize, frameSize,
-                        orientation, autoFocusSupported, flashSupported);
+                Decoder decoder = new Decoder(mDecoderStateListener, mFormats);
+                mDecoderWrapper =
+                        new DecoderWrapper(camera, cameraInfo, decoder, previewSize, frameSize,
+                                orientation, autoFocusSupported, flashSupported);
+                decoder.start();
                 mInitialization = false;
                 mInitialized = true;
             } finally {

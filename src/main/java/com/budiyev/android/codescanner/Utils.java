@@ -88,20 +88,30 @@ final class Utils {
         return new Point(defaultSize.width, defaultSize.height);
     }
 
-    public static void setFocusMode(@NonNull Camera.Parameters parameters,
+    public static boolean setFocusMode(@NonNull Camera.Parameters parameters,
             @NonNull String focusMode) {
+        if (focusMode.equals(parameters.getFocusMode())) {
+            return false;
+        }
         List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes != null && focusModes.contains(focusMode)) {
             parameters.setFocusMode(focusMode);
+            return true;
         }
+        return false;
     }
 
-    public static void setFlashMode(@NonNull Camera.Parameters parameters,
+    public static boolean setFlashMode(@NonNull Camera.Parameters parameters,
             @NonNull String flashMode) {
+        if (flashMode.equals(parameters.getFlashMode())) {
+            return false;
+        }
         List<String> flashModes = parameters.getSupportedFlashModes();
         if (flashModes != null && flashModes.contains(flashMode)) {
             parameters.setFlashMode(flashMode);
+            return true;
         }
+        return false;
     }
 
     public static int getDisplayOrientation(@NonNull Context context,
