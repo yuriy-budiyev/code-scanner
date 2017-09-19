@@ -81,15 +81,12 @@ public final class CodeScanner {
     private final int mCameraId;
     private volatile List<BarcodeFormat> mFormats = ALL_FORMATS;
     private volatile DecodeCallback mDecodeCallback;
-    private volatile Camera mCamera;
-    private volatile Camera.CameraInfo mCameraInfo;
-    private volatile Decoder mDecoder;
-    private volatile Point mPreviewSize;
-    private volatile Point mFrameSize;
-    private volatile int mDisplayOrientation;
+    private volatile DecoderWrapper mDecoderWrapper;
     private volatile boolean mInitialization;
     private volatile boolean mInitialized;
     private volatile boolean mStoppingPreview;
+    private volatile boolean mAutoFocusEnabled = true;
+    private volatile boolean mFlashEnabled;
     private boolean mPreviewActive;
     private boolean mFocusing;
     private int mFocusAttemptsCount;
@@ -143,7 +140,7 @@ public final class CodeScanner {
         mInitializeLock.lock();
         try {
             if (mInitialized) {
-                mDecoder.setFormats(formats);
+                mDecoderWrapper.getDecoder().setFormats(formats);
             } else {
                 mFormats = formats;
             }
@@ -170,6 +167,38 @@ public final class CodeScanner {
      */
     public void setDecodeCallback(@Nullable DecodeCallback decodeCallback) {
         mDecodeCallback = decodeCallback;
+    }
+
+    /**
+     * Whether to enable or disable auto focus if it's supported, {@code true} by default
+     */
+    public void setAutoFocusEnabled(boolean autoFocusEnabled) {
+        mInitializeLock.lock();
+        try {
+            boolean changed = mAutoFocusEnabled != autoFocusEnabled;
+            mAutoFocusEnabled = autoFocusEnabled;
+            if (mInitialized && changed && mDecoderWrapper.isAutoFocusSupported()) {
+                setAutoFocusEnabledInternal(autoFocusEnabled);
+            }
+        } finally {
+            mInitializeLock.unlock();
+        }
+    }
+
+    /**
+     * Whether to enable or disable flash light if it's supported, {@code false} by default
+     */
+    public void setFlashEnabled(boolean flashEnabled) {
+        mInitializeLock.lock();
+        try {
+            boolean changed = mFlashEnabled != flashEnabled;
+            mFlashEnabled = flashEnabled;
+            if (mInitialized && changed && mDecoderWrapper.isFlashSupported()) {
+                setFlashEnabledInternal(flashEnabled);
+            }
+        } finally {
+            mInitializeLock.unlock();
+        }
     }
 
     /**
@@ -227,14 +256,10 @@ public final class CodeScanner {
             mStoppingPreview = false;
             mPreviewActive = false;
             mFocusing = false;
-            mCamera.release();
-            mDecoder.shutdown();
-            mCamera = null;
-            mCameraInfo = null;
-            mDecoder = null;
-            mPreviewSize = null;
-            mFrameSize = null;
-            mDisplayOrientation = 0;
+            DecoderWrapper decoderWrapper = mDecoderWrapper;
+            decoderWrapper.getCamera().release();
+            decoderWrapper.getDecoder().shutdown();
+            mDecoderWrapper = null;
         }
     }
 
@@ -250,30 +275,12 @@ public final class CodeScanner {
         new InitializationThread(width, height).start();
     }
 
-    private void finishInitialization(@NonNull Camera camera, @NonNull Camera.CameraInfo cameraInfo,
-            @NonNull Point previewSize, @NonNull Point frameSize, int displayOrientation) {
-        mInitializeLock.lock();
-        try {
-            mCamera = camera;
-            mCameraInfo = cameraInfo;
-            mDecoder = new Decoder(mDecoderStateListener, mFormats);
-            mDecoder.start();
-            mPreviewSize = previewSize;
-            mFrameSize = frameSize;
-            mDisplayOrientation = displayOrientation;
-            mInitialization = false;
-            mInitialized = true;
-        } finally {
-            mInitializeLock.unlock();
-        }
-        mMainThreadHandler.post(new FinishInitializationTask(frameSize));
-    }
-
     private void startPreviewInternal() {
         try {
-            mCamera.setPreviewCallback(mPreviewCallback);
-            mCamera.setPreviewDisplay(mSurfaceHolder);
-            mCamera.startPreview();
+            Camera camera = mDecoderWrapper.getCamera();
+            camera.setPreviewCallback(mPreviewCallback);
+            camera.setPreviewDisplay(mSurfaceHolder);
+            camera.startPreview();
             mStoppingPreview = false;
             mPreviewActive = true;
             mFocusing = false;
@@ -291,8 +298,9 @@ public final class CodeScanner {
 
     private void stopPreviewInternal() {
         try {
-            mCamera.setPreviewCallback(null);
-            mCamera.stopPreview();
+            Camera camera = mDecoderWrapper.getCamera();
+            camera.setPreviewCallback(null);
+            camera.stopPreview();
         } catch (Exception ignored) {
         }
         mStoppingPreview = false;
@@ -307,15 +315,58 @@ public final class CodeScanner {
         }
     }
 
+    private void setFlashEnabledInternal(boolean flashEnabled) {
+        try {
+            DecoderWrapper decoderWrapper = mDecoderWrapper;
+            Camera camera = decoderWrapper.getCamera();
+            Camera.Parameters parameters = camera.getParameters();
+            if (parameters == null) {
+                return;
+            }
+            if (flashEnabled) {
+                Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_TORCH);
+            } else {
+                Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_OFF);
+            }
+            camera.setParameters(parameters);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private void setAutoFocusEnabledInternal(boolean autoFocusEnabled) {
+        try {
+            DecoderWrapper decoderWrapper = mDecoderWrapper;
+            Camera camera = decoderWrapper.getCamera();
+            Camera.Parameters parameters = camera.getParameters();
+            if (parameters == null) {
+                return;
+            }
+            if (autoFocusEnabled) {
+                Utils.setFocusMode(parameters, Camera.Parameters.FOCUS_MODE_AUTO);
+            } else {
+                camera.cancelAutoFocus();
+                Utils.setFocusMode(parameters, Camera.Parameters.FOCUS_MODE_FIXED);
+            }
+            camera.setParameters(parameters);
+            if (autoFocusEnabled) {
+                scheduleAutoFocusTask();
+            }
+        } catch (Exception ignored) {
+        }
+    }
+
     private void autoFocusCamera() {
         if (!mInitialized || !mPreviewActive) {
+            return;
+        }
+        if (!mDecoderWrapper.isAutoFocusSupported()) {
             return;
         }
         if (mFocusing && mFocusAttemptsCount < FOCUS_ATTEMPTS_THRESHOLD) {
             mFocusAttemptsCount++;
         } else {
             try {
-                mCamera.autoFocus(mAutoFocusCallback);
+                mDecoderWrapper.getCamera().autoFocus(mAutoFocusCallback);
                 mFocusAttemptsCount = 0;
                 mFocusing = true;
             } catch (Exception e) {
@@ -340,14 +391,20 @@ public final class CodeScanner {
     private final class PreviewCallback implements Camera.PreviewCallback {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-            if (!mInitialized || mStoppingPreview || mDecoder.isProcessing()) {
+            if (!mInitialized || mStoppingPreview) {
                 return;
             }
-            Point previewSize = mPreviewSize;
-            Point frameSize = mFrameSize;
-            mDecoder.decode(data, previewSize.x, previewSize.y, frameSize.x, frameSize.y,
-                    mDisplayOrientation, mScannerView.isSquareFrame(),
-                    mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT, mDecodeCallback);
+            DecoderWrapper decoderWrapper = mDecoderWrapper;
+            Decoder decoder = decoderWrapper.getDecoder();
+            if (decoder.isProcessing()) {
+                return;
+            }
+            Point previewSize = decoderWrapper.getPreviewSize();
+            Point frameSize = decoderWrapper.getFrameSize();
+            decoder.decode(data, previewSize.x, previewSize.y, frameSize.x, frameSize.y,
+                    decoderWrapper.getDisplayOrientation(), mScannerView.isSquareFrame(),
+                    decoderWrapper.getCameraInfo().facing == Camera.CameraInfo.CAMERA_FACING_FRONT,
+                    mDecodeCallback);
         }
     }
 
@@ -432,9 +489,31 @@ public final class CodeScanner {
             parameters.setPreviewSize(previewSize.x, previewSize.y);
             Point frameSize = Utils.getFrameSize(portrait ? previewSize.y : previewSize.x,
                     portrait ? previewSize.x : previewSize.y, mWidth, mHeight);
+            List<String> focusModes = parameters.getSupportedFocusModes();
+            boolean autoFocusSupported =
+                    focusModes != null && focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO);
+            if (autoFocusSupported) {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            }
+            List<String> flashModes = parameters.getSupportedFlashModes();
+            boolean flashSupported =
+                    flashModes != null && flashModes.contains(Camera.Parameters.FLASH_MODE_TORCH);
+            if (flashSupported) {
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+            }
             camera.setParameters(Utils.optimizeParameters(parameters));
             camera.setDisplayOrientation(orientation);
-            finishInitialization(camera, cameraInfo, previewSize, frameSize, orientation);
+            mInitializeLock.lock();
+            try {
+                mDecoderWrapper = new DecoderWrapper(camera, cameraInfo,
+                        new Decoder(mDecoderStateListener, mFormats), previewSize, frameSize,
+                        orientation, autoFocusSupported, flashSupported);
+                mInitialization = false;
+                mInitialized = true;
+            } finally {
+                mInitializeLock.unlock();
+            }
+            mMainThreadHandler.post(new FinishInitializationTask(frameSize));
         }
     }
 

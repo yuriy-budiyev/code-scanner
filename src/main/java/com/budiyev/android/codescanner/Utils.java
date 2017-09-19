@@ -58,10 +58,6 @@ final class Utils {
         CameraConfigurationUtils.setBarcodeSceneMode(parameters);
         CameraConfigurationUtils.setBestExposure(parameters, false);
         CameraConfigurationUtils.setVideoStabilization(parameters);
-        List<String> focusModes = parameters.getSupportedFocusModes();
-        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-        }
         parameters.setPreviewFormat(ImageFormat.NV21);
         return parameters;
     }
@@ -90,6 +86,22 @@ final class Utils {
             throw new RuntimeException("Can't get camera preview size");
         }
         return new Point(defaultSize.width, defaultSize.height);
+    }
+
+    public static void setFocusMode(@NonNull Camera.Parameters parameters,
+            @NonNull String focusMode) {
+        List<String> focusModes = parameters.getSupportedFocusModes();
+        if (focusModes != null && focusModes.contains(focusMode)) {
+            parameters.setFocusMode(focusMode);
+        }
+    }
+
+    public static void setFlashMode(@NonNull Camera.Parameters parameters,
+            @NonNull String flashMode) {
+        List<String> flashModes = parameters.getSupportedFlashModes();
+        if (flashModes != null && flashModes.contains(flashMode)) {
+            parameters.setFlashMode(flashMode);
+        }
     }
 
     public static int getDisplayOrientation(@NonNull Context context,
