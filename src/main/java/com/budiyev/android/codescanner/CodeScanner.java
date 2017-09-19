@@ -270,9 +270,6 @@ public final class CodeScanner {
     }
 
     private void startPreviewInternal() {
-        if (!mInitialized) {
-            return;
-        }
         try {
             mCamera.setPreviewCallback(mPreviewCallback);
             mCamera.setPreviewDisplay(mSurfaceHolder);
@@ -286,10 +283,13 @@ public final class CodeScanner {
         }
     }
 
-    private void stopPreviewInternal() {
-        if (!mInitialized) {
-            return;
+    private void startPreviewInternalSafe() {
+        if (mInitialized) {
+            startPreviewInternal();
         }
+    }
+
+    private void stopPreviewInternal() {
         try {
             mCamera.setPreviewCallback(null);
             mCamera.stopPreview();
@@ -299,6 +299,12 @@ public final class CodeScanner {
         mPreviewActive = false;
         mFocusing = false;
         mFocusAttemptsCount = 0;
+    }
+
+    private void stopPreviewInternalSafe() {
+        if (mInitialized) {
+            stopPreviewInternal();
+        }
     }
 
     private void autoFocusCamera() {
@@ -348,7 +354,7 @@ public final class CodeScanner {
     private final class SurfaceCallback implements SurfaceHolder.Callback {
         @Override
         public void surfaceCreated(SurfaceHolder holder) {
-            startPreviewInternal();
+            startPreviewInternalSafe();
         }
 
         @Override
@@ -357,13 +363,13 @@ public final class CodeScanner {
                 mPreviewActive = false;
                 return;
             }
-            stopPreviewInternal();
-            startPreviewInternal();
+            stopPreviewInternalSafe();
+            startPreviewInternalSafe();
         }
 
         @Override
         public void surfaceDestroyed(SurfaceHolder holder) {
-            stopPreviewInternal();
+            stopPreviewInternalSafe();
         }
     }
 
