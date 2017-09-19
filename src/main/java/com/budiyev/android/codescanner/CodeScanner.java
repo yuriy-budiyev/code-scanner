@@ -270,6 +270,9 @@ public final class CodeScanner {
     }
 
     private void startPreviewInternal() {
+        if (!mInitialized) {
+            return;
+        }
         try {
             mCamera.setPreviewCallback(mPreviewCallback);
             mCamera.setPreviewDisplay(mSurfaceHolder);
@@ -284,8 +287,11 @@ public final class CodeScanner {
     }
 
     private void stopPreviewInternal() {
-        mCamera.setPreviewCallback(null);
+        if (!mInitialized) {
+            return;
+        }
         try {
+            mCamera.setPreviewCallback(null);
             mCamera.stopPreview();
         } catch (Exception ignored) {
         }
