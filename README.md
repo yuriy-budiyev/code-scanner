@@ -45,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         CodeScannerView scannerView = findViewById(R.id.scanner_view);
         mCodeScanner = new CodeScanner(this, scannerView);
+        mCodeScanner.setAutoFocusEnabled(true);
+        mCodeScanner.setFlashEnabled(false);
         mCodeScanner.setDecodeCallback(new DecodeCallback() {
             @Override
             public void onDecoded(@NonNull final Result result) {
