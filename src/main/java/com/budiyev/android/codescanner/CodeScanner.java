@@ -187,6 +187,13 @@ public final class CodeScanner {
     }
 
     /**
+     * Whether if auto focus is currently enabled
+     */
+    public boolean isAutoFocusEnabled() {
+        return mAutoFocusEnabled;
+    }
+
+    /**
      * Whether to enable or disable flash light if it's supported, {@code false} by default
      */
     public void setFlashEnabled(boolean flashEnabled) {
@@ -200,6 +207,13 @@ public final class CodeScanner {
         } finally {
             mInitializeLock.unlock();
         }
+    }
+
+    /**
+     * Whether if flash light is currently enabled
+     */
+    public boolean isFlashEnabled() {
+        return mFlashEnabled;
     }
 
     /**
