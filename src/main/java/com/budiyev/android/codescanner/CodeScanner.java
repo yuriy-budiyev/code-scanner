@@ -177,7 +177,8 @@ public final class CodeScanner {
         try {
             boolean changed = mAutoFocusEnabled != autoFocusEnabled;
             mAutoFocusEnabled = autoFocusEnabled;
-            if (mInitialized && changed && mDecoderWrapper.isAutoFocusSupported()) {
+            if (mInitialized && mPreviewActive && changed &&
+                    mDecoderWrapper.isAutoFocusSupported()) {
                 setAutoFocusEnabledInternal(autoFocusEnabled);
             }
         } finally {
@@ -193,7 +194,7 @@ public final class CodeScanner {
         try {
             boolean changed = mFlashEnabled != flashEnabled;
             mFlashEnabled = flashEnabled;
-            if (mInitialized && changed && mDecoderWrapper.isFlashSupported()) {
+            if (mInitialized && mPreviewActive && changed && mDecoderWrapper.isFlashSupported()) {
                 setFlashEnabledInternal(flashEnabled);
             }
         } finally {
