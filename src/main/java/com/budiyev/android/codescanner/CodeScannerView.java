@@ -108,6 +108,7 @@ public final class CodeScannerView extends ViewGroup {
         mAutoFocusButton = new ImageView(context);
         mAutoFocusButton.setLayoutParams(new LayoutParams(mButtonSize, mButtonSize));
         mAutoFocusButton.setScaleType(ImageView.ScaleType.CENTER);
+        mAutoFocusButton.setImageResource(R.drawable.ic_code_scanner_auto_focus_on);
         mAutoFocusButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -123,6 +124,7 @@ public final class CodeScannerView extends ViewGroup {
         mFlashButton = new ImageView(context);
         mFlashButton.setLayoutParams(new LayoutParams(mButtonSize, mButtonSize));
         mFlashButton.setScaleType(ImageView.ScaleType.CENTER);
+        mFlashButton.setImageResource(R.drawable.ic_code_scanner_flash_on);
         mFlashButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -173,7 +175,7 @@ public final class CodeScannerView extends ViewGroup {
                 mAutoFocusButton.setVisibility(attributes
                         .getBoolean(R.styleable.CodeScannerView_autoFocusButtonVisible,
                                 DEFAULT_AUTO_FOCUS_BUTTON_VISIBLE) ? VISIBLE : INVISIBLE);
-                mAutoFocusButton.setVisibility(attributes
+                mFlashButton.setVisibility(attributes
                         .getBoolean(R.styleable.CodeScannerView_flashButtonVisible,
                                 DEFAULT_FLASH_BUTTON_VISIBLE) ? VISIBLE : INVISIBLE);
             } finally {
@@ -267,6 +269,22 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setFrameCornersSize(size);
     }
 
+    public void setAutoFocusButtonVisible(boolean visible) {
+        if (visible) {
+            mAutoFocusButton.setVisibility(VISIBLE);
+        } else {
+            mAutoFocusButton.setVisibility(INVISIBLE);
+        }
+    }
+
+    public void setFlashButtonVisible(boolean visible) {
+        if (visible) {
+            mFlashButton.setVisibility(VISIBLE);
+        } else {
+            mFlashButton.setVisibility(INVISIBLE);
+        }
+    }
+
     boolean isSquareFrame() {
         return mViewFinderView.isSquareFrame();
     }
@@ -295,22 +313,6 @@ public final class CodeScannerView extends ViewGroup {
         }
         setAutoFocusEnabled(codeScanner.isAutoFocusEnabled());
         setFlashEnabled(codeScanner.isFlashEnabled());
-    }
-
-    public void setAutoFocusButtonVisible(boolean autoFocusButtonVisible) {
-        if (autoFocusButtonVisible) {
-            mAutoFocusButton.setVisibility(VISIBLE);
-        } else {
-            mAutoFocusButton.setVisibility(INVISIBLE);
-        }
-    }
-
-    public void setFlashButtonVisible(boolean flashButtonVisible) {
-        if (flashButtonVisible) {
-            mFlashButton.setVisibility(VISIBLE);
-        } else {
-            mFlashButton.setVisibility(INVISIBLE);
-        }
     }
 
     void setAutoFocusEnabled(boolean enabled) {

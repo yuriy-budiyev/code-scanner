@@ -31,7 +31,11 @@ Define a view in your layout file:
         app:frameCornersSize="50dp"
         app:frameWidth="2dp"
         app:maskColor="#77000000"
-        app:squareFrame="true"/>
+        app:squareFrame="true"
+        app:autoFocusButtonColor="@android:color/white"
+        app:flashButtonColor="@android:color/white"
+        app:autoFocusButtonVisible="true"
+        app:flashButtonVisible="true"/>
 </FrameLayout>
 ```
 And add following code to your activity:
