@@ -182,6 +182,8 @@ public final class CodeScannerView extends ViewGroup {
         }
         addView(mPreviewView);
         addView(mViewFinderView);
+        addView(mAutoFocusButton);
+        addView(mFlashButton);
     }
 
     @Override
