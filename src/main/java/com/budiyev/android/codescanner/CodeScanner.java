@@ -539,12 +539,18 @@ public final class CodeScanner {
             List<String> focusModes = parameters.getSupportedFocusModes();
             boolean autoFocusSupported =
                     focusModes != null && focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO);
+            if (!autoFocusSupported) {
+                mAutoFocusEnabled = false;
+            }
             if (autoFocusSupported && mAutoFocusEnabled) {
                 parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
             }
             List<String> flashModes = parameters.getSupportedFlashModes();
             boolean flashSupported =
                     flashModes != null && flashModes.contains(Camera.Parameters.FLASH_MODE_TORCH);
+            if (!flashSupported) {
+                mFlashEnabled = false;
+            }
             camera.setParameters(Utils.optimizeParameters(parameters));
             camera.setDisplayOrientation(orientation);
             mInitializeLock.lock();
@@ -594,6 +600,7 @@ public final class CodeScanner {
         @Override
         public void run() {
             mScannerView.setFrameSize(mFrameSize);
+            mScannerView.setCodeScanner(CodeScanner.this);
             startPreview();
         }
     }
