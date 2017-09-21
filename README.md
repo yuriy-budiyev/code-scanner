@@ -3,7 +3,10 @@
 
 Code scanner library based on [ZXing](https://github.com/zxing/zxing)
 
-Supports portrait and landscape screen orientations, back and front facing cameras, auto focus and flash light control
+### Features
+* Auto focus and flash light control
+* Portrait and landscape screen orientations
+* Back and front facing cameras
 
 ### Supported formats
 | 1D product | 1D industrial | 2D
