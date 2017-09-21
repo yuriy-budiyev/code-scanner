@@ -55,7 +55,7 @@ public final class CodeScannerView extends ViewGroup {
     private static final int DEFAULT_FLASH_BUTTON_COLOR = Color.WHITE;
     private static final float DEFAULT_FRAME_WIDTH_DP = 2f;
     private static final float DEFAULT_FRAME_CORNER_SIZE_DP = 50f;
-    private static final float BUTTON_SIZE_DP = 24f;
+    private static final float BUTTON_SIZE_DP = 56f;
     private SurfaceView mPreviewView;
     private ViewFinderView mViewFinderView;
     private ImageView mAutoFocusButton;
@@ -107,6 +107,7 @@ public final class CodeScannerView extends ViewGroup {
         mButtonSize = Math.round(displayMetrics.density * BUTTON_SIZE_DP);
         mAutoFocusButton = new ImageView(context);
         mAutoFocusButton.setLayoutParams(new LayoutParams(mButtonSize, mButtonSize));
+        mAutoFocusButton.setScaleType(ImageView.ScaleType.CENTER);
         mAutoFocusButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,6 +122,7 @@ public final class CodeScannerView extends ViewGroup {
         });
         mFlashButton = new ImageView(context);
         mFlashButton.setLayoutParams(new LayoutParams(mButtonSize, mButtonSize));
+        mFlashButton.setScaleType(ImageView.ScaleType.CENTER);
         mFlashButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
