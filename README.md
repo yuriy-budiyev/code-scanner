@@ -3,6 +3,19 @@
 
 Code scanner library based on [ZXing](https://github.com/zxing/zxing)
 
+Supports portrait and landscape screen orientations, back and front facing cameras, auto focus and flash light control
+
+### Supported formats
+| 1D product | 1D industrial | 2D
+| ---------- | ------------- | --------------
+| UPC-A      | Code 39       | QR Code
+| UPC-E      | Code 93       | Data Matrix
+| EAN-8      | Code 128      | Aztec
+| EAN-13     | Codabar       | PDF 417
+|            | ITF           | MaxiCode
+|            | RSS-14        |
+|            | RSS-Expanded  |
+
 ### Usage
 Add dependency:
 ```
