@@ -125,6 +125,7 @@ public final class CodeScanner {
         mStopPreviewTask = new StopPreviewTask();
         mDecoderStateListener = new DecoderStateListener();
         mCameraId = cameraId;
+        mScannerView.setCodeScanner(this);
     }
 
     /**
@@ -177,6 +178,7 @@ public final class CodeScanner {
         try {
             boolean changed = mAutoFocusEnabled != autoFocusEnabled;
             mAutoFocusEnabled = autoFocusEnabled;
+            mScannerView.setAutoFocusEnabled(autoFocusEnabled);
             if (mInitialized && mPreviewActive && changed &&
                     mDecoderWrapper.isAutoFocusSupported()) {
                 setAutoFocusEnabledInternal(autoFocusEnabled);
@@ -201,6 +203,7 @@ public final class CodeScanner {
         try {
             boolean changed = mFlashEnabled != flashEnabled;
             mFlashEnabled = flashEnabled;
+            mScannerView.setFlashEnabled(flashEnabled);
             if (mInitialized && mPreviewActive && changed && mDecoderWrapper.isFlashSupported()) {
                 setFlashEnabledInternal(flashEnabled);
             }
@@ -472,6 +475,16 @@ public final class CodeScanner {
                 mMainThreadHandler.post(mStopPreviewTask);
             }
         }
+    }
+
+    boolean isAutoFocusSupportedOrUnknown() {
+        DecoderWrapper wrapper = mDecoderWrapper;
+        return wrapper == null || wrapper.isAutoFocusSupported();
+    }
+
+    boolean isFlashSupportedOrUnknown() {
+        DecoderWrapper wrapper = mDecoderWrapper;
+        return wrapper == null || wrapper.isFlashSupported();
     }
 
     private final class InitializationThread extends Thread {

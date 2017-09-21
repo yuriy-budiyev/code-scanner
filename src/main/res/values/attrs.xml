@@ -3,6 +3,10 @@
     <declare-styleable name="CodeScannerView">
         <attr name="maskColor" format="color"/>
         <attr name="frameColor" format="color"/>
+        <attr name="autoFocusButtonColor" format="color"/>
+        <attr name="flashButtonColor" format="color"/>
+        <attr name="autoFocusButtonVisible" format="boolean"/>
+        <attr name="flashButtonVisible" format="boolean"/>
         <attr name="squareFrame" format="boolean"/>
         <attr name="frameWidth" format="dimension"/>
         <attr name="frameCornersSize" format="dimension"/>
