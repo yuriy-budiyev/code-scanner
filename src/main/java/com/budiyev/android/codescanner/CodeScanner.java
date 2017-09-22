@@ -628,6 +628,9 @@ public final class CodeScanner {
 
         @Override
         public void run() {
+            if (!mInitialized) {
+                return;
+            }
             mScannerView.setFrameSize(mFrameSize);
             mScannerView.setCodeScanner(CodeScanner.this);
             startPreview();
