@@ -24,7 +24,7 @@ Code scanner library based on [ZXing](https://github.com/zxing/zxing)
 Add dependency:
 ```
 dependencies {
-    implementation 'com.budiyev.android:code-scanner:1.2.1'
+    implementation 'com.budiyev.android:code-scanner:1.3.0'
 }
 ```
 Add camera permission to AndroidManifest.xml (Don't forget about dynamic permissions on API >= 23):
@@ -65,21 +65,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         CodeScannerView scannerView = findViewById(R.id.scanner_view);
-        mCodeScanner = new CodeScanner(this, scannerView);
-        mCodeScanner.setAutoFocusEnabled(true); // true by default
-        mCodeScanner.setFlashEnabled(false); // false by default
-        mCodeScanner.setDecodeCallback(new DecodeCallback() {
-            @Override
-            public void onDecoded(@NonNull final Result result) {
-                runOnUiThread(new Runnable() {
+        mCodeScanner =
+                CodeScanner.builder().autoFocus(true).flash(false).onDecoded(new DecodeCallback() {
                     @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this, result.getText(), Toast.LENGTH_LONG)
-                                .show();
+                    public void onDecoded(@NonNull final Result result) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, result.getText(),
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
                     }
-                });
-            }
-        });
+                }).build(this, scannerView);
         scannerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
