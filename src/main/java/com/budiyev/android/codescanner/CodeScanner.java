@@ -81,6 +81,7 @@ public final class CodeScanner {
     private final int mCameraId;
     private volatile List<BarcodeFormat> mFormats = ALL_FORMATS;
     private volatile DecodeCallback mDecodeCallback;
+    private volatile ErrorCallback mErrorCallback;
     private volatile DecoderWrapper mDecoderWrapper;
     private volatile boolean mInitialization;
     private volatile boolean mInitialized;
@@ -168,6 +169,16 @@ public final class CodeScanner {
      */
     public void setDecodeCallback(@Nullable DecodeCallback decodeCallback) {
         mDecodeCallback = decodeCallback;
+    }
+
+    /**
+     * Set camera initialization error callback.
+     * If not set, an exception will be thrown when error will occur.
+     *
+     * @param errorCallback Callback
+     */
+    public void setErrorCallback(@Nullable ErrorCallback errorCallback) {
+        mErrorCallback = errorCallback;
     }
 
     /**
@@ -346,7 +357,6 @@ public final class CodeScanner {
     }
 
     private void setFlashEnabledInternal(boolean flashEnabled) {
-        Thread.dumpStack();
         try {
             DecoderWrapper decoderWrapper = mDecoderWrapper;
             Camera camera = decoderWrapper.getCamera();
@@ -506,6 +516,19 @@ public final class CodeScanner {
         @Override
         @SuppressWarnings("SuspiciousNameCombination")
         public void run() {
+            try {
+                initialize();
+            } catch (Exception e) {
+                ErrorCallback errorCallback = mErrorCallback;
+                if (errorCallback != null) {
+                    errorCallback.onError(e);
+                } else {
+                    throw e;
+                }
+            }
+        }
+
+        private void initialize() {
             Camera camera = null;
             Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
             if (mCameraId == UNSPECIFIED) {
