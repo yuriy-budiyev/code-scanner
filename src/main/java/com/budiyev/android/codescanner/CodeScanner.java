@@ -162,7 +162,7 @@ public final class CodeScanner {
     }
 
     /**
-     * Set callback of the decoding process
+     * Set callback of decoding process
      *
      * @param decodeCallback Callback
      * @see DecodeCallback
