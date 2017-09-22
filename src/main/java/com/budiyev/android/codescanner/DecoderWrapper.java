@@ -86,4 +86,9 @@ final class DecoderWrapper {
     public boolean isFlashSupported() {
         return mFlashSupported;
     }
+
+    public void release() {
+        mCamera.release();
+        mDecoder.shutdown();
+    }
 }

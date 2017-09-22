@@ -280,15 +280,7 @@ public final class CodeScanner {
             if (mPreviewActive) {
                 stopPreview();
             }
-            mInitialized = false;
-            mInitialization = false;
-            mStoppingPreview = false;
-            mPreviewActive = false;
-            mFocusing = false;
-            DecoderWrapper decoderWrapper = mDecoderWrapper;
-            decoderWrapper.getCamera().release();
-            decoderWrapper.getDecoder().shutdown();
-            mDecoderWrapper = null;
+            releaseResourcesInternal();
         }
     }
 
@@ -353,6 +345,19 @@ public final class CodeScanner {
     private void stopPreviewInternalSafe() {
         if (mInitialized && mPreviewActive) {
             stopPreviewInternal(true);
+        }
+    }
+
+    private void releaseResourcesInternal() {
+        mInitialized = false;
+        mInitialization = false;
+        mStoppingPreview = false;
+        mPreviewActive = false;
+        mFocusing = false;
+        DecoderWrapper decoderWrapper = mDecoderWrapper;
+        if (decoderWrapper != null) {
+            mDecoderWrapper = null;
+            decoderWrapper.release();
         }
     }
 
@@ -519,6 +524,7 @@ public final class CodeScanner {
             try {
                 initialize();
             } catch (Exception e) {
+                releaseResourcesInternal();
                 ErrorCallback errorCallback = mErrorCallback;
                 if (errorCallback != null) {
                     errorCallback.onError(e);
