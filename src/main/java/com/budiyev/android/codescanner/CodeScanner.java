@@ -138,8 +138,7 @@ public final class CodeScanner {
      * @see #ONE_DIMENSIONAL_FORMATS
      * @see #TWO_DIMENSIONAL_FORMATS
      */
-    @NonNull
-    public CodeScanner setFormats(@NonNull List<BarcodeFormat> formats) {
+    public void setFormats(@NonNull List<BarcodeFormat> formats) {
         mInitializeLock.lock();
         try {
             if (mInitialized) {
@@ -150,7 +149,6 @@ public final class CodeScanner {
         } finally {
             mInitializeLock.unlock();
         }
-        return this;
     }
 
     /**
@@ -162,9 +160,8 @@ public final class CodeScanner {
      * @see #ONE_DIMENSIONAL_FORMATS
      * @see #TWO_DIMENSIONAL_FORMATS
      */
-    @NonNull
-    public CodeScanner setFormats(@NonNull BarcodeFormat... formats) {
-        return setFormats(Arrays.asList(formats));
+    public void setFormats(@NonNull BarcodeFormat... formats) {
+        setFormats(Arrays.asList(formats));
     }
 
     /**
@@ -173,9 +170,8 @@ public final class CodeScanner {
      * @param format Format
      * @see BarcodeFormat
      */
-    @NonNull
-    public CodeScanner setFormat(@NonNull BarcodeFormat format) {
-        return setFormats(Collections.singletonList(format));
+    public void setFormat(@NonNull BarcodeFormat format) {
+        setFormats(Collections.singletonList(format));
     }
 
     /**
@@ -184,10 +180,8 @@ public final class CodeScanner {
      * @param decodeCallback Callback
      * @see DecodeCallback
      */
-    @NonNull
-    public CodeScanner setDecodeCallback(@Nullable DecodeCallback decodeCallback) {
+    public void setDecodeCallback(@Nullable DecodeCallback decodeCallback) {
         mDecodeCallback = decodeCallback;
-        return this;
     }
 
     /**
@@ -197,17 +191,14 @@ public final class CodeScanner {
      * @param errorCallback Callback
      * @see ErrorCallback#SUPPRESS
      */
-    @NonNull
-    public CodeScanner setErrorCallback(@Nullable ErrorCallback errorCallback) {
+    public void setErrorCallback(@Nullable ErrorCallback errorCallback) {
         mErrorCallback = errorCallback;
-        return this;
     }
 
     /**
      * Whether to enable or disable auto focus if it's supported, {@code true} by default
      */
-    @NonNull
-    public CodeScanner setAutoFocusEnabled(boolean autoFocusEnabled) {
+    public void setAutoFocusEnabled(boolean autoFocusEnabled) {
         mInitializeLock.lock();
         try {
             boolean changed = mAutoFocusEnabled != autoFocusEnabled;
@@ -220,7 +211,6 @@ public final class CodeScanner {
         } finally {
             mInitializeLock.unlock();
         }
-        return this;
     }
 
     /**
@@ -233,8 +223,7 @@ public final class CodeScanner {
     /**
      * Whether to enable or disable flash light if it's supported, {@code false} by default
      */
-    @NonNull
-    public CodeScanner setFlashEnabled(boolean flashEnabled) {
+    public void setFlashEnabled(boolean flashEnabled) {
         mInitializeLock.lock();
         try {
             boolean changed = mFlashEnabled != flashEnabled;
@@ -246,7 +235,6 @@ public final class CodeScanner {
         } finally {
             mInitializeLock.unlock();
         }
-        return this;
     }
 
     /**
