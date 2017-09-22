@@ -31,6 +31,15 @@ import android.support.annotation.WorkerThread;
  */
 public interface ErrorCallback {
     /**
+     * Callback to suppress errors
+     */
+    ErrorCallback SUPPRESS = new ErrorCallback() {
+        @Override
+        public void onError(@NonNull Exception error) {
+        }
+    };
+
+    /**
      * Called when error has occurred
      *
      * @param error Exception that has been thrown

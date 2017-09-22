@@ -176,6 +176,7 @@ public final class CodeScanner {
      * If not set, an exception will be thrown when error will occur.
      *
      * @param errorCallback Callback
+     * @see ErrorCallback#SUPPRESS
      */
     public void setErrorCallback(@Nullable ErrorCallback errorCallback) {
         mErrorCallback = errorCallback;
