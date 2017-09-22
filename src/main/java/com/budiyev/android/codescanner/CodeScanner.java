@@ -650,4 +650,74 @@ public final class CodeScanner {
             startPreview();
         }
     }
+
+    @NonNull
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private int mCameraId = UNSPECIFIED;
+        private List<BarcodeFormat> mFormats = ALL_FORMATS;
+        private DecodeCallback mDecodeCallback;
+        private ErrorCallback mErrorCallback;
+        private boolean mAutoFocusEnabled = true;
+        private boolean mFlashEnabled;
+
+        private Builder() {
+        }
+
+        @NonNull
+        public Builder camera(int cameraId) {
+            mCameraId = cameraId;
+            return this;
+        }
+
+        @NonNull
+        public Builder formats(@NonNull BarcodeFormat... formats) {
+            mFormats = Arrays.asList(formats);
+            return this;
+        }
+
+        @NonNull
+        public Builder formats(@NonNull List<BarcodeFormat> formats) {
+            mFormats = formats;
+            return this;
+        }
+
+        @NonNull
+        public Builder onDecoded(@Nullable DecodeCallback callback) {
+            mDecodeCallback = callback;
+            return this;
+        }
+
+        @NonNull
+        public Builder onError(@Nullable ErrorCallback callback) {
+            mErrorCallback = callback;
+            return this;
+        }
+
+        @NonNull
+        public Builder autoFocus(boolean enabled) {
+            mAutoFocusEnabled = enabled;
+            return this;
+        }
+
+        @NonNull
+        public Builder flash(boolean enabled) {
+            mFlashEnabled = enabled;
+            return this;
+        }
+
+        @NonNull
+        public CodeScanner build(@NonNull Context context, @NonNull CodeScannerView view) {
+            CodeScanner scanner = new CodeScanner(context, view, mCameraId);
+            scanner.mFormats = mFormats;
+            scanner.mDecodeCallback = mDecodeCallback;
+            scanner.mErrorCallback = mErrorCallback;
+            scanner.mAutoFocusEnabled = mAutoFocusEnabled;
+            scanner.mFlashEnabled = mFlashEnabled;
+            return scanner;
+        }
+    }
 }
