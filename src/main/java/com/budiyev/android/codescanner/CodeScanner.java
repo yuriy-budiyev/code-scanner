@@ -651,11 +651,17 @@ public final class CodeScanner {
         }
     }
 
+    /**
+     * New builder instance
+     */
     @NonNull
     public static Builder builder() {
         return new Builder();
     }
 
+    /**
+     * Code scanner builder
+     */
     public static final class Builder {
         private int mCameraId = UNSPECIFIED;
         private List<BarcodeFormat> mFormats = ALL_FORMATS;
