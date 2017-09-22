@@ -24,6 +24,7 @@
 package com.budiyev.android.codescanner;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.WorkerThread;
 
 /**
  * Code scanner error callback
@@ -34,5 +35,6 @@ public interface ErrorCallback {
      *
      * @param error Exception that has been thrown
      */
+    @WorkerThread
     void onError(@NonNull Exception error);
 }
