@@ -190,6 +190,7 @@ public final class CodeScanner {
      *
      * @param errorCallback Callback
      * @see ErrorCallback#SUPPRESS
+     * @see ErrorCallback
      */
     public void setErrorCallback(@Nullable ErrorCallback errorCallback) {
         mErrorCallback = errorCallback;
@@ -673,48 +674,97 @@ public final class CodeScanner {
         private Builder() {
         }
 
+        /**
+         * Camera that will be used by scanner.
+         * First back-facing camera on the device by default.
+         */
         @NonNull
         public Builder camera(int cameraId) {
             mCameraId = cameraId;
             return this;
         }
 
+        /**
+         * Formats, decoder to react to ({@link #ALL_FORMATS} by default)
+         *
+         * @param formats Formats
+         * @see BarcodeFormat
+         * @see #ALL_FORMATS
+         * @see #ONE_DIMENSIONAL_FORMATS
+         * @see #TWO_DIMENSIONAL_FORMATS
+         */
         @NonNull
         public Builder formats(@NonNull BarcodeFormat... formats) {
             mFormats = Arrays.asList(formats);
             return this;
         }
 
+        /**
+         * Formats, decoder to react to ({@link #ALL_FORMATS} by default)
+         *
+         * @param formats Formats
+         * @see BarcodeFormat
+         * @see #ALL_FORMATS
+         * @see #ONE_DIMENSIONAL_FORMATS
+         * @see #TWO_DIMENSIONAL_FORMATS
+         */
         @NonNull
         public Builder formats(@NonNull List<BarcodeFormat> formats) {
             mFormats = formats;
             return this;
         }
 
+        /**
+         * Callback of decoding process
+         *
+         * @param callback Callback
+         * @see DecodeCallback
+         */
         @NonNull
         public Builder onDecoded(@Nullable DecodeCallback callback) {
             mDecodeCallback = callback;
             return this;
         }
 
+        /**
+         * Set camera initialization error callback.
+         * If not set, an exception will be thrown when error will occur.
+         *
+         * @param callback Callback
+         * @see ErrorCallback#SUPPRESS
+         * @see ErrorCallback
+         */
         @NonNull
         public Builder onError(@Nullable ErrorCallback callback) {
             mErrorCallback = callback;
             return this;
         }
 
+        /**
+         * Whether to enable or disable auto focus if it's supported, {@code true} by default
+         */
         @NonNull
         public Builder autoFocus(boolean enabled) {
             mAutoFocusEnabled = enabled;
             return this;
         }
 
+        /**
+         * Whether to enable or disable flash light if it's supported, {@code false} by default
+         */
         @NonNull
         public Builder flash(boolean enabled) {
             mFlashEnabled = enabled;
             return this;
         }
 
+        /**
+         * Create new {@link CodeScanner} instance with specified parameters
+         *
+         * @param context Context
+         * @param view    A view to display the preview
+         * @see CodeScannerView
+         */
         @NonNull
         public CodeScanner build(@NonNull Context context, @NonNull CodeScannerView view) {
             CodeScanner scanner = new CodeScanner(context, view, mCameraId);
