@@ -65,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         CodeScannerView scannerView = findViewById(R.id.scanner_view);
+        //Use builder
         mCodeScanner =
                 CodeScanner.builder().autoFocus(true).flash(false).onDecoded(new DecodeCallback() {
                     @Override
@@ -78,6 +79,9 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
                 }).build(this, scannerView);
+        //Or use constructor to create scanner with default parameters
+        //All parameters can be set after scanner created
+        //mCodeScanner = new CodeScanner(this, scannerView);                
         scannerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
