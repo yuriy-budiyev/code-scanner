@@ -109,6 +109,7 @@ public final class CodeScannerView extends ViewGroup {
     public CodeScannerView(Context context, AttributeSet attrs, @AttrRes int defStyleAttr,
             @StyleRes int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        initialize(context, attrs, defStyleAttr, defStyleRes);
     }
 
     private void initialize(@NonNull Context context, @Nullable AttributeSet attrs,
