@@ -24,7 +24,7 @@ Code scanner library based on [ZXing](https://github.com/zxing/zxing)
 Add dependency:
 ```
 dependencies {
-    implementation 'com.budiyev.android:code-scanner:1.3.0'
+    implementation 'com.budiyev.android:code-scanner:1.3.1'
 }
 ```
 Add camera permission to AndroidManifest.xml (Don't forget about dynamic permissions on API >= 23):
@@ -82,6 +82,7 @@ public class MainActivity extends AppCompatActivity {
         // Or use constructor to create scanner with default parameters
         // All parameters can be changed after scanner created
         // mCodeScanner = new CodeScanner(this, scannerView);                
+        // mCodeScanner.setDecodeCallback(...);                
         scannerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

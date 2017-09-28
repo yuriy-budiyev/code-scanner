@@ -27,10 +27,14 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.graphics.Point;
+import android.os.Build;
+import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.Px;
+import android.support.annotation.RequiresApi;
+import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.view.SurfaceView;
@@ -72,7 +76,7 @@ public final class CodeScannerView extends ViewGroup {
      */
     public CodeScannerView(@NonNull Context context) {
         super(context);
-        initialize(context, null);
+        initialize(context, null, 0, 0);
     }
 
     /**
@@ -82,7 +86,7 @@ public final class CodeScannerView extends ViewGroup {
      */
     public CodeScannerView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        initialize(context, attrs);
+        initialize(context, attrs, 0, 0);
     }
 
     /**
@@ -91,12 +95,24 @@ public final class CodeScannerView extends ViewGroup {
      * @see CodeScanner
      */
     public CodeScannerView(@NonNull Context context, @Nullable AttributeSet attrs,
-            int defStyleAttr) {
+            @AttrRes int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initialize(context, attrs);
+        initialize(context, attrs, defStyleAttr, 0);
     }
 
-    private void initialize(@NonNull Context context, @Nullable AttributeSet attributeSet) {
+    /**
+     * A view to display code scanner preview
+     *
+     * @see CodeScanner
+     */
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    public CodeScannerView(Context context, AttributeSet attrs, @AttrRes int defStyleAttr,
+            @StyleRes int defStyleRes) {
+        super(context, attrs, defStyleAttr, defStyleRes);
+    }
+
+    private void initialize(@NonNull Context context, @Nullable AttributeSet attrs,
+            @AttrRes int defStyleAttr, @StyleRes int defStyleRes) {
         mPreviewView = new SurfaceView(context);
         mPreviewView.setLayoutParams(
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -109,35 +125,13 @@ public final class CodeScannerView extends ViewGroup {
         mAutoFocusButton.setLayoutParams(new LayoutParams(mButtonSize, mButtonSize));
         mAutoFocusButton.setScaleType(ImageView.ScaleType.CENTER);
         mAutoFocusButton.setImageResource(R.drawable.ic_code_scanner_auto_focus_on);
-        mAutoFocusButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CodeScanner scanner = mCodeScanner;
-                if (scanner == null || !scanner.isAutoFocusSupportedOrUnknown()) {
-                    return;
-                }
-                boolean enabled = !scanner.isAutoFocusEnabled();
-                scanner.setAutoFocusEnabled(enabled);
-                setAutoFocusEnabled(enabled);
-            }
-        });
+        mAutoFocusButton.setOnClickListener(new AutoFocusClickListener());
         mFlashButton = new ImageView(context);
         mFlashButton.setLayoutParams(new LayoutParams(mButtonSize, mButtonSize));
         mFlashButton.setScaleType(ImageView.ScaleType.CENTER);
         mFlashButton.setImageResource(R.drawable.ic_code_scanner_flash_on);
-        mFlashButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CodeScanner scanner = mCodeScanner;
-                if (scanner == null || !scanner.isFlashSupportedOrUnknown()) {
-                    return;
-                }
-                boolean enabled = !scanner.isFlashEnabled();
-                scanner.setFlashEnabled(enabled);
-                setFlashEnabled(enabled);
-            }
-        });
-        if (attributeSet == null) {
+        mFlashButton.setOnClickListener(new FlashClickListener());
+        if (attrs == null) {
             mViewFinderView.setSquareFrame(DEFAULT_SQUARE_FRAME);
             mViewFinderView.setMaskColor(DEFAULT_MASK_COLOR);
             mViewFinderView.setFrameColor(DEFAULT_FRAME_COLOR);
@@ -153,7 +147,8 @@ public final class CodeScannerView extends ViewGroup {
             TypedArray attributes = null;
             try {
                 attributes = context.getTheme()
-                        .obtainStyledAttributes(attributeSet, R.styleable.CodeScannerView, 0, 0);
+                        .obtainStyledAttributes(attrs, R.styleable.CodeScannerView, defStyleAttr,
+                                defStyleRes);
                 mViewFinderView.setSquareFrame(attributes
                         .getBoolean(R.styleable.CodeScannerView_squareFrame, DEFAULT_SQUARE_FRAME));
                 mViewFinderView.setMaskColor(attributes
@@ -269,6 +264,11 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setFrameCornersSize(size);
     }
 
+    /**
+     * Set whether auto focus button is visible or not
+     *
+     * @param visible Visibility
+     */
     public void setAutoFocusButtonVisible(boolean visible) {
         if (visible) {
             mAutoFocusButton.setVisibility(VISIBLE);
@@ -277,6 +277,11 @@ public final class CodeScannerView extends ViewGroup {
         }
     }
 
+    /**
+     * Set whether flash button is visible or not
+     *
+     * @param visible Visibility
+     */
     public void setFlashButtonVisible(boolean visible) {
         if (visible) {
             mFlashButton.setVisibility(VISIBLE);
@@ -333,5 +338,31 @@ public final class CodeScannerView extends ViewGroup {
 
     interface LayoutListener {
         void onLayout(int width, int height);
+    }
+
+    private final class AutoFocusClickListener implements OnClickListener {
+        @Override
+        public void onClick(View view) {
+            CodeScanner scanner = mCodeScanner;
+            if (scanner == null || !scanner.isAutoFocusSupportedOrUnknown()) {
+                return;
+            }
+            boolean enabled = !scanner.isAutoFocusEnabled();
+            scanner.setAutoFocusEnabled(enabled);
+            setAutoFocusEnabled(enabled);
+        }
+    }
+
+    private final class FlashClickListener implements OnClickListener {
+        @Override
+        public void onClick(View view) {
+            CodeScanner scanner = mCodeScanner;
+            if (scanner == null || !scanner.isFlashSupportedOrUnknown()) {
+                return;
+            }
+            boolean enabled = !scanner.isFlashEnabled();
+            scanner.setFlashEnabled(enabled);
+            setFlashEnabled(enabled);
+        }
     }
 }

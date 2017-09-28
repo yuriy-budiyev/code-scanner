@@ -263,6 +263,12 @@ final class Utils {
         return a + b;
     }
 
+    public static final class SuppressErrorCallback implements ErrorCallback {
+        @Override
+        public void onError(@NonNull Exception error) {
+        }
+    }
+
     private static final class CameraSizeComparator implements Comparator<Camera.Size> {
         @Override
         public int compare(@NonNull Camera.Size a, @NonNull Camera.Size b) {

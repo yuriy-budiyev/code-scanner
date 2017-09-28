@@ -33,11 +33,7 @@ public interface ErrorCallback {
     /**
      * Callback to suppress errors
      */
-    ErrorCallback SUPPRESS = new ErrorCallback() {
-        @Override
-        public void onError(@NonNull Exception error) {
-        }
-    };
+    ErrorCallback SUPPRESS = new Utils.SuppressErrorCallback();
 
     /**
      * Called when error has occurred
