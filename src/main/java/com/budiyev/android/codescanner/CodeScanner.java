@@ -29,6 +29,7 @@ import android.content.Context;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.os.Handler;
+import android.support.annotation.IntDef;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -36,6 +37,8 @@ import android.view.SurfaceHolder;
 
 import com.google.zxing.BarcodeFormat;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -775,5 +778,12 @@ public final class CodeScanner {
             scanner.mFlashEnabled = mFlashEnabled;
             return scanner;
         }
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef({AutoFocusMode.SAFE, AutoFocusMode.CONTINUOUS})
+    public @interface AutoFocusMode {
+        int SAFE = 0;
+        int CONTINUOUS = 1;
     }
 }
