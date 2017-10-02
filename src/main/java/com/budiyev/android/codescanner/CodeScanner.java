@@ -706,6 +706,8 @@ public final class CodeScanner {
         private DecodeCallback mDecodeCallback;
         private ErrorCallback mErrorCallback;
         private boolean mAutoFocusEnabled = true;
+        private long mAutoFocusInterval = 1500L;
+        private int mAutoFocusMode = AUTO_FOCUS_MODE_SAFE;
         private boolean mFlashEnabled;
 
         private Builder() {
@@ -731,8 +733,8 @@ public final class CodeScanner {
          * @see #TWO_DIMENSIONAL_FORMATS
          */
         @NonNull
-        public Builder formats(@NonNull BarcodeFormat... formats) {
-            mFormats = Arrays.asList(formats);
+        public Builder formats(@NonNull List<BarcodeFormat> formats) {
+            mFormats = formats;
             return this;
         }
 
@@ -746,8 +748,8 @@ public final class CodeScanner {
          * @see #TWO_DIMENSIONAL_FORMATS
          */
         @NonNull
-        public Builder formats(@NonNull List<BarcodeFormat> formats) {
-            mFormats = formats;
+        public Builder formats(@NonNull BarcodeFormat... formats) {
+            mFormats = Arrays.asList(formats);
             return this;
         }
 
@@ -764,7 +766,7 @@ public final class CodeScanner {
         }
 
         /**
-         * Set camera initialization error callback.
+         * Camera initialization error callback.
          * If not set, an exception will be thrown when error will occur.
          *
          * @param callback Callback
@@ -783,6 +785,30 @@ public final class CodeScanner {
         @NonNull
         public Builder autoFocus(boolean enabled) {
             mAutoFocusEnabled = enabled;
+            return this;
+        }
+
+        /**
+         * Auto focus interval in milliseconds for safe mode
+         *
+         * @see #setAutoFocusMode(int)
+         * @see #AUTO_FOCUS_MODE_SAFE
+         */
+        @NonNull
+        public Builder autoFocusInterval(long interval) {
+            mAutoFocusInterval = interval;
+            return this;
+        }
+
+        /**
+         * Auto focus mode, {@link #AUTO_FOCUS_MODE_SAFE} by default
+         *
+         * @see #AUTO_FOCUS_MODE_SAFE
+         * @see #AUTO_FOCUS_MODE_CONTINUOUS
+         */
+        @NonNull
+        public Builder autoFocusMode(@AutoFocusMode int mode) {
+            mAutoFocusMode = mode;
             return this;
         }
 
@@ -809,6 +835,8 @@ public final class CodeScanner {
             scanner.mDecodeCallback = mDecodeCallback;
             scanner.mErrorCallback = mErrorCallback;
             scanner.mAutoFocusEnabled = mAutoFocusEnabled;
+            scanner.mAutoFocusInterval = mAutoFocusInterval;
+            scanner.mAutoFocusMode = mAutoFocusMode;
             scanner.mFlashEnabled = mFlashEnabled;
             return scanner;
         }
