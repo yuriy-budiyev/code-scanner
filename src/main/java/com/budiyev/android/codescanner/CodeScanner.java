@@ -52,13 +52,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @see BarcodeFormat
  */
 public final class CodeScanner {
-    public static final List<BarcodeFormat> ALL_FORMATS =
-            Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.CODABAR, BarcodeFormat.CODE_39,
-                    BarcodeFormat.CODE_93, BarcodeFormat.CODE_128, BarcodeFormat.DATA_MATRIX,
-                    BarcodeFormat.EAN_8, BarcodeFormat.EAN_13, BarcodeFormat.ITF,
-                    BarcodeFormat.MAXICODE, BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE,
-                    BarcodeFormat.RSS_14, BarcodeFormat.RSS_EXPANDED, BarcodeFormat.UPC_A,
-                    BarcodeFormat.UPC_E, BarcodeFormat.UPC_EAN_EXTENSION);
+    public static final List<BarcodeFormat> ALL_FORMATS = Arrays.asList(BarcodeFormat.values());
     public static final List<BarcodeFormat> ONE_DIMENSIONAL_FORMATS =
             Arrays.asList(BarcodeFormat.CODABAR, BarcodeFormat.CODE_39, BarcodeFormat.CODE_93,
                     BarcodeFormat.CODE_128, BarcodeFormat.EAN_8, BarcodeFormat.EAN_13,
@@ -69,7 +63,6 @@ public final class CodeScanner {
                     BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE);
     public static final int AUTO_FOCUS_MODE_SAFE = 0;
     public static final int AUTO_FOCUS_MODE_CONTINUOUS = 1;
-    private static final long AUTO_FOCUS_INTERVAL = 1500L;
     private static final int UNSPECIFIED = -1;
     private static final int FOCUS_ATTEMPTS_THRESHOLD = 2;
     private final Lock mInitializeLock = new ReentrantLock();
@@ -93,6 +86,8 @@ public final class CodeScanner {
     private volatile boolean mStoppingPreview;
     private volatile boolean mAutoFocusEnabled = true;
     private volatile boolean mFlashEnabled;
+    private volatile long mAutoFocusInterval = 1500L;
+    private volatile int mAutoFocusMode = AUTO_FOCUS_MODE_SAFE;
     private boolean mPreviewActive;
     private boolean mFocusing;
     private int mFocusAttemptsCount;
@@ -224,6 +219,35 @@ public final class CodeScanner {
      */
     public boolean isAutoFocusEnabled() {
         return mAutoFocusEnabled;
+    }
+
+    /**
+     * Set auto focus interval in milliseconds for safe mode
+     *
+     * @see #setAutoFocusMode(int)
+     * @see #AUTO_FOCUS_MODE_SAFE
+     */
+    public void setAutoFocusInterval(long autoFocusInterval) {
+        mAutoFocusInterval = autoFocusInterval;
+    }
+
+    /**
+     * Set auto focus mode, {@link #AUTO_FOCUS_MODE_SAFE} by default
+     *
+     * @see #AUTO_FOCUS_MODE_SAFE
+     * @see #AUTO_FOCUS_MODE_CONTINUOUS
+     */
+    public void setAutoFocusMode(@AutoFocusMode int autoFocusMode) {
+        mInitializeLock.lock();
+        try {
+            if (mInitialized) {
+                //TODO
+            } else {
+                mAutoFocusMode = autoFocusMode;
+            }
+        } finally {
+            mInitializeLock.unlock();
+        }
     }
 
     /**
@@ -449,7 +473,7 @@ public final class CodeScanner {
     }
 
     private void scheduleAutoFocusTask() {
-        mMainThreadHandler.postDelayed(mAutoFocusTask, AUTO_FOCUS_INTERVAL);
+        mMainThreadHandler.postDelayed(mAutoFocusTask, mAutoFocusInterval);
     }
 
     private final class ScannerLayoutListener implements CodeScannerView.LayoutListener {
