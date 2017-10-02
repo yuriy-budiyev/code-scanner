@@ -88,15 +88,27 @@ final class Utils {
         return new Point(defaultSize.width, defaultSize.height);
     }
 
-    public static boolean setFocusMode(@NonNull Camera.Parameters parameters,
-            @NonNull String focusMode) {
-        if (focusMode.equals(parameters.getFocusMode())) {
+    public static boolean disableAutoFocus(@NonNull Camera.Parameters parameters) {
+        List<String> focusModes = parameters.getSupportedFocusModes();
+        if (focusModes == null || focusModes.isEmpty()) {
             return false;
         }
-        List<String> focusModes = parameters.getSupportedFocusModes();
-        if (focusModes != null && focusModes.contains(focusMode)) {
-            parameters.setFocusMode(focusMode);
-            return true;
+        String focusMode = parameters.getFocusMode();
+        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_FIXED)) {
+            if (Camera.Parameters.FOCUS_MODE_FIXED.equals(focusMode)) {
+                return false;
+            } else {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);
+                return true;
+            }
+        }
+        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            if (Camera.Parameters.FOCUS_MODE_AUTO.equals(focusMode)) {
+                return false;
+            } else {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                return true;
+            }
         }
         return false;
     }

@@ -442,7 +442,7 @@ public final class CodeScanner {
                 changed = Utils.setAutoFocusMode(parameters, autoFocusMode);
             } else {
                 camera.cancelAutoFocus();
-                changed = Utils.setFocusMode(parameters, Camera.Parameters.FOCUS_MODE_FIXED);
+                changed = Utils.disableAutoFocus(parameters);
             }
             if (changed) {
                 camera.setParameters(parameters);
