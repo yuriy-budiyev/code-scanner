@@ -240,10 +240,9 @@ public final class CodeScanner {
     public void setAutoFocusMode(@AutoFocusMode int autoFocusMode) {
         mInitializeLock.lock();
         try {
-            if (mInitialized) {
-                //TODO
-            } else {
-                mAutoFocusMode = autoFocusMode;
+            mAutoFocusMode = autoFocusMode;
+            if (mInitialized && mAutoFocusEnabled) {
+                setAutoFocusEnabledInternal(true);
             }
         } finally {
             mInitializeLock.unlock();
@@ -354,7 +353,9 @@ public final class CodeScanner {
             mPreviewActive = true;
             mFocusing = false;
             mFocusAttemptsCount = 0;
-            scheduleAutoFocusTask();
+            if (mAutoFocusMode == AUTO_FOCUS_MODE_SAFE) {
+                scheduleSafeAutoFocusTask();
+            }
         } catch (Exception ignored) {
         }
     }
@@ -428,15 +429,15 @@ public final class CodeScanner {
 
     private void setAutoFocusEnabledInternal(boolean autoFocusEnabled) {
         try {
-            DecoderWrapper decoderWrapper = mDecoderWrapper;
-            Camera camera = decoderWrapper.getCamera();
+            Camera camera = mDecoderWrapper.getCamera();
             Camera.Parameters parameters = camera.getParameters();
             if (parameters == null) {
                 return;
             }
             boolean changed;
+            int autoFocusMode = mAutoFocusMode;
             if (autoFocusEnabled) {
-                changed = Utils.setFocusMode(parameters, Camera.Parameters.FOCUS_MODE_AUTO);
+                changed = Utils.setAutoFocusMode(parameters, autoFocusMode);
             } else {
                 camera.cancelAutoFocus();
                 changed = Utils.setFocusMode(parameters, Camera.Parameters.FOCUS_MODE_FIXED);
@@ -445,13 +446,17 @@ public final class CodeScanner {
                 camera.setParameters(parameters);
             }
             if (autoFocusEnabled) {
-                scheduleAutoFocusTask();
+                if (autoFocusMode == AUTO_FOCUS_MODE_SAFE) {
+                    scheduleSafeAutoFocusTask();
+                } else {
+                    mFocusing = false;
+                }
             }
         } catch (Exception ignored) {
         }
     }
 
-    private void autoFocusCamera() {
+    private void autoFocusCameraSafe() {
         if (!mInitialized || !mPreviewActive) {
             return;
         }
@@ -469,10 +474,10 @@ public final class CodeScanner {
                 mFocusing = false;
             }
         }
-        scheduleAutoFocusTask();
+        scheduleSafeAutoFocusTask();
     }
 
-    private void scheduleAutoFocusTask() {
+    private void scheduleSafeAutoFocusTask() {
         mMainThreadHandler.postDelayed(mAutoFocusTask, mAutoFocusInterval);
     }
 
@@ -610,13 +615,14 @@ public final class CodeScanner {
             Point frameSize = Utils.getFrameSize(portrait ? previewSize.y : previewSize.x,
                     portrait ? previewSize.x : previewSize.y, mWidth, mHeight);
             List<String> focusModes = parameters.getSupportedFocusModes();
-            boolean autoFocusSupported =
-                    focusModes != null && focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO);
+            boolean autoFocusSupported = focusModes != null &&
+                    (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO) ||
+                            focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE));
             if (!autoFocusSupported) {
                 mAutoFocusEnabled = false;
             }
             if (autoFocusSupported && mAutoFocusEnabled) {
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                Utils.setAutoFocusMode(parameters, mAutoFocusMode);
             }
             List<String> flashModes = parameters.getSupportedFlashModes();
             boolean flashSupported =
@@ -652,7 +658,9 @@ public final class CodeScanner {
     private final class AutoFocusTask implements Runnable {
         @Override
         public void run() {
-            autoFocusCamera();
+            if (mAutoFocusMode == AUTO_FOCUS_MODE_SAFE) {
+                autoFocusCameraSafe();
+            }
         }
     }
 

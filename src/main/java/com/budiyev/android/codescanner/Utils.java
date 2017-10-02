@@ -101,6 +101,32 @@ final class Utils {
         return false;
     }
 
+    public static boolean setAutoFocusMode(@NonNull Camera.Parameters parameters,
+            @CodeScanner.AutoFocusMode int autoFocusMode) {
+        List<String> focusModes = parameters.getSupportedFocusModes();
+        if (focusModes == null || focusModes.isEmpty()) {
+            return false;
+        }
+        if (autoFocusMode == CodeScanner.AUTO_FOCUS_MODE_CONTINUOUS) {
+            if (Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE.equals(parameters.getFocusMode())) {
+                return false;
+            }
+            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                return true;
+            }
+        }
+        if (Camera.Parameters.FOCUS_MODE_AUTO.equals(parameters.getFocusMode())) {
+            return false;
+        }
+        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public static boolean setFlashMode(@NonNull Camera.Parameters parameters,
             @NonNull String flashMode) {
         if (flashMode.equals(parameters.getFlashMode())) {
