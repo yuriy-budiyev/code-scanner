@@ -222,10 +222,9 @@ public final class CodeScanner {
     }
 
     /**
-     * Set auto focus interval in milliseconds for safe mode
+     * Set auto focus interval in milliseconds for safe mode, 1500 by default
      *
      * @see #setAutoFocusMode(int)
-     * @see #AUTO_FOCUS_MODE_SAFE
      */
     public void setAutoFocusInterval(long autoFocusInterval) {
         mAutoFocusInterval = autoFocusInterval;
@@ -792,10 +791,9 @@ public final class CodeScanner {
         }
 
         /**
-         * Auto focus interval in milliseconds for safe mode
+         * Auto focus interval in milliseconds for safe mode, 1500 by default
          *
          * @see #setAutoFocusMode(int)
-         * @see #AUTO_FOCUS_MODE_SAFE
          */
         @NonNull
         public Builder autoFocusInterval(long interval) {
