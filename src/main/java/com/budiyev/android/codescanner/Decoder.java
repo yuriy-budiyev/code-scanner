@@ -41,6 +41,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 final class Decoder {
+    public static final int STATE_IDLE = 0;
+    public static final int STATE_DECODING = 1;
+    public static final int STATE_DECODED = 2;
     private final BlockingQueue<DecodeTask> mDecodeQueue = new LinkedBlockingQueue<>();
     private final MultiFormatReader mReader;
     private final DecoderThread mDecoderThread;
@@ -97,19 +100,19 @@ final class Decoder {
         public void run() {
             for (; ; ) {
                 try {
-                    mStateListener.onStateChanged(Decoder.State.IDLE);
+                    mStateListener.onStateChanged(STATE_IDLE);
                     Result result = null;
                     DecodeCallback callback = null;
                     try {
                         DecodeTask task = mDecodeQueue.take();
                         mProcessing = true;
-                        mStateListener.onStateChanged(Decoder.State.DECODING);
+                        mStateListener.onStateChanged(STATE_DECODING);
                         result = task.decode(mReader);
                         callback = task.getCallback();
                     } catch (ReaderException ignored) {
                     } finally {
                         if (result != null) {
-                            mStateListener.onStateChanged(Decoder.State.DECODED);
+                            mStateListener.onStateChanged(STATE_DECODED);
                             if (callback != null) {
                                 callback.onDecoded(result);
                             }
@@ -128,10 +131,7 @@ final class Decoder {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({State.IDLE, State.DECODING, State.DECODED})
+    @IntDef({STATE_IDLE, STATE_DECODING, STATE_DECODED})
     public @interface State {
-        int IDLE = 0;
-        int DECODING = 1;
-        int DECODED = 2;
     }
 }

@@ -67,6 +67,8 @@ public final class CodeScanner {
     public static final List<BarcodeFormat> TWO_DIMENSIONAL_FORMATS =
             Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.DATA_MATRIX, BarcodeFormat.MAXICODE,
                     BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE);
+    public static final int AUTO_FOCUS_MODE_SAFE = 0;
+    public static final int AUTO_FOCUS_MODE_CONTINUOUS = 1;
     private static final long AUTO_FOCUS_INTERVAL = 1500L;
     private static final int UNSPECIFIED = -1;
     private static final int FOCUS_ATTEMPTS_THRESHOLD = 2;
@@ -503,7 +505,7 @@ public final class CodeScanner {
     private final class DecoderStateListener implements Decoder.StateListener {
         @Override
         public void onStateChanged(int state) {
-            if (state == Decoder.State.DECODED) {
+            if (state == Decoder.STATE_DECODED) {
                 mStoppingPreview = true;
                 mMainThreadHandler.post(mStopPreviewTask);
             }
@@ -781,9 +783,7 @@ public final class CodeScanner {
     }
 
     @Retention(RetentionPolicy.SOURCE)
-    @IntDef({AutoFocusMode.SAFE, AutoFocusMode.CONTINUOUS})
+    @IntDef({AUTO_FOCUS_MODE_SAFE, AUTO_FOCUS_MODE_CONTINUOUS})
     public @interface AutoFocusMode {
-        int SAFE = 0;
-        int CONTINUOUS = 1;
     }
 }
