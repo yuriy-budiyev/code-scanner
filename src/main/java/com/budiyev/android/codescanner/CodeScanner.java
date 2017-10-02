@@ -570,7 +570,6 @@ public final class CodeScanner {
         }
 
         @Override
-        @SuppressWarnings("SuspiciousNameCombination")
         public void run() {
             try {
                 initialize();
