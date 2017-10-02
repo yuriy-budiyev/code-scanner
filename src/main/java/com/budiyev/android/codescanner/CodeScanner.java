@@ -233,9 +233,12 @@ public final class CodeScanner {
 
     /**
      * Set auto focus mode, {@link #AUTO_FOCUS_MODE_SAFE} by default
-     *
-     * @see #AUTO_FOCUS_MODE_SAFE
-     * @see #AUTO_FOCUS_MODE_CONTINUOUS
+     * <br>
+     * <b>Modes:</b>
+     * <ul>
+     * <li>{@link #AUTO_FOCUS_MODE_SAFE} - auto focus camera with the specified interval</li>
+     * <li>{@link #AUTO_FOCUS_MODE_CONTINUOUS} - continuous auto focus, may not work on some devices</li>
+     * </ul>
      */
     public void setAutoFocusMode(@AutoFocusMode int autoFocusMode) {
         mInitializeLock.lock();
@@ -802,9 +805,12 @@ public final class CodeScanner {
 
         /**
          * Auto focus mode, {@link #AUTO_FOCUS_MODE_SAFE} by default
-         *
-         * @see #AUTO_FOCUS_MODE_SAFE
-         * @see #AUTO_FOCUS_MODE_CONTINUOUS
+         * <br>
+         * <b>Modes:</b>
+         * <ul>
+         * <li>{@link #AUTO_FOCUS_MODE_SAFE} - auto focus camera with the specified interval</li>
+         * <li>{@link #AUTO_FOCUS_MODE_CONTINUOUS} - continuous auto focus, may not work on some devices</li>
+         * </ul>
          */
         @NonNull
         public Builder autoFocusMode(@AutoFocusMode int mode) {
