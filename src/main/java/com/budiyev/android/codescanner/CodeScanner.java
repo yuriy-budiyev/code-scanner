@@ -465,7 +465,7 @@ public final class CodeScanner {
         }
     }
 
-    private void autoFocusCameraSafe() {
+    private void safeAutoFocusCamera() {
         if (!mInitialized || !mPreviewActive) {
             return;
         }
@@ -476,7 +476,9 @@ public final class CodeScanner {
             mSafeAutoFocusAttemptsCount++;
         } else {
             try {
-                mDecoderWrapper.getCamera().autoFocus(mSafeAutoFocusCallback);
+                Camera camera = mDecoderWrapper.getCamera();
+                camera.cancelAutoFocus();
+                camera.autoFocus(mSafeAutoFocusCallback);
                 mSafeAutoFocusAttemptsCount = 0;
                 mSafeAutoFocusing = true;
             } catch (Exception e) {
@@ -672,7 +674,7 @@ public final class CodeScanner {
         public void run() {
             mSafeAutoFocusTaskScheduled = false;
             if (mAutoFocusMode == AUTO_FOCUS_MODE_SAFE) {
-                autoFocusCameraSafe();
+                safeAutoFocusCamera();
             }
         }
     }
