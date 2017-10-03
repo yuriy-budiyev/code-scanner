@@ -706,6 +706,7 @@ public final class CodeScanner {
      * New builder instance
      */
     @NonNull
+    @MainThread
     public static Builder builder() {
         return new Builder();
     }
@@ -731,6 +732,7 @@ public final class CodeScanner {
          * First back-facing camera on the device by default.
          */
         @NonNull
+        @MainThread
         public Builder camera(int cameraId) {
             mCameraId = cameraId;
             return this;
@@ -746,6 +748,7 @@ public final class CodeScanner {
          * @see #TWO_DIMENSIONAL_FORMATS
          */
         @NonNull
+        @MainThread
         public Builder formats(@NonNull List<BarcodeFormat> formats) {
             mFormats = formats;
             return this;
@@ -761,6 +764,7 @@ public final class CodeScanner {
          * @see #TWO_DIMENSIONAL_FORMATS
          */
         @NonNull
+        @MainThread
         public Builder formats(@NonNull BarcodeFormat... formats) {
             mFormats = Arrays.asList(formats);
             return this;
@@ -773,6 +777,7 @@ public final class CodeScanner {
          * @see DecodeCallback
          */
         @NonNull
+        @MainThread
         public Builder onDecoded(@Nullable DecodeCallback callback) {
             mDecodeCallback = callback;
             return this;
@@ -787,6 +792,7 @@ public final class CodeScanner {
          * @see ErrorCallback
          */
         @NonNull
+        @MainThread
         public Builder onError(@Nullable ErrorCallback callback) {
             mErrorCallback = callback;
             return this;
@@ -796,6 +802,7 @@ public final class CodeScanner {
          * Whether to enable or disable auto focus if it's supported, {@code true} by default
          */
         @NonNull
+        @MainThread
         public Builder autoFocus(boolean enabled) {
             mAutoFocusEnabled = enabled;
             return this;
@@ -807,6 +814,7 @@ public final class CodeScanner {
          * @see #setAutoFocusMode(int)
          */
         @NonNull
+        @MainThread
         public Builder autoFocusInterval(long interval) {
             mAutoFocusInterval = interval;
             return this;
@@ -822,6 +830,7 @@ public final class CodeScanner {
          * </ul>
          */
         @NonNull
+        @MainThread
         public Builder autoFocusMode(@AutoFocusMode int mode) {
             mAutoFocusMode = mode;
             return this;
@@ -831,6 +840,7 @@ public final class CodeScanner {
          * Whether to enable or disable flash light if it's supported, {@code false} by default
          */
         @NonNull
+        @MainThread
         public Builder flash(boolean enabled) {
             mFlashEnabled = enabled;
             return this;
@@ -844,6 +854,7 @@ public final class CodeScanner {
          * @see CodeScannerView
          */
         @NonNull
+        @MainThread
         public CodeScanner build(@NonNull Context context, @NonNull CodeScannerView view) {
             CodeScanner scanner = new CodeScanner(context, view, mCameraId);
             scanner.mFormats = mFormats;
