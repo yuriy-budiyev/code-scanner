@@ -86,7 +86,7 @@ public final class CodeScanner {
     private volatile boolean mStoppingPreview;
     private volatile boolean mAutoFocusEnabled = true;
     private volatile boolean mFlashEnabled;
-    private volatile long mSafeAutoFocusInterval = 1500L;
+    private volatile long mSafeAutoFocusInterval = 2000L;
     private volatile int mAutoFocusMode = AUTO_FOCUS_MODE_SAFE;
     private boolean mPreviewActive;
     private boolean mSafeAutoFocusing;
@@ -227,7 +227,7 @@ public final class CodeScanner {
     }
 
     /**
-     * Set auto focus interval in milliseconds for safe mode, 1500 by default
+     * Set auto focus interval in milliseconds for safe mode, 2000 by default
      *
      * @see #setAutoFocusMode(int)
      */
@@ -724,7 +724,7 @@ public final class CodeScanner {
         private DecodeCallback mDecodeCallback;
         private ErrorCallback mErrorCallback;
         private boolean mAutoFocusEnabled = true;
-        private long mAutoFocusInterval = 1500L;
+        private long mAutoFocusInterval = 2000L;
         private int mAutoFocusMode = AUTO_FOCUS_MODE_SAFE;
         private boolean mFlashEnabled;
 
@@ -813,7 +813,7 @@ public final class CodeScanner {
         }
 
         /**
-         * Auto focus interval in milliseconds for safe mode, 1500 by default
+         * Auto focus interval in milliseconds for safe mode, 2000 by default
          *
          * @see #setAutoFocusMode(int)
          */
