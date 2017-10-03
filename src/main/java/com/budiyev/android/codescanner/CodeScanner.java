@@ -494,6 +494,16 @@ public final class CodeScanner {
         mMainThreadHandler.postDelayed(mSafeAutoFocusTask, mSafeAutoFocusInterval);
     }
 
+    boolean isAutoFocusSupportedOrUnknown() {
+        DecoderWrapper wrapper = mDecoderWrapper;
+        return wrapper == null || wrapper.isAutoFocusSupported();
+    }
+
+    boolean isFlashSupportedOrUnknown() {
+        DecoderWrapper wrapper = mDecoderWrapper;
+        return wrapper == null || wrapper.isFlashSupported();
+    }
+
     private final class ScannerLayoutListener implements CodeScannerView.LayoutListener {
         @Override
         public void onLayout(int width, int height) {
@@ -552,16 +562,6 @@ public final class CodeScanner {
                 mMainThreadHandler.post(mStopPreviewTask);
             }
         }
-    }
-
-    boolean isAutoFocusSupportedOrUnknown() {
-        DecoderWrapper wrapper = mDecoderWrapper;
-        return wrapper == null || wrapper.isAutoFocusSupported();
-    }
-
-    boolean isFlashSupportedOrUnknown() {
-        DecoderWrapper wrapper = mDecoderWrapper;
-        return wrapper == null || wrapper.isFlashSupported();
     }
 
     private final class InitializationThread extends Thread {
@@ -703,7 +703,11 @@ public final class CodeScanner {
     }
 
     /**
-     * New builder instance
+     * New builder instance. Use it to pre-configure scanner. Note that all parameters
+     * also can be changed after scanner created and when preview is active.
+     *
+     * Call {@link Builder#build(Context, CodeScannerView)} to create
+     * scanner instance with specified parameters.
      */
     @NonNull
     @MainThread
