@@ -64,7 +64,7 @@ public final class CodeScanner {
     public static final int AUTO_FOCUS_MODE_SAFE = 0;
     public static final int AUTO_FOCUS_MODE_CONTINUOUS = 1;
     private static final int UNSPECIFIED = -1;
-    private static final int FOCUS_ATTEMPTS_THRESHOLD = 2;
+    private static final int SAFE_AUTO_FOCUS_ATTEMPTS_THRESHOLD = 2;
     private final Lock mInitializeLock = new ReentrantLock();
     private final Context mContext;
     private final Handler mMainThreadHandler;
@@ -472,7 +472,7 @@ public final class CodeScanner {
         if (!mDecoderWrapper.isAutoFocusSupported() || !mAutoFocusEnabled) {
             return;
         }
-        if (mSafeAutoFocusing && mSafeAutoFocusAttemptsCount < FOCUS_ATTEMPTS_THRESHOLD) {
+        if (mSafeAutoFocusing && mSafeAutoFocusAttemptsCount < SAFE_AUTO_FOCUS_ATTEMPTS_THRESHOLD) {
             mSafeAutoFocusAttemptsCount++;
         } else {
             try {
