@@ -63,7 +63,7 @@ public final class CodeScanner {
                     BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE);
     public static final int AUTO_FOCUS_MODE_SAFE = 0;
     public static final int AUTO_FOCUS_MODE_CONTINUOUS = 1;
-    private static final int UNSPECIFIED = -1;
+    public static final int UNSPECIFIED = -1;
     private static final int SAFE_AUTO_FOCUS_ATTEMPTS_THRESHOLD = 2;
     private final Lock mInitializeLock = new ReentrantLock();
     private final Context mContext;
@@ -76,7 +76,6 @@ public final class CodeScanner {
     private final Runnable mSafeAutoFocusTask;
     private final Runnable mStopPreviewTask;
     private final DecoderStateListener mDecoderStateListener;
-    private final int mCameraId;
     private volatile List<BarcodeFormat> mFormats = ALL_FORMATS;
     private volatile DecodeCallback mDecodeCallback;
     private volatile ErrorCallback mErrorCallback;
@@ -88,6 +87,7 @@ public final class CodeScanner {
     private volatile boolean mFlashEnabled;
     private volatile long mSafeAutoFocusInterval = 2000L;
     private volatile int mAutoFocusMode = AUTO_FOCUS_MODE_SAFE;
+    private volatile int mCameraId;
     private boolean mPreviewActive;
     private boolean mSafeAutoFocusing;
     private boolean mSafeAutoFocusTaskScheduled;
@@ -111,7 +111,8 @@ public final class CodeScanner {
      * @param context  Context
      * @param view     A view to display the preview
      * @param cameraId Camera id (between {@code 0} and
-     *                 {@link Camera#getNumberOfCameras()} - {@code 1})
+     *                 {@link Camera#getNumberOfCameras()} - {@code 1}
+     *                 or {@link #UNSPECIFIED})
      * @see CodeScannerView
      */
     @MainThread
@@ -128,6 +129,32 @@ public final class CodeScanner {
         mDecoderStateListener = new DecoderStateListener();
         mCameraId = cameraId;
         mScannerView.setCodeScanner(this);
+    }
+
+    /**
+     * Set camera
+     *
+     * @param cameraId Camera id (between {@code 0} and
+     *                 {@link Camera#getNumberOfCameras()} - {@code 1}
+     *                 or {@link #UNSPECIFIED})
+     */
+    @MainThread
+    public void setCamera(int cameraId) {
+        mInitializeLock.lock();
+        try {
+            if (mCameraId != cameraId) {
+                mCameraId = cameraId;
+                if (mInitialized) {
+                    boolean previewActive = mPreviewActive;
+                    releaseResources();
+                    if (previewActive) {
+                        initialize();
+                    }
+                }
+            }
+        } finally {
+            mInitializeLock.unlock();
+        }
     }
 
     /**
@@ -299,7 +326,6 @@ public final class CodeScanner {
         mInitializeLock.lock();
         try {
             if (!mInitialized && !mInitialization) {
-                mInitialization = true;
                 initialize();
                 return;
             }
@@ -337,6 +363,7 @@ public final class CodeScanner {
     }
 
     private void initialize() {
+        mInitialization = true;
         if (Utils.isLaidOut(mScannerView)) {
             initialize(mScannerView.getWidth(), mScannerView.getHeight());
         } else {
@@ -600,18 +627,20 @@ public final class CodeScanner {
         private void initialize() {
             Camera camera = null;
             Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-            if (mCameraId == UNSPECIFIED) {
+            int cameraId = mCameraId;
+            if (cameraId == UNSPECIFIED) {
                 int numberOfCameras = Camera.getNumberOfCameras();
                 for (int i = 0; i < numberOfCameras; i++) {
                     Camera.getCameraInfo(i, cameraInfo);
                     if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
                         camera = Camera.open(i);
+                        mCameraId = i;
                         break;
                     }
                 }
             } else {
-                camera = Camera.open(mCameraId);
-                Camera.getCameraInfo(mCameraId, cameraInfo);
+                camera = Camera.open(cameraId);
+                Camera.getCameraInfo(cameraId, cameraInfo);
             }
             if (camera == null) {
                 throw new RuntimeException("Unable to access camera");
@@ -735,7 +764,11 @@ public final class CodeScanner {
 
         /**
          * Camera that will be used by scanner.
-         * First back-facing camera on the device by default.
+         * First back-facing camera on the device by default ({@link #UNSPECIFIED}).
+         *
+         * @param cameraId Camera id (between {@code 0} and
+         *                 {@link Camera#getNumberOfCameras()} - {@code 1}
+         *                 or {@link #UNSPECIFIED})
          */
         @NonNull
         @MainThread
