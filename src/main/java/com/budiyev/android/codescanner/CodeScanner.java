@@ -726,31 +726,31 @@ public final class CodeScanner {
         }
     }
 
-    public static void checkCameraId(int cameraId) {
+    private static void checkCameraId(int cameraId) {
         if (cameraId != UNSPECIFIED && (cameraId < 0 || cameraId >= Camera.getNumberOfCameras())) {
             throw new IllegalArgumentException("Invalid camera id");
         }
     }
 
-    public static void checkFormats(@Nullable List<?> formats) {
+    private static void checkFormats(@Nullable List<?> formats) {
         if (formats == null || formats.isEmpty()) {
             throw new IllegalArgumentException("Format list can't be null or empty");
         }
     }
 
-    public static void checkFormats(@Nullable Object[] formats) {
+    private static void checkFormats(@Nullable Object[] formats) {
         if (formats == null || formats.length == 0) {
             throw new IllegalArgumentException("Format list can't be null or empty");
         }
     }
 
-    public static void checkAutoFocusInterval(long autoFocusInterval) {
+    private static void checkAutoFocusInterval(long autoFocusInterval) {
         if (autoFocusInterval <= 0) {
             throw new IllegalArgumentException("Invalid auto focus interval");
         }
     }
 
-    public static void checkAutoFocusMode(@AutoFocusMode int autoFocusMode) {
+    private static void checkAutoFocusMode(@AutoFocusMode int autoFocusMode) {
         if (autoFocusMode != AUTO_FOCUS_MODE_SAFE && autoFocusMode != AUTO_FOCUS_MODE_CONTINUOUS) {
             throw new IllegalArgumentException("Invalid auto focus mode");
         }
