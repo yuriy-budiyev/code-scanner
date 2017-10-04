@@ -24,7 +24,7 @@ Code scanner library based on [ZXing](https://github.com/zxing/zxing)
 Add dependency:
 ```
 dependencies {
-    implementation 'com.budiyev.android:code-scanner:1.5.0'
+    implementation 'com.budiyev.android:code-scanner:1.5.1'
 }
 ```
 Add camera permission to AndroidManifest.xml (Don't forget about dynamic permissions on API >= 23):
