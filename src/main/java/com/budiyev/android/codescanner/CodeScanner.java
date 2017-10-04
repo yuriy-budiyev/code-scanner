@@ -732,13 +732,13 @@ public final class CodeScanner {
         }
     }
 
-    private static void checkFormats(@Nullable List<?> formats) {
+    private static void checkFormats(List<?> formats) {
         if (formats == null || formats.isEmpty()) {
             throw new IllegalArgumentException("Format list can't be null or empty");
         }
     }
 
-    private static void checkFormats(@Nullable Object[] formats) {
+    private static void checkFormats(Object[] formats) {
         if (formats == null || formats.length == 0) {
             throw new IllegalArgumentException("Format list can't be null or empty");
         }
@@ -750,7 +750,7 @@ public final class CodeScanner {
         }
     }
 
-    private static void checkAutoFocusMode(@AutoFocusMode int autoFocusMode) {
+    private static void checkAutoFocusMode(int autoFocusMode) {
         if (autoFocusMode != AUTO_FOCUS_MODE_SAFE && autoFocusMode != AUTO_FOCUS_MODE_CONTINUOUS) {
             throw new IllegalArgumentException("Invalid auto focus mode");
         }
