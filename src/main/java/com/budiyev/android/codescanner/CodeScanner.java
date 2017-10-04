@@ -40,7 +40,6 @@ import com.google.zxing.BarcodeFormat;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -140,6 +139,7 @@ public final class CodeScanner {
      */
     @MainThread
     public void setCamera(int cameraId) {
+        checkCameraId(cameraId);
         mInitializeLock.lock();
         try {
             if (mCameraId != cameraId) {
@@ -168,6 +168,7 @@ public final class CodeScanner {
      */
     @MainThread
     public void setFormats(@NonNull List<BarcodeFormat> formats) {
+        checkFormats(formats);
         mInitializeLock.lock();
         try {
             if (mInitialized) {
@@ -191,18 +192,8 @@ public final class CodeScanner {
      */
     @MainThread
     public void setFormats(@NonNull BarcodeFormat... formats) {
+        checkFormats(formats);
         setFormats(Arrays.asList(formats));
-    }
-
-    /**
-     * Set format, decoder to react to
-     *
-     * @param format Format
-     * @see BarcodeFormat
-     */
-    @MainThread
-    public void setFormat(@NonNull BarcodeFormat format) {
-        setFormats(Collections.singletonList(format));
     }
 
     /**
@@ -259,6 +250,7 @@ public final class CodeScanner {
      * @see #setAutoFocusMode(int)
      */
     public void setAutoFocusInterval(long autoFocusInterval) {
+        checkAutoFocusInterval(autoFocusInterval);
         mSafeAutoFocusInterval = autoFocusInterval;
     }
 
@@ -273,6 +265,7 @@ public final class CodeScanner {
      */
     @MainThread
     public void setAutoFocusMode(@AutoFocusMode int autoFocusMode) {
+        checkAutoFocusMode(autoFocusMode);
         mInitializeLock.lock();
         try {
             mAutoFocusMode = autoFocusMode;
@@ -733,6 +726,36 @@ public final class CodeScanner {
         }
     }
 
+    public static void checkCameraId(int cameraId) {
+        if (cameraId != UNSPECIFIED && (cameraId < 0 || cameraId >= Camera.getNumberOfCameras())) {
+            throw new IllegalArgumentException("Invalid camera id");
+        }
+    }
+
+    public static void checkFormats(@Nullable List<?> formats) {
+        if (formats == null || formats.isEmpty()) {
+            throw new IllegalArgumentException("Format list can't be null or empty");
+        }
+    }
+
+    public static void checkFormats(@Nullable Object[] formats) {
+        if (formats == null || formats.length == 0) {
+            throw new IllegalArgumentException("Format list can't be null or empty");
+        }
+    }
+
+    public static void checkAutoFocusInterval(long autoFocusInterval) {
+        if (autoFocusInterval <= 0) {
+            throw new IllegalArgumentException("Invalid auto focus interval");
+        }
+    }
+
+    public static void checkAutoFocusMode(@AutoFocusMode int autoFocusMode) {
+        if (autoFocusMode != AUTO_FOCUS_MODE_SAFE && autoFocusMode != AUTO_FOCUS_MODE_CONTINUOUS) {
+            throw new IllegalArgumentException("Invalid auto focus mode");
+        }
+    }
+
     /**
      * New builder instance. Use it to pre-configure scanner. Note that all parameters
      * also can be changed after scanner created and when preview is active.
@@ -773,6 +796,7 @@ public final class CodeScanner {
         @NonNull
         @MainThread
         public Builder camera(int cameraId) {
+            checkCameraId(cameraId);
             mCameraId = cameraId;
             return this;
         }
@@ -789,6 +813,7 @@ public final class CodeScanner {
         @NonNull
         @MainThread
         public Builder formats(@NonNull List<BarcodeFormat> formats) {
+            checkFormats(formats);
             mFormats = formats;
             return this;
         }
@@ -805,6 +830,7 @@ public final class CodeScanner {
         @NonNull
         @MainThread
         public Builder formats(@NonNull BarcodeFormat... formats) {
+            checkFormats(formats);
             mFormats = Arrays.asList(formats);
             return this;
         }
@@ -855,6 +881,7 @@ public final class CodeScanner {
         @NonNull
         @MainThread
         public Builder autoFocusInterval(long interval) {
+            checkAutoFocusInterval(interval);
             mAutoFocusInterval = interval;
             return this;
         }
@@ -871,6 +898,7 @@ public final class CodeScanner {
         @NonNull
         @MainThread
         public Builder autoFocusMode(@AutoFocusMode int mode) {
+            checkAutoFocusMode(mode);
             mAutoFocusMode = mode;
             return this;
         }
