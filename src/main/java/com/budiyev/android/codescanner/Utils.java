@@ -72,18 +72,15 @@ final class Utils {
             for (Camera.Size size : sizes) {
                 int width = size.width;
                 int height = size.height;
-                if (width * height < MIN_PREVIEW_PIXELS) {
-                    continue;
+                if (width * height >= MIN_PREVIEW_PIXELS &&
+                        Math.abs(frameRatio - (float) width / (float) height) <= MAX_DISTORTION) {
+                    return new Point(width, height);
                 }
-                if (Math.abs(frameRatio - (float) width / (float) height) > MAX_DISTORTION) {
-                    continue;
-                }
-                return new Point(width, height);
             }
         }
         Camera.Size defaultSize = parameters.getPreviewSize();
         if (defaultSize == null) {
-            throw new RuntimeException("Can't get camera preview size");
+            throw new CodeScannerException("Unable to configure camera preview size");
         }
         return new Point(defaultSize.width, defaultSize.height);
     }
@@ -157,7 +154,7 @@ final class Utils {
         WindowManager windowManager =
                 (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         if (windowManager == null) {
-            throw new RuntimeException("Can't access window manager");
+            throw new CodeScannerException("Unable to access window manager");
         }
         int degrees;
         int rotation = windowManager.getDefaultDisplay().getRotation();
@@ -178,7 +175,7 @@ final class Utils {
                 if (rotation % 90 == 0) {
                     degrees = (360 + rotation) % 360;
                 } else {
-                    throw new RuntimeException("Bad rotation: " + rotation);
+                    throw new CodeScannerException("Invalid display rotation");
                 }
         }
         return ((cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT ? 180 : 360) +

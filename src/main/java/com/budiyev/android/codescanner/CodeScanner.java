@@ -643,11 +643,11 @@ public final class CodeScanner {
                 Camera.getCameraInfo(cameraId, cameraInfo);
             }
             if (camera == null) {
-                throw new RuntimeException("Unable to access camera");
+                throw new CodeScannerException("Unable to access camera");
             }
             Camera.Parameters parameters = camera.getParameters();
             if (parameters == null) {
-                throw new RuntimeException("Unable to configure camera");
+                throw new CodeScannerException("Unable to configure camera");
             }
             int orientation = Utils.getDisplayOrientation(mContext, cameraInfo);
             boolean portrait = Utils.isPortrait(orientation);
