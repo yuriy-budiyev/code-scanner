@@ -1,7 +1,10 @@
 # Code Scanner
-[![Download](https://api.bintray.com/packages/yuriy-budiyev/maven/code-scanner/images/download.svg) ](https://bintray.com/yuriy-budiyev/maven/code-scanner/_latestVersion) [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Code%20Scanner-brightgreen.svg?style=flat)](https://android-arsenal.com/details/1/6095) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/04f32141b2ef480580f709883541b469)](https://www.codacy.com/app/yuriy-budiyev/code-scanner?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yuriy-budiyev/code-scanner&amp;utm_campaign=Badge_Grade)
+[![Download](https://api.bintray.com/packages/yuriy-budiyev/maven/code-scanner/images/download.svg)](https://bintray.com/yuriy-budiyev/maven/code-scanner/_latestVersion)
+[![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Code%20Scanner-blue.svg?style=flat)](https://android-arsenal.com/details/1/6095)
+[![API](https://img.shields.io/badge/API-14%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=14)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/04f32141b2ef480580f709883541b469)](https://www.codacy.com/app/yuriy-budiyev/code-scanner?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yuriy-budiyev/code-scanner&amp;utm_campaign=Badge_Grade)
 
-Code scanner library based on [ZXing](https://github.com/zxing/zxing)
+Code scanner library for [Android](https://developer.android.com), based on [ZXing](https://github.com/zxing/zxing)
 
 ### Features
 * Auto focus and flash light control
