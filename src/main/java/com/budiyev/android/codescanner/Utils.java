@@ -52,14 +52,11 @@ final class Utils {
     private Utils() {
     }
 
-    @NonNull
-    public static Camera.Parameters optimizeParameters(@NonNull Camera.Parameters parameters) {
+    public static void optimizeParameters(@NonNull Camera.Parameters parameters) {
         CameraConfigurationUtils.setBestPreviewFPS(parameters);
         CameraConfigurationUtils.setBarcodeSceneMode(parameters);
-        CameraConfigurationUtils.setBestExposure(parameters, false);
         CameraConfigurationUtils.setVideoStabilization(parameters);
         parameters.setPreviewFormat(ImageFormat.NV21);
-        return parameters;
     }
 
     @NonNull

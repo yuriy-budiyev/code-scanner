@@ -35,6 +35,7 @@ import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -446,6 +447,7 @@ public final class CodeScanner {
                 changed = Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_OFF);
             }
             if (changed) {
+                CameraConfigurationUtils.setBestExposure(parameters, flashEnabled);
                 camera.setParameters(parameters);
             }
         } catch (Exception ignored) {
@@ -662,7 +664,9 @@ public final class CodeScanner {
             if (!flashSupported) {
                 mFlashEnabled = false;
             }
-            camera.setParameters(Utils.optimizeParameters(parameters));
+            Utils.optimizeParameters(parameters);
+            CameraConfigurationUtils.setBestExposure(parameters, mFlashEnabled);
+            camera.setParameters(parameters);
             camera.setDisplayOrientation(orientation);
             mInitializeLock.lock();
             try {
