@@ -58,7 +58,7 @@ public final class CodeScanner {
     public static final List<BarcodeFormat> TWO_DIMENSIONAL_FORMATS =
             Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.DATA_MATRIX, BarcodeFormat.MAXICODE,
                     BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE);
-    private static final int UNSPECIFIED = -1;
+    private static final int CAMERA_DEFAULT = -1;
     private static final int SAFE_AUTO_FOCUS_ATTEMPTS_THRESHOLD = 2;
     private final Lock mInitializeLock = new ReentrantLock();
     private final Context mContext;
@@ -97,7 +97,7 @@ public final class CodeScanner {
      */
     @MainThread
     public CodeScanner(@NonNull Context context, @NonNull CodeScannerView view) {
-        this(context, view, UNSPECIFIED);
+        this(context, view, CAMERA_DEFAULT);
     }
 
     /**
@@ -247,15 +247,6 @@ public final class CodeScanner {
     }
 
     /**
-     * Set auto focus interval in milliseconds for safe mode, 2000 by default
-     *
-     * @see #setAutoFocusMode(AutoFocusMode)
-     */
-    public void setAutoFocusInterval(long autoFocusInterval) {
-        mSafeAutoFocusInterval = autoFocusInterval;
-    }
-
-    /**
      * Set auto focus mode, {@link AutoFocusMode#SAFE} by default
      *
      * @see AutoFocusMode
@@ -271,6 +262,15 @@ public final class CodeScanner {
         } finally {
             mInitializeLock.unlock();
         }
+    }
+
+    /**
+     * Set auto focus interval in milliseconds for safe mode, 2000 by default
+     *
+     * @see #setAutoFocusMode(AutoFocusMode)
+     */
+    public void setAutoFocusInterval(long autoFocusInterval) {
+        mSafeAutoFocusInterval = autoFocusInterval;
     }
 
     /**
@@ -617,7 +617,7 @@ public final class CodeScanner {
             Camera camera = null;
             Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
             int cameraId = mCameraId;
-            if (cameraId == UNSPECIFIED) {
+            if (cameraId == CAMERA_DEFAULT) {
                 int numberOfCameras = Camera.getNumberOfCameras();
                 for (int i = 0; i < numberOfCameras; i++) {
                     Camera.getCameraInfo(i, cameraInfo);
@@ -739,7 +739,7 @@ public final class CodeScanner {
      * Code scanner builder
      */
     public static final class Builder {
-        private int mCameraId = UNSPECIFIED;
+        private int mCameraId = CAMERA_DEFAULT;
         private List<BarcodeFormat> mFormats = ALL_FORMATS;
         private DecodeCallback mDecodeCallback;
         private ErrorCallback mErrorCallback;
@@ -849,18 +849,6 @@ public final class CodeScanner {
         }
 
         /**
-         * Auto focus interval in milliseconds for safe mode, 2000 by default
-         *
-         * @see #autoFocusMode(AutoFocusMode)
-         */
-        @NonNull
-        @MainThread
-        public Builder autoFocusInterval(long interval) {
-            mAutoFocusInterval = interval;
-            return this;
-        }
-
-        /**
          * Set auto focus mode, {@link AutoFocusMode#SAFE} by default
          *
          * @see AutoFocusMode
@@ -869,6 +857,18 @@ public final class CodeScanner {
         @MainThread
         public Builder autoFocusMode(@NonNull AutoFocusMode mode) {
             mAutoFocusMode = mode;
+            return this;
+        }
+
+        /**
+         * Auto focus interval in milliseconds for safe mode, 2000 by default
+         *
+         * @see #autoFocusMode(AutoFocusMode)
+         */
+        @NonNull
+        @MainThread
+        public Builder autoFocusInterval(long interval) {
+            mAutoFocusInterval = interval;
             return this;
         }
 
