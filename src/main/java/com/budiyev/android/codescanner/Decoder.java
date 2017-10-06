@@ -23,7 +23,6 @@
  */
 package com.budiyev.android.codescanner;
 
-import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 
 import com.google.zxing.BarcodeFormat;
@@ -32,8 +31,6 @@ import com.google.zxing.MultiFormatReader;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -41,9 +38,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 final class Decoder {
-    public static final int STATE_IDLE = 0;
-    public static final int STATE_DECODING = 1;
-    public static final int STATE_DECODED = 2;
     private final BlockingQueue<DecodeTask> mDecodeQueue = new LinkedBlockingQueue<>();
     private final MultiFormatReader mReader;
     private final DecoderThread mDecoderThread;
@@ -100,19 +94,19 @@ final class Decoder {
         public void run() {
             for (; ; ) {
                 try {
-                    mStateListener.onStateChanged(STATE_IDLE);
+                    mStateListener.onStateChanged(Decoder.State.IDLE);
                     Result result = null;
                     DecodeCallback callback = null;
                     try {
                         DecodeTask task = mDecodeQueue.take();
                         mProcessing = true;
-                        mStateListener.onStateChanged(STATE_DECODING);
+                        mStateListener.onStateChanged(Decoder.State.DECODING);
                         result = task.decode(mReader);
                         callback = task.getCallback();
                     } catch (ReaderException ignored) {
                     } finally {
                         if (result != null) {
-                            mStateListener.onStateChanged(STATE_DECODED);
+                            mStateListener.onStateChanged(Decoder.State.DECODED);
                             if (callback != null) {
                                 callback.onDecoded(result);
                             }
@@ -127,11 +121,12 @@ final class Decoder {
     }
 
     public interface StateListener {
-        void onStateChanged(@State int state);
+        void onStateChanged(@NonNull State state);
     }
 
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({STATE_IDLE, STATE_DECODING, STATE_DECODED})
-    public @interface State {
+    public enum State {
+        IDLE,
+        DECODING,
+        DECODED
     }
 }

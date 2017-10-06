@@ -111,12 +111,12 @@ final class Utils {
     }
 
     public static boolean setAutoFocusMode(@NonNull Camera.Parameters parameters,
-            @CodeScanner.AutoFocusMode int autoFocusMode) {
+            AutoFocusMode autoFocusMode) {
         List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes == null || focusModes.isEmpty()) {
             return false;
         }
-        if (autoFocusMode == CodeScanner.AUTO_FOCUS_MODE_CONTINUOUS) {
+        if (autoFocusMode == AutoFocusMode.CONTINUOUS) {
             if (Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE.equals(parameters.getFocusMode())) {
                 return false;
             }

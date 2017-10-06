@@ -29,7 +29,6 @@ import android.content.Context;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.os.Handler;
-import android.support.annotation.IntDef;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -37,8 +36,6 @@ import android.view.SurfaceHolder;
 
 import com.google.zxing.BarcodeFormat;
 
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -61,9 +58,7 @@ public final class CodeScanner {
     public static final List<BarcodeFormat> TWO_DIMENSIONAL_FORMATS =
             Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.DATA_MATRIX, BarcodeFormat.MAXICODE,
                     BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE);
-    public static final int AUTO_FOCUS_MODE_SAFE = 0;
-    public static final int AUTO_FOCUS_MODE_CONTINUOUS = 1;
-    public static final int UNSPECIFIED = -1;
+    private static final int UNSPECIFIED = -1;
     private static final int SAFE_AUTO_FOCUS_ATTEMPTS_THRESHOLD = 2;
     private final Lock mInitializeLock = new ReentrantLock();
     private final Context mContext;
@@ -77,6 +72,7 @@ public final class CodeScanner {
     private final Runnable mStopPreviewTask;
     private final DecoderStateListener mDecoderStateListener;
     private volatile List<BarcodeFormat> mFormats = ALL_FORMATS;
+    private volatile AutoFocusMode mAutoFocusMode = AutoFocusMode.SAFE;
     private volatile DecodeCallback mDecodeCallback;
     private volatile ErrorCallback mErrorCallback;
     private volatile DecoderWrapper mDecoderWrapper;
@@ -86,7 +82,6 @@ public final class CodeScanner {
     private volatile boolean mAutoFocusEnabled = true;
     private volatile boolean mFlashEnabled;
     private volatile long mSafeAutoFocusInterval = 2000L;
-    private volatile int mAutoFocusMode = AUTO_FOCUS_MODE_SAFE;
     private volatile int mCameraId;
     private boolean mPreviewActive;
     private boolean mSafeAutoFocusing;
@@ -111,8 +106,7 @@ public final class CodeScanner {
      * @param context  Context
      * @param view     A view to display the preview
      * @param cameraId Camera id (between {@code 0} and
-     *                 {@link Camera#getNumberOfCameras()} - {@code 1}
-     *                 or {@link #UNSPECIFIED})
+     *                 {@link Camera#getNumberOfCameras()} - {@code 1})
      * @see CodeScannerView
      */
     @MainThread
@@ -135,8 +129,7 @@ public final class CodeScanner {
      * Set camera
      *
      * @param cameraId Camera id (between {@code 0} and
-     *                 {@link Camera#getNumberOfCameras()} - {@code 1}
-     *                 or {@link #UNSPECIFIED})
+     *                 {@link Camera#getNumberOfCameras()} - {@code 1})
      */
     @MainThread
     public void setCamera(int cameraId) {
@@ -256,23 +249,19 @@ public final class CodeScanner {
     /**
      * Set auto focus interval in milliseconds for safe mode, 2000 by default
      *
-     * @see #setAutoFocusMode(int)
+     * @see #setAutoFocusMode(AutoFocusMode)
      */
     public void setAutoFocusInterval(long autoFocusInterval) {
         mSafeAutoFocusInterval = autoFocusInterval;
     }
 
     /**
-     * Set auto focus mode, {@link #AUTO_FOCUS_MODE_SAFE} by default
-     * <br>
-     * <b>Modes:</b>
-     * <ul>
-     * <li>{@link #AUTO_FOCUS_MODE_SAFE} - auto focus camera with the specified interval</li>
-     * <li>{@link #AUTO_FOCUS_MODE_CONTINUOUS} - continuous auto focus, may not work on some devices</li>
-     * </ul>
+     * Set auto focus mode, {@link AutoFocusMode#SAFE} by default
+     *
+     * @see AutoFocusMode
      */
     @MainThread
-    public void setAutoFocusMode(@AutoFocusMode int autoFocusMode) {
+    public void setAutoFocusMode(@NonNull AutoFocusMode autoFocusMode) {
         mInitializeLock.lock();
         try {
             mAutoFocusMode = autoFocusMode;
@@ -389,7 +378,7 @@ public final class CodeScanner {
             mPreviewActive = true;
             mSafeAutoFocusing = false;
             mSafeAutoFocusAttemptsCount = 0;
-            if (mAutoFocusMode == AUTO_FOCUS_MODE_SAFE) {
+            if (mAutoFocusMode == AutoFocusMode.SAFE) {
                 scheduleSafeAutoFocusTask();
             }
         } catch (Exception ignored) {
@@ -471,7 +460,7 @@ public final class CodeScanner {
                 return;
             }
             boolean changed;
-            int autoFocusMode = mAutoFocusMode;
+            AutoFocusMode autoFocusMode = mAutoFocusMode;
             if (autoFocusEnabled) {
                 changed = Utils.setAutoFocusMode(parameters, autoFocusMode);
             } else {
@@ -484,7 +473,7 @@ public final class CodeScanner {
             if (autoFocusEnabled) {
                 mSafeAutoFocusAttemptsCount = 0;
                 mSafeAutoFocusing = false;
-                if (autoFocusMode == AUTO_FOCUS_MODE_SAFE) {
+                if (autoFocusMode == AutoFocusMode.SAFE) {
                     scheduleSafeAutoFocusTask();
                 }
             }
@@ -585,8 +574,8 @@ public final class CodeScanner {
 
     private final class DecoderStateListener implements Decoder.StateListener {
         @Override
-        public void onStateChanged(int state) {
-            if (state == Decoder.STATE_DECODED) {
+        public void onStateChanged(@NonNull Decoder.State state) {
+            if (state == Decoder.State.DECODED) {
                 mStoppingPreview = true;
                 mMainThreadHandler.post(mStopPreviewTask);
             }
@@ -702,7 +691,7 @@ public final class CodeScanner {
         @Override
         public void run() {
             mSafeAutoFocusTaskScheduled = false;
-            if (mAutoFocusMode == AUTO_FOCUS_MODE_SAFE) {
+            if (mAutoFocusMode == AutoFocusMode.SAFE) {
                 safeAutoFocusCamera();
             }
         }
@@ -756,7 +745,7 @@ public final class CodeScanner {
         private ErrorCallback mErrorCallback;
         private boolean mAutoFocusEnabled = true;
         private long mAutoFocusInterval = 2000L;
-        private int mAutoFocusMode = AUTO_FOCUS_MODE_SAFE;
+        private AutoFocusMode mAutoFocusMode = AutoFocusMode.SAFE;
         private boolean mFlashEnabled;
 
         private Builder() {
@@ -764,11 +753,10 @@ public final class CodeScanner {
 
         /**
          * Camera that will be used by scanner.
-         * First back-facing camera on the device by default ({@link #UNSPECIFIED}).
+         * First back-facing camera on the device by default.
          *
          * @param cameraId Camera id (between {@code 0} and
-         *                 {@link Camera#getNumberOfCameras()} - {@code 1}
-         *                 or {@link #UNSPECIFIED})
+         *                 {@link Camera#getNumberOfCameras()} - {@code 1})
          */
         @NonNull
         @MainThread
@@ -863,7 +851,7 @@ public final class CodeScanner {
         /**
          * Auto focus interval in milliseconds for safe mode, 2000 by default
          *
-         * @see #setAutoFocusMode(int)
+         * @see #autoFocusMode(AutoFocusMode)
          */
         @NonNull
         @MainThread
@@ -873,17 +861,13 @@ public final class CodeScanner {
         }
 
         /**
-         * Auto focus mode, {@link #AUTO_FOCUS_MODE_SAFE} by default
-         * <br>
-         * <b>Modes:</b>
-         * <ul>
-         * <li>{@link #AUTO_FOCUS_MODE_SAFE} - auto focus camera with the specified interval</li>
-         * <li>{@link #AUTO_FOCUS_MODE_CONTINUOUS} - continuous auto focus, may not work on some devices</li>
-         * </ul>
+         * Set auto focus mode, {@link AutoFocusMode#SAFE} by default
+         *
+         * @see AutoFocusMode
          */
         @NonNull
         @MainThread
-        public Builder autoFocusMode(@AutoFocusMode int mode) {
+        public Builder autoFocusMode(@NonNull AutoFocusMode mode) {
             mAutoFocusMode = mode;
             return this;
         }
@@ -918,10 +902,5 @@ public final class CodeScanner {
             scanner.mFlashEnabled = mFlashEnabled;
             return scanner;
         }
-    }
-
-    @Retention(RetentionPolicy.SOURCE)
-    @IntDef({AUTO_FOCUS_MODE_SAFE, AUTO_FOCUS_MODE_CONTINUOUS})
-    public @interface AutoFocusMode {
     }
 }
