@@ -29,6 +29,8 @@ package com.budiyev.android.codescanner;
 public enum AutoFocusMode {
     /**
      * Auto focus camera with the specified interval
+     *
+     * @see CodeScanner#setAutoFocusInterval(long)
      */
     SAFE,
 
