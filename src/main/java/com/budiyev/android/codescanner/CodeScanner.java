@@ -62,7 +62,12 @@ public final class CodeScanner {
     public static final List<BarcodeFormat> TWO_DIMENSIONAL_FORMATS =
             Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.DATA_MATRIX, BarcodeFormat.MAXICODE,
                     BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE);
-    private static final int CAMERA_DEFAULT = -1;
+    private static final List<BarcodeFormat> DEFAULT_FORMATS = ALL_FORMATS;
+    private static final AutoFocusMode DEFAULT_AUTO_FOCUS_MODE = AutoFocusMode.SAFE;
+    private static final long DEFAULT_SAFE_AUTO_FOCUS_INTERVAL = 2000L;
+    private static final int DEFAULT_CAMERA = -1;
+    private static final boolean DEFAULT_AUTO_FOCUS_ENABLED = true;
+    private static final boolean DEFAULT_FLASH_ENABLED = false;
     private static final int SAFE_AUTO_FOCUS_ATTEMPTS_THRESHOLD = 2;
     private final Lock mInitializeLock = new ReentrantLock();
     private final Context mContext;
@@ -75,18 +80,18 @@ public final class CodeScanner {
     private final Runnable mSafeAutoFocusTask;
     private final Runnable mStopPreviewTask;
     private final DecoderStateListener mDecoderStateListener;
-    private volatile List<BarcodeFormat> mFormats = ALL_FORMATS;
-    private volatile AutoFocusMode mAutoFocusMode = AutoFocusMode.SAFE;
+    private volatile List<BarcodeFormat> mFormats = DEFAULT_FORMATS;
+    private volatile AutoFocusMode mAutoFocusMode = DEFAULT_AUTO_FOCUS_MODE;
     private volatile DecodeCallback mDecodeCallback;
     private volatile ErrorCallback mErrorCallback;
     private volatile DecoderWrapper mDecoderWrapper;
     private volatile boolean mInitialization;
     private volatile boolean mInitialized;
     private volatile boolean mStoppingPreview;
-    private volatile boolean mAutoFocusEnabled = true;
-    private volatile boolean mFlashEnabled;
-    private volatile long mSafeAutoFocusInterval = 2000L;
-    private volatile int mCameraId;
+    private volatile boolean mAutoFocusEnabled = DEFAULT_AUTO_FOCUS_ENABLED;
+    private volatile boolean mFlashEnabled = DEFAULT_FLASH_ENABLED;
+    private volatile long mSafeAutoFocusInterval = DEFAULT_SAFE_AUTO_FOCUS_INTERVAL;
+    private volatile int mCameraId = DEFAULT_CAMERA;
     private boolean mPreviewActive;
     private boolean mSafeAutoFocusing;
     private boolean mSafeAutoFocusTaskScheduled;
@@ -101,7 +106,17 @@ public final class CodeScanner {
      */
     @MainThread
     public CodeScanner(@NonNull Context context, @NonNull CodeScannerView view) {
-        this(context, view, CAMERA_DEFAULT);
+        mContext = context;
+        mScannerView = view;
+        mSurfaceHolder = view.getPreviewView().getHolder();
+        mMainThreadHandler = new Handler();
+        mSurfaceCallback = new SurfaceCallback();
+        mPreviewCallback = new PreviewCallback();
+        mSafeAutoFocusCallback = new SafeAutoFocusCallback();
+        mSafeAutoFocusTask = new SafeAutoFocusTask();
+        mStopPreviewTask = new StopPreviewTask();
+        mDecoderStateListener = new DecoderStateListener();
+        mScannerView.setCodeScanner(this);
     }
 
     /**
@@ -115,18 +130,8 @@ public final class CodeScanner {
      */
     @MainThread
     public CodeScanner(@NonNull Context context, @NonNull CodeScannerView view, int cameraId) {
-        mContext = context;
-        mScannerView = view;
-        mSurfaceHolder = view.getPreviewView().getHolder();
-        mMainThreadHandler = new Handler();
-        mSurfaceCallback = new SurfaceCallback();
-        mPreviewCallback = new PreviewCallback();
-        mSafeAutoFocusCallback = new SafeAutoFocusCallback();
-        mSafeAutoFocusTask = new SafeAutoFocusTask();
-        mStopPreviewTask = new StopPreviewTask();
-        mDecoderStateListener = new DecoderStateListener();
+        this(context, view);
         mCameraId = cameraId;
-        mScannerView.setCodeScanner(this);
     }
 
     /**
@@ -622,7 +627,7 @@ public final class CodeScanner {
             Camera camera = null;
             Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
             int cameraId = mCameraId;
-            if (cameraId == CAMERA_DEFAULT) {
+            if (cameraId == DEFAULT_CAMERA) {
                 int numberOfCameras = Camera.getNumberOfCameras();
                 for (int i = 0; i < numberOfCameras; i++) {
                     Camera.getCameraInfo(i, cameraInfo);
@@ -746,14 +751,14 @@ public final class CodeScanner {
      * Code scanner builder
      */
     public static final class Builder {
-        private int mCameraId = CAMERA_DEFAULT;
-        private List<BarcodeFormat> mFormats = ALL_FORMATS;
+        private int mCameraId = DEFAULT_CAMERA;
+        private List<BarcodeFormat> mFormats = DEFAULT_FORMATS;
         private DecodeCallback mDecodeCallback;
         private ErrorCallback mErrorCallback;
-        private boolean mAutoFocusEnabled = true;
-        private long mAutoFocusInterval = 2000L;
-        private AutoFocusMode mAutoFocusMode = AutoFocusMode.SAFE;
-        private boolean mFlashEnabled;
+        private boolean mAutoFocusEnabled = DEFAULT_AUTO_FOCUS_ENABLED;
+        private AutoFocusMode mAutoFocusMode = DEFAULT_AUTO_FOCUS_MODE;
+        private long mAutoFocusInterval = DEFAULT_SAFE_AUTO_FOCUS_INTERVAL;
+        private boolean mFlashEnabled = DEFAULT_FLASH_ENABLED;
 
         private Builder() {
         }
@@ -900,7 +905,8 @@ public final class CodeScanner {
         @NonNull
         @MainThread
         public CodeScanner build(@NonNull Context context, @NonNull CodeScannerView view) {
-            CodeScanner scanner = new CodeScanner(context, view, mCameraId);
+            CodeScanner scanner = new CodeScanner(context, view);
+            scanner.mCameraId = mCameraId;
             scanner.mFormats = mFormats;
             scanner.mDecodeCallback = mDecodeCallback;
             scanner.mErrorCallback = mErrorCallback;

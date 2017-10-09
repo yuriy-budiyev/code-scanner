@@ -298,6 +298,7 @@ final class Utils {
     public static final class SuppressErrorCallback implements ErrorCallback {
         @Override
         public void onError(@NonNull Exception error) {
+            // Do nothing
         }
     }
 
