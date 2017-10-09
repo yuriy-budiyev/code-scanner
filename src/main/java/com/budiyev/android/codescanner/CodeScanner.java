@@ -868,7 +868,8 @@ public final class CodeScanner {
         }
 
         /**
-         * Auto focus interval in milliseconds for safe mode, 2000 by default
+         * Set auto focus interval in milliseconds for {@link AutoFocusMode#SAFE} mode,
+         * 2000 by default
          *
          * @see #autoFocusMode(AutoFocusMode)
          */
