@@ -25,6 +25,8 @@ package com.budiyev.android.codescanner;
 
 /**
  * Code scanner auto focus mode
+ *
+ * @see CodeScanner#setAutoFocusMode(AutoFocusMode)
  */
 public enum AutoFocusMode {
     /**
