@@ -23,6 +23,9 @@
  */
 package com.budiyev.android.codescanner;
 
+import android.app.Activity;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.WorkerThread;
 
@@ -39,6 +42,9 @@ public interface ErrorCallback {
      * Called when error has occurred
      *
      * @param error Exception that has been thrown
+     * @see Handler
+     * @see Looper#getMainLooper()
+     * @see Activity#runOnUiThread(Runnable)
      */
     @WorkerThread
     void onError(@NonNull Exception error);
