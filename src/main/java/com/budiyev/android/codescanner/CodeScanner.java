@@ -44,8 +44,11 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
- * Scanner of different codes
+ * Code scanner.
+ * Supports portrait and landscape screen orientations, back and front facing cameras,
+ * auto focus and flash light control, viewfinder customization.
  *
+ * @see CodeScanner#builder()
  * @see CodeScannerView
  * @see BarcodeFormat
  */
@@ -266,7 +269,7 @@ public final class CodeScanner {
     }
 
     /**
-     * Set auto focus interval in milliseconds for safe mode, 2000 by default
+     * Set auto focus interval in milliseconds for {@link AutoFocusMode#SAFE} mode, 2000 by default
      *
      * @see #setAutoFocusMode(AutoFocusMode)
      */

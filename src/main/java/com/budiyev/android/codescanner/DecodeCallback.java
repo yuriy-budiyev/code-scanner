@@ -38,7 +38,7 @@ public interface DecodeCallback {
     /**
      * Called when decoder has successfully decoded the code
      * <br>
-     * Note that this method is called on a worker thread
+     * Note that this method always called on a worker thread
      *
      * @param result Encapsulates the result of decoding a barcode within an image
      * @see Handler

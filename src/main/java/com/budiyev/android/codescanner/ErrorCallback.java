@@ -40,6 +40,8 @@ public interface ErrorCallback {
 
     /**
      * Called when error has occurred
+     * <br>
+     * Note that this method always called on a worker thread
      *
      * @param error Exception that has been thrown
      * @see Handler
