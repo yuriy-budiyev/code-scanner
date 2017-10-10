@@ -36,7 +36,7 @@ import android.view.View;
 final class ViewFinderView extends View {
     private final Paint mMaskPaint;
     private final Paint mFramePaint;
-    private final Path mFramePath;
+    private final Path mPath;
     private Rect mFrameRect;
     private boolean mSquareFrame;
     private int mFrameCornerSize;
@@ -46,7 +46,7 @@ final class ViewFinderView extends View {
         mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFramePaint.setStyle(Paint.Style.STROKE);
-        mFramePath = new Path();
+        mPath = new Path();
     }
 
     @Override
@@ -57,24 +57,26 @@ final class ViewFinderView extends View {
         }
         int width = canvas.getWidth();
         int height = canvas.getHeight();
-        canvas.drawRect(0, 0, width, frameRect.top, mMaskPaint);
-        canvas.drawRect(0, frameRect.top, frameRect.left, frameRect.bottom, mMaskPaint);
-        canvas.drawRect(frameRect.right, frameRect.top, width, frameRect.bottom, mMaskPaint);
-        canvas.drawRect(0, frameRect.bottom, width, height, mMaskPaint);
-        mFramePath.reset();
-        mFramePath.moveTo(frameRect.left, frameRect.top + mFrameCornerSize);
-        mFramePath.lineTo(frameRect.left, frameRect.top);
-        mFramePath.lineTo(frameRect.left + mFrameCornerSize, frameRect.top);
-        mFramePath.moveTo(frameRect.right - mFrameCornerSize, frameRect.top);
-        mFramePath.lineTo(frameRect.right, frameRect.top);
-        mFramePath.lineTo(frameRect.right, frameRect.top + mFrameCornerSize);
-        mFramePath.moveTo(frameRect.right, frameRect.bottom - mFrameCornerSize);
-        mFramePath.lineTo(frameRect.right, frameRect.bottom);
-        mFramePath.lineTo(frameRect.right - mFrameCornerSize, frameRect.bottom);
-        mFramePath.moveTo(frameRect.left + mFrameCornerSize, frameRect.bottom);
-        mFramePath.lineTo(frameRect.left, frameRect.bottom);
-        mFramePath.lineTo(frameRect.left, frameRect.bottom - mFrameCornerSize);
-        canvas.drawPath(mFramePath, mFramePaint);
+        mPath.reset();
+        mPath.addRect(0, 0, width, frameRect.top, Path.Direction.CW);
+        mPath.addRect(0, frameRect.top, frameRect.left, frameRect.bottom, Path.Direction.CW);
+        mPath.addRect(frameRect.right, frameRect.top, width, frameRect.bottom, Path.Direction.CW);
+        mPath.addRect(0, frameRect.bottom, width, height, Path.Direction.CW);
+        canvas.drawPath(mPath, mMaskPaint);
+        mPath.reset();
+        mPath.moveTo(frameRect.left, frameRect.top + mFrameCornerSize);
+        mPath.lineTo(frameRect.left, frameRect.top);
+        mPath.lineTo(frameRect.left + mFrameCornerSize, frameRect.top);
+        mPath.moveTo(frameRect.right - mFrameCornerSize, frameRect.top);
+        mPath.lineTo(frameRect.right, frameRect.top);
+        mPath.lineTo(frameRect.right, frameRect.top + mFrameCornerSize);
+        mPath.moveTo(frameRect.right, frameRect.bottom - mFrameCornerSize);
+        mPath.lineTo(frameRect.right, frameRect.bottom);
+        mPath.lineTo(frameRect.right - mFrameCornerSize, frameRect.bottom);
+        mPath.moveTo(frameRect.left + mFrameCornerSize, frameRect.bottom);
+        mPath.lineTo(frameRect.left, frameRect.bottom);
+        mPath.lineTo(frameRect.left, frameRect.bottom - mFrameCornerSize);
+        canvas.drawPath(mPath, mFramePaint);
     }
 
     @Override
