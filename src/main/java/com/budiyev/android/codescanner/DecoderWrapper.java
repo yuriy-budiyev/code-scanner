@@ -32,6 +32,7 @@ final class DecoderWrapper {
     private final Decoder mDecoder;
     private final Point mImageSize;
     private final Point mPreviewSize;
+    private final Point mViewSize;
     private final int mDisplayOrientation;
     private final boolean mReverseHorizontal;
     private final boolean mAutoFocusSupported;
@@ -39,12 +40,14 @@ final class DecoderWrapper {
 
     public DecoderWrapper(@NonNull Camera camera, @NonNull Camera.CameraInfo cameraInfo,
             @NonNull Decoder decoder, @NonNull Point imageSize, @NonNull Point previewSize,
-            int displayOrientation, boolean autoFocusSupported, boolean flashSupported) {
+            @NonNull Point viewSize, int displayOrientation, boolean autoFocusSupported,
+            boolean flashSupported) {
         mCamera = camera;
         mCameraInfo = cameraInfo;
         mDecoder = decoder;
         mImageSize = imageSize;
         mPreviewSize = previewSize;
+        mViewSize = viewSize;
         mDisplayOrientation = displayOrientation;
         mReverseHorizontal = cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT;
         mAutoFocusSupported = autoFocusSupported;
@@ -74,6 +77,11 @@ final class DecoderWrapper {
     @NonNull
     public Point getPreviewSize() {
         return mPreviewSize;
+    }
+
+    @NonNull
+    public Point getViewSize() {
+        return mViewSize;
     }
 
     public int getDisplayOrientation() {

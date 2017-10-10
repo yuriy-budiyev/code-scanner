@@ -208,7 +208,7 @@ final class Utils {
 
     @NonNull
     @SuppressWarnings("SuspiciousNameCombination")
-    public static Rect getPreviewFrameRect(boolean squareFrame, int width, int height) {
+    public static Rect getViewFrameRect(boolean squareFrame, int width, int height) {
         int frameWidth;
         int frameHeight;
         if (squareFrame) {
@@ -230,12 +230,25 @@ final class Utils {
 
     @NonNull
     public static Rect getImageFrameRect(boolean squareFrame, int imageWidth, int imageHeight,
-            int viewWidth, int viewHeight) {
-        Rect rect = getPreviewFrameRect(squareFrame, viewWidth, viewHeight);
-        float wRatio = (float) imageWidth / (float) viewWidth;
-        float hRatio = (float) imageHeight / (float) viewHeight;
+            @NonNull Point previewSize, @NonNull Point viewSize) {
+        Rect viewFrameRect = getViewFrameRect(squareFrame, viewSize.getX(), viewSize.getY());
+        int wD = (previewSize.getX() - viewSize.getX()) / 2;
+        int hD = (previewSize.getY() - viewSize.getY()) / 2;
+        float wR = (float) imageWidth / (float) previewSize.getX();
+        float hR = (float) imageHeight / (float) previewSize.getY();
+        int left = Math.round((viewFrameRect.getLeft() + wD) * wR);
+        int top = Math.round((viewFrameRect.getTop() + hD) * hR);
+        int right = Math.round((viewFrameRect.getRight() + wD) * wR);
+        int bottom = Math.round((viewFrameRect.getBottom() + hD) * hR);
+        return new Rect(left, top, right, bottom);
+        /*int previewWidth = previewSize.getX();
+        int previewHeight = previewSize.getY();
+
+        Rect rect = getPreviewFrameRect(squareFrame, previewWidth, previewHeight);
+        float wRatio = (float) imageSize.getX() / (float) previewWidth;
+        float hRatio = (float) imageSize.getY() / (float) previewHeight;
         return new Rect(Math.round(rect.getLeft() * wRatio), Math.round(rect.getTop() * hRatio),
-                Math.round(rect.getRight() * wRatio), Math.round(rect.getBottom() * hRatio));
+                Math.round(rect.getRight() * wRatio), Math.round(rect.getBottom() * hRatio));*/
     }
 
     public static byte[] rotateNV21(byte[] yuv, int width, int height, int rotation) {

@@ -36,17 +36,19 @@ final class DecodeTask {
     private final byte[] mImage;
     private final Point mImageSize;
     private final Point mPreviewSize;
+    private final Point mViewSize;
     private final int mOrientation;
     private final boolean mSquareFrame;
     private final boolean mReverseHorizontal;
     private final DecodeCallback mCallback;
 
     public DecodeTask(@NonNull byte[] image, @NonNull Point imageSize, @NonNull Point previewSize,
-            int orientation, boolean squareFrame, boolean reverseHorizontal,
-            @NonNull DecodeCallback callback) {
+            @NonNull Point viewSize, int orientation, boolean squareFrame,
+            boolean reverseHorizontal, @NonNull DecodeCallback callback) {
         mImage = image;
         mImageSize = imageSize;
         mPreviewSize = previewSize;
+        mViewSize = viewSize;
         mOrientation = orientation;
         mSquareFrame = squareFrame;
         mReverseHorizontal = reverseHorizontal;
@@ -80,8 +82,8 @@ final class DecodeTask {
                 height = imageHeight;
             }
         }
-        Rect frameRect = Utils.getImageFrameRect(mSquareFrame, width, height, mPreviewSize.getX(),
-                mPreviewSize.getY());
+        Rect frameRect =
+                Utils.getImageFrameRect(mSquareFrame, width, height, mPreviewSize, mViewSize);
         return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(
                 new PlanarYUVLuminanceSource(image, width, height, frameRect.getLeft(),
                         frameRect.getTop(), frameRect.getWidth(), frameRect.getHeight(),
