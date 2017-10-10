@@ -84,13 +84,13 @@ final class ViewFinderView extends View {
 
     @Override
     protected void onSizeChanged(int width, int height, int oldW, int oldH) {
-        mFrameRect = Utils.getFrameRect(mSquareFrame, width, height);
+        mFrameRect = Utils.getPreviewFrameRect(mSquareFrame, width, height);
     }
 
     void setSquareFrame(boolean squareFrame) {
         mSquareFrame = squareFrame;
         if (mFrameRect != null) {
-            mFrameRect = Utils.getFrameRect(mSquareFrame, getWidth(), getHeight());
+            mFrameRect = Utils.getPreviewFrameRect(mSquareFrame, getWidth(), getHeight());
         }
         if (Utils.isLaidOut(this)) {
             invalidate();

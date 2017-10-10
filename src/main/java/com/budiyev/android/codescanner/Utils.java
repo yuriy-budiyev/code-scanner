@@ -208,7 +208,7 @@ final class Utils {
 
     @NonNull
     @SuppressWarnings("SuspiciousNameCombination")
-    public static Rect getFrameRect(boolean squareFrame, int width, int height) {
+    public static Rect getPreviewFrameRect(boolean squareFrame, int width, int height) {
         int frameWidth;
         int frameHeight;
         if (squareFrame) {
@@ -231,12 +231,11 @@ final class Utils {
     @NonNull
     public static Rect getImageFrameRect(boolean squareFrame, int imageWidth, int imageHeight,
             int viewWidth, int viewHeight) {
-        Rect frameRect = getFrameRect(squareFrame, viewWidth, viewHeight);
+        Rect rect = getPreviewFrameRect(squareFrame, viewWidth, viewHeight);
         float wRatio = (float) imageWidth / (float) viewWidth;
         float hRatio = (float) imageHeight / (float) viewHeight;
-        return new Rect(Math.round(frameRect.getLeft() * wRatio),
-                Math.round(frameRect.getTop() * hRatio), Math.round(frameRect.getRight() * wRatio),
-                Math.round(frameRect.getBottom() * hRatio));
+        return new Rect(Math.round(rect.getLeft() * wRatio), Math.round(rect.getTop() * hRatio),
+                Math.round(rect.getRight() * wRatio), Math.round(rect.getBottom() * hRatio));
     }
 
     public static byte[] rotateNV21(byte[] yuv, int width, int height, int rotation) {
