@@ -34,23 +34,19 @@ import com.google.zxing.common.HybridBinarizer;
 
 final class DecodeTask {
     private final byte[] mImage;
-    private final int mImageWidth;
-    private final int mImageHeight;
-    private final int mPreviewWidth;
-    private final int mPreviewHeight;
+    private final Point mImageSize;
+    private final Point mPreviewSize;
     private final int mOrientation;
     private final boolean mSquareFrame;
     private final boolean mReverseHorizontal;
     private final DecodeCallback mCallback;
 
-    public DecodeTask(@NonNull byte[] image, int imageWidth, int imageHeight, int previewWidth,
-            int previewHeight, int orientation, boolean squareFrame, boolean reverseHorizontal,
+    public DecodeTask(@NonNull byte[] image, @NonNull Point imageSize, @NonNull Point previewSize,
+            int orientation, boolean squareFrame, boolean reverseHorizontal,
             @NonNull DecodeCallback callback) {
         mImage = image;
-        mImageWidth = imageWidth;
-        mImageHeight = imageHeight;
-        mPreviewWidth = previewWidth;
-        mPreviewHeight = previewHeight;
+        mImageSize = imageSize;
+        mPreviewSize = previewSize;
         mOrientation = orientation;
         mSquareFrame = squareFrame;
         mReverseHorizontal = reverseHorizontal;
@@ -65,28 +61,29 @@ final class DecodeTask {
     @NonNull
     @SuppressWarnings("SuspiciousNameCombination")
     public Result decode(@NonNull MultiFormatReader reader) throws ReaderException {
+        int imageWidth = mImageSize.getX();
+        int imageHeight = mImageSize.getY();
         byte[] image;
-        int imageWidth;
-        int imageHeight;
+        int width;
+        int height;
         if (mOrientation == 0) {
             image = mImage;
-            imageWidth = mImageWidth;
-            imageHeight = mImageHeight;
+            width = imageWidth;
+            height = imageHeight;
         } else {
-            image = Utils.rotateNV21(mImage, mImageWidth, mImageHeight, mOrientation);
+            image = Utils.rotateNV21(mImage, imageWidth, imageHeight, mOrientation);
             if (mOrientation == 90 || mOrientation == 270) {
-                imageWidth = mImageHeight;
-                imageHeight = mImageWidth;
+                width = imageHeight;
+                height = imageWidth;
             } else {
-                imageWidth = mImageWidth;
-                imageHeight = mImageHeight;
+                width = imageWidth;
+                height = imageHeight;
             }
         }
-        Rect frameRect =
-                Utils.getImageFrameRect(mSquareFrame, imageWidth, imageHeight, mPreviewWidth,
-                        mPreviewHeight);
+        Rect frameRect = Utils.getImageFrameRect(mSquareFrame, width, height, mPreviewSize.getX(),
+                mPreviewSize.getY());
         return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(
-                new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.getLeft(),
+                new PlanarYUVLuminanceSource(image, width, height, frameRect.getLeft(),
                         frameRect.getTop(), frameRect.getWidth(), frameRect.getHeight(),
                         mReverseHorizontal))));
     }

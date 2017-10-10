@@ -58,8 +58,8 @@ final class Utils {
     }
 
     @NonNull
-    public static Point findSuitablePreviewSize(@NonNull Camera.Parameters parameters,
-            int frameWidth, int frameHeight) {
+    public static Point findSuitableImageSize(@NonNull Camera.Parameters parameters, int frameWidth,
+            int frameHeight) {
         List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
         if (sizes != null && !sizes.isEmpty()) {
             Collections.sort(sizes, new CameraSizeComparator());
@@ -190,7 +190,7 @@ final class Utils {
     }
 
     @NonNull
-    public static Point getPreviewViewSize(int imageWidth, int imageHeight, int frameWidth,
+    public static Point getPreviewSize(int imageWidth, int imageHeight, int frameWidth,
             int frameHeight) {
         if (imageWidth == frameWidth && imageHeight == frameHeight) {
             return new Point(frameWidth, frameHeight);
@@ -234,9 +234,9 @@ final class Utils {
         Rect frameRect = getFrameRect(squareFrame, viewWidth, viewHeight);
         float wRatio = (float) imageWidth / (float) viewWidth;
         float hRatio = (float) imageHeight / (float) viewHeight;
-        return new Rect(Math.round(frameRect.getLeft() * wRatio), Math.round(
-                frameRect.getTop() * hRatio),
-                Math.round(frameRect.getRight() * wRatio), Math.round(frameRect.getBottom() * hRatio));
+        return new Rect(Math.round(frameRect.getLeft() * wRatio),
+                Math.round(frameRect.getTop() * hRatio), Math.round(frameRect.getRight() * wRatio),
+                Math.round(frameRect.getBottom() * hRatio));
     }
 
     public static byte[] rotateNV21(byte[] yuv, int width, int height, int rotation) {
