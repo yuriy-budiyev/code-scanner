@@ -197,13 +197,13 @@ public final class CodeScannerView extends ViewGroup {
             int frameTop = top;
             int frameRight = right;
             int frameBottom = bottom;
-            if (frameSize.x > width) {
-                int d = (frameSize.x - width) / 2;
+            if (frameSize.getX() > width) {
+                int d = (frameSize.getX() - width) / 2;
                 frameLeft -= d;
                 frameRight += d;
             }
-            if (frameSize.y > height) {
-                int d = (frameSize.y - height) / 2;
+            if (frameSize.getY() > height) {
+                int d = (frameSize.getY() - height) / 2;
                 frameTop -= d;
                 frameBottom += d;
             }

@@ -233,15 +233,15 @@ final class Utils {
     public static Rect getImageFrameRect(boolean squareFrame, int imageWidth, int imageHeight,
             int frameWidth, int frameHeight) {
         Point frameSize = getFrameSize(imageWidth, imageHeight, frameWidth, frameHeight);
-        int wDiff = (frameSize.x - frameWidth) / 2;
-        int hDiff = (frameSize.y - frameHeight) / 2;
+        int wDiff = (frameSize.getX() - frameWidth) / 2;
+        int hDiff = (frameSize.getY() - frameHeight) / 2;
         Rect frameRect = getFrameRect(squareFrame, frameWidth, frameHeight);
         frameRect.left += wDiff;
         frameRect.top += hDiff;
         frameRect.right += wDiff;
         frameRect.bottom += hDiff;
-        float wRatio = (float) imageWidth / (float) frameSize.x;
-        float hRatio = (float) imageHeight / (float) frameSize.y;
+        float wRatio = (float) imageWidth / (float) frameSize.getX();
+        float hRatio = (float) imageHeight / (float) frameSize.getY();
         frameRect.left = Math.round(frameRect.left * wRatio);
         frameRect.top = Math.round(frameRect.top * hRatio);
         frameRect.right = Math.round(frameRect.right * wRatio);

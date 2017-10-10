@@ -24,17 +24,25 @@
 package com.budiyev.android.codescanner;
 
 final class Point {
-    public final int x;
-    public final int y;
+    private final int mX;
+    private final int mY;
 
     public Point(int x, int y) {
-        this.x = x;
-        this.y = y;
+        mX = x;
+        mY = y;
+    }
+
+    public int getX() {
+        return mX;
+    }
+
+    public int getY() {
+        return mY;
     }
 
     @Override
     public int hashCode() {
-        return x ^ ((y << (Integer.SIZE / 2)) | (y >>> (Integer.SIZE / 2)));
+        return mX ^ ((mY << (Integer.SIZE / 2)) | (mY >>> (Integer.SIZE / 2)));
     }
 
     @Override
@@ -43,7 +51,7 @@ final class Point {
             return true;
         } else if (obj instanceof Point) {
             Point other = (Point) obj;
-            return x == other.x && y == other.y;
+            return mX == other.mX && mY == other.mY;
         } else {
             return false;
         }
@@ -51,6 +59,6 @@ final class Point {
 
     @Override
     public String toString() {
-        return "(" + x + "; " + y + ")";
+        return "(" + mX + "; " + mY + ")";
     }
 }

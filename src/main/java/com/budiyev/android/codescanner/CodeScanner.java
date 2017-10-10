@@ -552,8 +552,9 @@ public final class CodeScanner {
             }
             Point previewSize = decoderWrapper.getPreviewSize();
             Point frameSize = decoderWrapper.getFrameSize();
-            decoder.decode(data, previewSize.x, previewSize.y, frameSize.x, frameSize.y,
-                    decoderWrapper.getDisplayOrientation(), mScannerView.isSquareFrame(),
+            decoder.decode(data, previewSize.getX(), previewSize.getY(), frameSize.getX(),
+                    frameSize.getY(), decoderWrapper.getDisplayOrientation(),
+                    mScannerView.isSquareFrame(),
                     decoderWrapper.getCameraInfo().facing == Camera.CameraInfo.CAMERA_FACING_FRONT,
                     mDecodeCallback);
         }
@@ -652,9 +653,9 @@ public final class CodeScanner {
             Point previewSize =
                     Utils.findSuitablePreviewSize(parameters, portrait ? mHeight : mWidth,
                             portrait ? mWidth : mHeight);
-            parameters.setPreviewSize(previewSize.x, previewSize.y);
-            Point frameSize = Utils.getFrameSize(portrait ? previewSize.y : previewSize.x,
-                    portrait ? previewSize.x : previewSize.y, mWidth, mHeight);
+            parameters.setPreviewSize(previewSize.getX(), previewSize.getY());
+            Point frameSize = Utils.getFrameSize(portrait ? previewSize.getY() : previewSize.getX(),
+                    portrait ? previewSize.getX() : previewSize.getY(), mWidth, mHeight);
             List<String> focusModes = parameters.getSupportedFocusModes();
             boolean autoFocusSupported = focusModes != null &&
                     (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO) ||
