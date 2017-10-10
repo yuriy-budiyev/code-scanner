@@ -23,7 +23,6 @@
  */
 package com.budiyev.android.codescanner;
 
-import android.graphics.Rect;
 import android.support.annotation.NonNull;
 
 import com.google.zxing.BinaryBitmap;
@@ -87,8 +86,8 @@ final class DecodeTask {
                 Utils.getImageFrameRect(mSquareFrame, imageWidth, imageHeight, mPreviewWidth,
                         mPreviewHeight);
         return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(
-                new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.left,
-                        frameRect.top, frameRect.width(), frameRect.height(),
+                new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.getLeft(),
+                        frameRect.getTop(), frameRect.getWidth(), frameRect.getHeight(),
                         mReverseHorizontal))));
     }
 }

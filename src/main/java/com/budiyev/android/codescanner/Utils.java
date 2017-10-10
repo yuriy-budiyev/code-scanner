@@ -25,7 +25,6 @@ package com.budiyev.android.codescanner;
 
 import android.content.Context;
 import android.graphics.ImageFormat;
-import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -235,11 +234,9 @@ final class Utils {
         Rect frameRect = getFrameRect(squareFrame, viewWidth, viewHeight);
         float wRatio = (float) imageWidth / (float) viewWidth;
         float hRatio = (float) imageHeight / (float) viewHeight;
-        frameRect.left = Math.round(frameRect.left * wRatio);
-        frameRect.top = Math.round(frameRect.top * hRatio);
-        frameRect.right = Math.round(frameRect.right * wRatio);
-        frameRect.bottom = Math.round(frameRect.bottom * hRatio);
-        return frameRect;
+        return new Rect(Math.round(frameRect.getLeft() * wRatio), Math.round(
+                frameRect.getTop() * hRatio),
+                Math.round(frameRect.getRight() * wRatio), Math.round(frameRect.getBottom() * hRatio));
     }
 
     public static byte[] rotateNV21(byte[] yuv, int width, int height, int rotation) {
