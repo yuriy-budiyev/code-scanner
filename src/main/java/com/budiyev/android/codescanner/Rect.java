@@ -62,11 +62,7 @@ final class Rect {
 
     @Override
     public int hashCode() {
-        int result = mLeft;
-        result = 31 * result + mTop;
-        result = 31 * result + mRight;
-        result = 31 * result + mBottom;
-        return result;
+        return 31 * (31 * (31 * mLeft + mTop) + mRight) + mBottom;
     }
 
     @Override
