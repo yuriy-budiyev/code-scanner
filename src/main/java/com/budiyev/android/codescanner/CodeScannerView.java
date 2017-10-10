@@ -63,7 +63,7 @@ public final class CodeScannerView extends ViewGroup {
     private ViewFinderView mViewFinderView;
     private ImageView mAutoFocusButton;
     private ImageView mFlashButton;
-    private Point mFrameSize;
+    private Point mPreviewSize;
     private LayoutListener mLayoutListener;
     private CodeScanner mCodeScanner;
     private int mButtonSize;
@@ -189,21 +189,23 @@ public final class CodeScannerView extends ViewGroup {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         int width = right - left;
         int height = bottom - top;
-        Point frameSize = mFrameSize;
-        if (frameSize == null) {
+        Point previewSize = mPreviewSize;
+        if (previewSize == null) {
             mPreviewView.layout(left, top, right, bottom);
         } else {
             int frameLeft = left;
             int frameTop = top;
             int frameRight = right;
             int frameBottom = bottom;
-            if (frameSize.getX() > width) {
-                int d = (frameSize.getX() - width) / 2;
+            int previewWidth = previewSize.getX();
+            if (previewWidth > width) {
+                int d = (previewWidth - width) / 2;
                 frameLeft -= d;
                 frameRight += d;
             }
-            if (frameSize.getY() > height) {
-                int d = (frameSize.getY() - height) / 2;
+            int previewHeight = previewSize.getY();
+            if (previewHeight > height) {
+                int d = (previewHeight - height) / 2;
                 frameTop -= d;
                 frameBottom += d;
             }
@@ -302,8 +304,8 @@ public final class CodeScannerView extends ViewGroup {
         return mViewFinderView;
     }
 
-    void setFrameSize(@Nullable Point frameSize) {
-        mFrameSize = frameSize;
+    void setPreviewSize(@Nullable Point previewSize) {
+        mPreviewSize = previewSize;
         requestLayout();
     }
 

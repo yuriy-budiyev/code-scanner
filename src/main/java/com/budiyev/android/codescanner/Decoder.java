@@ -59,11 +59,8 @@ final class Decoder {
         mReader.setHints(mHints);
     }
 
-    public void decode(@NonNull byte[] data, int dataWidth, int dataHeight, int frameWidth,
-            int frameHeight, int orientation, boolean squareFrame, boolean reverseHorizontal,
-            @NonNull DecodeCallback decodeCallback) {
-        mDecodeQueue.add(new DecodeTask(data, dataWidth, dataHeight, frameWidth, frameHeight,
-                orientation, squareFrame, reverseHorizontal, decodeCallback));
+    public void decode(@NonNull DecodeTask task) {
+        mDecodeQueue.add(task);
     }
 
     public void start() {

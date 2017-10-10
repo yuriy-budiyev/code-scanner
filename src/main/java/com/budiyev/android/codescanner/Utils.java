@@ -191,7 +191,7 @@ final class Utils {
     }
 
     @NonNull
-    public static Point getFrameSize(int imageWidth, int imageHeight, int frameWidth,
+    public static Point getPreviewViewSize(int imageWidth, int imageHeight, int frameWidth,
             int frameHeight) {
         if (imageWidth == frameWidth && imageHeight == frameHeight) {
             return new Point(frameWidth, frameHeight);
@@ -231,17 +231,10 @@ final class Utils {
 
     @NonNull
     public static Rect getImageFrameRect(boolean squareFrame, int imageWidth, int imageHeight,
-            int frameWidth, int frameHeight) {
-        Point frameSize = getFrameSize(imageWidth, imageHeight, frameWidth, frameHeight);
-        int wDiff = (frameSize.getX() - frameWidth) / 2;
-        int hDiff = (frameSize.getY() - frameHeight) / 2;
-        Rect frameRect = getFrameRect(squareFrame, frameWidth, frameHeight);
-        frameRect.left += wDiff;
-        frameRect.top += hDiff;
-        frameRect.right += wDiff;
-        frameRect.bottom += hDiff;
-        float wRatio = (float) imageWidth / (float) frameSize.getX();
-        float hRatio = (float) imageHeight / (float) frameSize.getY();
+            int viewWidth, int viewHeight) {
+        Rect frameRect = getFrameRect(squareFrame, viewWidth, viewHeight);
+        float wRatio = (float) imageWidth / (float) viewWidth;
+        float hRatio = (float) imageHeight / (float) viewHeight;
         frameRect.left = Math.round(frameRect.left * wRatio);
         frameRect.top = Math.round(frameRect.top * hRatio);
         frameRect.right = Math.round(frameRect.right * wRatio);

@@ -34,24 +34,24 @@ import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 
 final class DecodeTask {
-    private final byte[] mData;
-    private final int mDataWidth;
-    private final int mDataHeight;
-    private final int mFrameWidth;
-    private final int mFrameHeight;
+    private final byte[] mImage;
+    private final int mImageWidth;
+    private final int mImageHeight;
+    private final int mPreviewWidth;
+    private final int mPreviewHeight;
     private final int mOrientation;
     private final boolean mSquareFrame;
     private final boolean mReverseHorizontal;
     private final DecodeCallback mCallback;
 
-    public DecodeTask(@NonNull byte[] data, int dataWidth, int dataHeight, int frameWidth,
-            int frameHeight, int orientation, boolean squareFrame, boolean reverseHorizontal,
+    public DecodeTask(@NonNull byte[] image, int imageWidth, int imageHeight, int previewWidth,
+            int previewHeight, int orientation, boolean squareFrame, boolean reverseHorizontal,
             @NonNull DecodeCallback callback) {
-        mData = data;
-        mDataWidth = dataWidth;
-        mDataHeight = dataHeight;
-        mFrameWidth = frameWidth;
-        mFrameHeight = frameHeight;
+        mImage = image;
+        mImageWidth = imageWidth;
+        mImageHeight = imageHeight;
+        mPreviewWidth = previewWidth;
+        mPreviewHeight = previewHeight;
         mOrientation = orientation;
         mSquareFrame = squareFrame;
         mReverseHorizontal = reverseHorizontal;
@@ -66,27 +66,28 @@ final class DecodeTask {
     @NonNull
     @SuppressWarnings("SuspiciousNameCombination")
     public Result decode(@NonNull MultiFormatReader reader) throws ReaderException {
-        byte[] data;
-        int dataWidth;
-        int dataHeight;
+        byte[] image;
+        int imageWidth;
+        int imageHeight;
         if (mOrientation == 0) {
-            data = mData;
-            dataWidth = mDataWidth;
-            dataHeight = mDataHeight;
+            image = mImage;
+            imageWidth = mImageWidth;
+            imageHeight = mImageHeight;
         } else {
-            data = Utils.rotateNV21(mData, mDataWidth, mDataHeight, mOrientation);
+            image = Utils.rotateNV21(mImage, mImageWidth, mImageHeight, mOrientation);
             if (mOrientation == 90 || mOrientation == 270) {
-                dataWidth = mDataHeight;
-                dataHeight = mDataWidth;
+                imageWidth = mImageHeight;
+                imageHeight = mImageWidth;
             } else {
-                dataWidth = mDataWidth;
-                dataHeight = mDataHeight;
+                imageWidth = mImageWidth;
+                imageHeight = mImageHeight;
             }
         }
-        Rect frameRect = Utils.getImageFrameRect(mSquareFrame, dataWidth, dataHeight, mFrameWidth,
-                mFrameHeight);
+        Rect frameRect =
+                Utils.getImageFrameRect(mSquareFrame, imageWidth, imageHeight, mPreviewWidth,
+                        mPreviewHeight);
         return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(
-                new PlanarYUVLuminanceSource(data, dataWidth, dataHeight, frameRect.left,
+                new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.left,
                         frameRect.top, frameRect.width(), frameRect.height(),
                         mReverseHorizontal))));
     }
