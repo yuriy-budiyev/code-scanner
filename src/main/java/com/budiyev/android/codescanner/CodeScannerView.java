@@ -313,11 +313,11 @@ public final class CodeScannerView extends ViewGroup {
         mLayoutListener = layoutListener;
     }
 
-    void setCodeScanner(@Nullable CodeScanner codeScanner) {
-        mCodeScanner = codeScanner;
-        if (codeScanner == null) {
-            return;
+    void setCodeScanner(@NonNull CodeScanner codeScanner) {
+        if (mCodeScanner != null) {
+            throw new IllegalStateException("Code scanner has already been set");
         }
+        mCodeScanner = codeScanner;
         setAutoFocusEnabled(codeScanner.isAutoFocusEnabled());
         setFlashEnabled(codeScanner.isFlashEnabled());
     }

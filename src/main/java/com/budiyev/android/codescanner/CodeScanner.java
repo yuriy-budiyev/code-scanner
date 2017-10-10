@@ -730,7 +730,8 @@ public final class CodeScanner {
                 return;
             }
             mScannerView.setPreviewSize(mPreviewSize);
-            mScannerView.setCodeScanner(CodeScanner.this);
+            mScannerView.setAutoFocusEnabled(isAutoFocusEnabled());
+            mScannerView.setFlashEnabled(isFlashEnabled());
             startPreview();
         }
     }
