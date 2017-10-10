@@ -650,9 +650,11 @@ public final class CodeScanner {
             boolean portrait = Utils.isPortrait(orientation);
             Point imageSize = Utils.findSuitableImageSize(parameters, portrait ? mHeight : mWidth,
                     portrait ? mWidth : mHeight);
-            parameters.setPreviewSize(imageSize.getX(), imageSize.getY());
-            Point previewSize = Utils.getPreviewSize(portrait ? imageSize.getY() : imageSize.getX(),
-                    portrait ? imageSize.getX() : imageSize.getY(), mWidth, mHeight);
+            int imageWidth = imageSize.getX();
+            int imageHeight = imageSize.getY();
+            parameters.setPreviewSize(imageWidth, imageHeight);
+            Point previewSize = Utils.getPreviewSize(portrait ? imageHeight : imageWidth,
+                    portrait ? imageWidth : imageHeight, mWidth, mHeight);
             List<String> focusModes = parameters.getSupportedFocusModes();
             boolean autoFocusSupported = focusModes != null &&
                     (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO) ||
