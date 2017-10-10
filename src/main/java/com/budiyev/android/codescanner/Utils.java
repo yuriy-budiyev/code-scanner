@@ -25,7 +25,6 @@ package com.budiyev.android.codescanner;
 
 import android.content.Context;
 import android.graphics.ImageFormat;
-import android.graphics.Point;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.os.Build;

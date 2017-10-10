@@ -26,7 +26,6 @@ package com.budiyev.android.codescanner;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Point;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.support.annotation.MainThread;

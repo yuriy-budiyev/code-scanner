@@ -23,7 +23,6 @@
  */
 package com.budiyev.android.codescanner;
 
-import android.graphics.Point;
 import android.hardware.Camera;
 import android.support.annotation.NonNull;
 
