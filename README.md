@@ -69,14 +69,34 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         CodeScannerView scannerView = findViewById(R.id.scanner_view);
         // Use builder
-        mCodeScanner =
-                CodeScanner.builder().autoFocus(true).flash(false).onDecoded(new DecodeCallback() {
+        mCodeScanner = CodeScanner.builder()
+                /*camera can be specified by calling .camera(cameraId),
+                first back-facing camera on the device by default*/
+                /*code formats*/.formats(CodeScanner.ALL_FORMATS/*List<BarcodeFormat>*/)
+                /*or .formats(BarcodeFormat.QR_CODE, BarcodeFormat.DATA_MATRIX, ...)*/
+                /*or .format(BarcodeFormat.QR_CODE) - only one format*/
+                /*auto focus*/.autoFocus(true).autoFocusMode(AutoFocusMode.SAFE)
+                .autoFocusInterval(2000L)
+                /*flash*/.flash(false)
+                /*decode callback*/.onDecoded(new DecodeCallback() {
                     @Override
                     public void onDecoded(@NonNull final Result result) {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
                                 Toast.makeText(MainActivity.this, result.getText(),
+                                        Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    }
+                })
+                /*error callback*/.onError(new ErrorCallback() {
+                    @Override
+                    public void onError(@NonNull final Exception error) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, error.getMessage(),
                                         Toast.LENGTH_LONG).show();
                             }
                         });
