@@ -72,13 +72,16 @@ public class MainActivity extends AppCompatActivity {
         mCodeScanner = CodeScanner.builder()
                 /*camera can be specified by calling .camera(cameraId),
                 first back-facing camera on the device by default*/
-                /*code formats*/.formats(CodeScanner.ALL_FORMATS)/*List<BarcodeFormat>*/
+                /*code formats*/
+                .formats(CodeScanner.ALL_FORMATS)/*List<BarcodeFormat>*/
                 /*or .formats(BarcodeFormat.QR_CODE, BarcodeFormat.DATA_MATRIX, ...)*/
                 /*or .format(BarcodeFormat.QR_CODE) - only one format*/
-                /*auto focus*/.autoFocus(true).autoFocusMode(AutoFocusMode.SAFE)
-                .autoFocusInterval(2000L)
-                /*flash*/.flash(false)
-                /*decode callback*/.onDecoded(new DecodeCallback() {
+                /*auto focus*/
+                .autoFocus(true).autoFocusMode(AutoFocusMode.SAFE).autoFocusInterval(2000L)
+                /*flash*/
+                .flash(false)
+                /*decode callback*/
+                .onDecoded(new DecodeCallback() {
                     @Override
                     public void onDecoded(@NonNull final Result result) {
                         runOnUiThread(new Runnable() {
@@ -90,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
                 })
-                /*error callback*/.onError(new ErrorCallback() {
+                /*error callback*/
+                .onError(new ErrorCallback() {
                     @Override
                     public void onError(@NonNull final Exception error) {
                         runOnUiThread(new Runnable() {
