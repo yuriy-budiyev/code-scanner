@@ -51,7 +51,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @see CodeScannerView
  * @see BarcodeFormat
  */
-public final class CodeScanner {
+public class CodeScanner {
     public static final List<BarcodeFormat> ALL_FORMATS = Arrays.asList(BarcodeFormat.values());
     public static final List<BarcodeFormat> ONE_DIMENSIONAL_FORMATS =
             Arrays.asList(BarcodeFormat.CODABAR, BarcodeFormat.CODE_39, BarcodeFormat.CODE_93,

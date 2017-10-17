@@ -28,7 +28,7 @@ import android.support.annotation.Nullable;
 /**
  * Common class for code scanner runtime exceptions
  */
-public final class CodeScannerException extends RuntimeException {
+public class CodeScannerException extends RuntimeException {
     CodeScannerException(@Nullable String message) {
         super(message);
     }
