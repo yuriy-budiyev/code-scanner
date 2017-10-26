@@ -23,6 +23,12 @@
  */
 package com.budiyev.android.codescanner;
 
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import android.support.annotation.NonNull;
 
 import com.google.zxing.BarcodeFormat;
@@ -30,12 +36,6 @@ import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
-
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 final class Decoder {
     private final BlockingQueue<DecodeTask> mDecodeQueue = new LinkedBlockingQueue<>();

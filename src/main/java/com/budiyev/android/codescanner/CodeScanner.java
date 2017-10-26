@@ -23,6 +23,12 @@
  */
 package com.budiyev.android.codescanner;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -35,12 +41,6 @@ import android.view.SurfaceHolder;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.android.camera.CameraConfigurationUtils;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Code scanner.

@@ -23,6 +23,10 @@
  */
 package com.budiyev.android.codescanner;
 
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
@@ -33,10 +37,6 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.google.zxing.client.android.camera.CameraConfigurationUtils;
-
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
 final class Utils {
     private static final float SQUARE_RATIO = 0.75f;
