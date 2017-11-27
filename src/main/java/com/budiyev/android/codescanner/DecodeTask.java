@@ -40,11 +40,12 @@ final class DecodeTask {
     private final int mOrientation;
     private final boolean mSquareFrame;
     private final boolean mReverseHorizontal;
+    private final boolean mStopOnDecode;
     private final DecodeCallback mCallback;
 
     public DecodeTask(@NonNull byte[] image, @NonNull Point imageSize, @NonNull Point previewSize,
             @NonNull Point viewSize, int orientation, boolean squareFrame,
-            boolean reverseHorizontal, @NonNull DecodeCallback callback) {
+            boolean reverseHorizontal, boolean stopOnDecode, @NonNull DecodeCallback callback) {
         mImage = image;
         mImageSize = imageSize;
         mPreviewSize = previewSize;
@@ -52,12 +53,17 @@ final class DecodeTask {
         mOrientation = orientation;
         mSquareFrame = squareFrame;
         mReverseHorizontal = reverseHorizontal;
+        mStopOnDecode = stopOnDecode;
         mCallback = callback;
     }
 
     @NonNull
     public DecodeCallback getCallback() {
         return mCallback;
+    }
+
+    public boolean shouldStopOnDecode() {
+        return mStopOnDecode;
     }
 
     @NonNull
