@@ -94,16 +94,20 @@ final class Decoder {
                     mStateListener.onStateChanged(Decoder.State.IDLE);
                     Result result = null;
                     DecodeCallback callback = null;
+                    boolean stopOnDecode = false;
                     try {
                         DecodeTask task = mDecodeQueue.take();
                         mProcessing = true;
                         mStateListener.onStateChanged(Decoder.State.DECODING);
                         result = task.decode(mReader);
                         callback = task.getCallback();
+                        stopOnDecode = task.shouldStopOnDecode();
                     } catch (ReaderException ignored) {
                     } finally {
                         if (result != null) {
-                            mStateListener.onStateChanged(Decoder.State.DECODED);
+                            if (stopOnDecode) {
+                                mStateListener.onStateChanged(Decoder.State.DECODED);
+                            }
                             if (callback != null) {
                                 callback.onDecoded(result);
                             }

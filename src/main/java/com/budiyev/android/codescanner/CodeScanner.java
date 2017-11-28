@@ -62,6 +62,7 @@ public class CodeScanner {
             Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.DATA_MATRIX, BarcodeFormat.MAXICODE,
                     BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE);
     private static final List<BarcodeFormat> DEFAULT_FORMATS = ALL_FORMATS;
+    private static final ScanMode DEFAULT_SCAN_MODE = ScanMode.SINGLE;
     private static final AutoFocusMode DEFAULT_AUTO_FOCUS_MODE = AutoFocusMode.SAFE;
     private static final long DEFAULT_SAFE_AUTO_FOCUS_INTERVAL = 2000L;
     private static final int DEFAULT_CAMERA = -1;
@@ -80,6 +81,7 @@ public class CodeScanner {
     private final Runnable mStopPreviewTask;
     private final DecoderStateListener mDecoderStateListener;
     private volatile List<BarcodeFormat> mFormats = DEFAULT_FORMATS;
+    private volatile ScanMode mScanMode = DEFAULT_SCAN_MODE;
     private volatile AutoFocusMode mAutoFocusMode = DEFAULT_AUTO_FOCUS_MODE;
     private volatile DecodeCallback mDecodeCallback;
     private volatile ErrorCallback mErrorCallback;
@@ -226,6 +228,16 @@ public class CodeScanner {
      */
     public void setErrorCallback(@Nullable ErrorCallback errorCallback) {
         mErrorCallback = errorCallback;
+    }
+
+    /**
+     * Set scan mode, {@link ScanMode#SINGLE} by default
+     *
+     * @see ScanMode
+     */
+    @MainThread
+    public void setScanMode(@NonNull ScanMode scanMode) {
+        mScanMode = scanMode;
     }
 
     /**
@@ -555,7 +567,8 @@ public class CodeScanner {
             decoder.decode(
                     new DecodeTask(data, imageSize, previewSize, decoderWrapper.getViewSize(),
                             decoderWrapper.getDisplayOrientation(), mScannerView.isSquareFrame(),
-                            decoderWrapper.shouldReverseHorizontal(), mDecodeCallback));
+                            decoderWrapper.shouldReverseHorizontal(), mScanMode == ScanMode.SINGLE,
+                            mDecodeCallback));
         }
     }
 
@@ -758,6 +771,7 @@ public class CodeScanner {
         private DecodeCallback mDecodeCallback;
         private ErrorCallback mErrorCallback;
         private boolean mAutoFocusEnabled = DEFAULT_AUTO_FOCUS_ENABLED;
+        private ScanMode mScanMode = DEFAULT_SCAN_MODE;
         private AutoFocusMode mAutoFocusMode = DEFAULT_AUTO_FOCUS_MODE;
         private long mAutoFocusInterval = DEFAULT_SAFE_AUTO_FOCUS_INTERVAL;
         private boolean mFlashEnabled = DEFAULT_FLASH_ENABLED;
@@ -863,6 +877,18 @@ public class CodeScanner {
         }
 
         /**
+         * Set scan mode, {@link ScanMode#SINGLE} by default
+         *
+         * @see ScanMode
+         */
+        @NonNull
+        @MainThread
+        public Builder scanMode(@NonNull ScanMode mode) {
+            mScanMode = mode;
+            return this;
+        }
+
+        /**
          * Set auto focus mode, {@link AutoFocusMode#SAFE} by default
          *
          * @see AutoFocusMode
@@ -914,6 +940,7 @@ public class CodeScanner {
             scanner.mErrorCallback = mErrorCallback;
             scanner.mAutoFocusEnabled = mAutoFocusEnabled;
             scanner.mSafeAutoFocusInterval = mAutoFocusInterval;
+            scanner.mScanMode = mScanMode;
             scanner.mAutoFocusMode = mAutoFocusMode;
             scanner.mFlashEnabled = mFlashEnabled;
             return scanner;
