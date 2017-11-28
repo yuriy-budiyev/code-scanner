@@ -555,6 +555,9 @@ public class CodeScanner {
                 return;
             }
             DecoderWrapper decoderWrapper = mDecoderWrapper;
+            if (decoderWrapper == null) {
+                return;
+            }
             Decoder decoder = decoderWrapper.getDecoder();
             if (decoder.isProcessing()) {
                 return;

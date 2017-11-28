@@ -35,7 +35,7 @@ public enum ScanMode {
     SINGLE,
 
     /**
-     * Continuous scan, even if scanner decoded the code
+     * Continuous scan, don't stop preview after decoding the code
      */
     CONTINUOUS
 }
