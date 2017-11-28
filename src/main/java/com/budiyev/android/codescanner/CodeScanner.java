@@ -555,12 +555,15 @@ public class CodeScanner {
                 return;
             }
             DecoderWrapper decoderWrapper = mDecoderWrapper;
+            Decoder decoder = decoderWrapper.getDecoder();
+            if (decoder.isProcessing()) {
+                return;
+            }
             Point imageSize = decoderWrapper.getImageSize();
             Point previewSize = decoderWrapper.getPreviewSize();
-            decoderWrapper.getDecoder()
-                    .decode(new DecodeTask(data, imageSize, previewSize, decoderWrapper.getViewSize(),
-                            decoderWrapper.getDisplayOrientation(), mScannerView.isSquareFrame(),
-                            decoderWrapper.shouldReverseHorizontal(), mDecodeCallback));
+            decoder.decode(new DecodeTask(data, imageSize, previewSize, decoderWrapper.getViewSize(),
+                    decoderWrapper.getDisplayOrientation(), mScannerView.isSquareFrame(),
+                    decoderWrapper.shouldReverseHorizontal(), mDecodeCallback));
         }
     }
 
