@@ -43,7 +43,6 @@ final class Decoder {
     private final DecoderThread mDecoderThread;
     private final StateListener mStateListener;
     private final Map<DecodeHintType, Object> mHints;
-    private volatile boolean mProcessing;
 
     public Decoder(@NonNull StateListener stateListener, @NonNull List<BarcodeFormat> formats) {
         mStateListener = stateListener;
@@ -72,10 +71,6 @@ final class Decoder {
         mDecodeQueue.clear();
     }
 
-    public boolean isProcessing() {
-        return mProcessing;
-    }
-
     private final class DecoderThread extends Thread {
         public DecoderThread() {
             super("Code scanner decode thread");
@@ -94,25 +89,20 @@ final class Decoder {
                     mStateListener.onStateChanged(Decoder.State.IDLE);
                     Result result = null;
                     DecodeCallback callback = null;
-                    boolean stopOnDecode = false;
                     try {
                         DecodeTask task = mDecodeQueue.take();
-                        mProcessing = true;
                         mStateListener.onStateChanged(Decoder.State.DECODING);
                         result = task.decode(mReader);
                         callback = task.getCallback();
-                        stopOnDecode = task.shouldStopOnDecode();
                     } catch (ReaderException ignored) {
                     } finally {
                         if (result != null) {
-                            if (stopOnDecode) {
-                                mStateListener.onStateChanged(Decoder.State.DECODED);
-                            }
+                            mDecodeQueue.clear();
+                            mStateListener.onStateChanged(Decoder.State.DECODED);
                             if (callback != null) {
                                 callback.onDecoded(result);
                             }
                         }
-                        mProcessing = false;
                     }
                 } catch (InterruptedException e) {
                     break;

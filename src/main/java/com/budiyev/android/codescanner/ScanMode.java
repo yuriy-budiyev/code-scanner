@@ -31,8 +31,6 @@ package com.budiyev.android.codescanner;
 public enum ScanMode {
     /**
      * Scan will stop after first successful decoded code
-     *
-     * @see CodeScanner#setAutoFocusInterval(long)
      */
     SINGLE,
 

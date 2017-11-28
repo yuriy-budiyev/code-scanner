@@ -54,13 +54,13 @@ import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 public class CodeScanner {
     public static final List<BarcodeFormat> ALL_FORMATS = Arrays.asList(BarcodeFormat.values());
     public static final List<BarcodeFormat> ONE_DIMENSIONAL_FORMATS =
-            Arrays.asList(BarcodeFormat.CODABAR, BarcodeFormat.CODE_39, BarcodeFormat.CODE_93,
-                    BarcodeFormat.CODE_128, BarcodeFormat.EAN_8, BarcodeFormat.EAN_13,
-                    BarcodeFormat.ITF, BarcodeFormat.RSS_14, BarcodeFormat.RSS_EXPANDED,
-                    BarcodeFormat.UPC_A, BarcodeFormat.UPC_E, BarcodeFormat.UPC_EAN_EXTENSION);
+            Arrays.asList(BarcodeFormat.CODABAR, BarcodeFormat.CODE_39, BarcodeFormat.CODE_93, BarcodeFormat.CODE_128,
+                    BarcodeFormat.EAN_8, BarcodeFormat.EAN_13, BarcodeFormat.ITF, BarcodeFormat.RSS_14,
+                    BarcodeFormat.RSS_EXPANDED, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E,
+                    BarcodeFormat.UPC_EAN_EXTENSION);
     public static final List<BarcodeFormat> TWO_DIMENSIONAL_FORMATS =
-            Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.DATA_MATRIX, BarcodeFormat.MAXICODE,
-                    BarcodeFormat.PDF_417, BarcodeFormat.QR_CODE);
+            Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.DATA_MATRIX, BarcodeFormat.MAXICODE, BarcodeFormat.PDF_417,
+                    BarcodeFormat.QR_CODE);
     private static final List<BarcodeFormat> DEFAULT_FORMATS = ALL_FORMATS;
     private static final ScanMode DEFAULT_SCAN_MODE = ScanMode.SINGLE;
     private static final AutoFocusMode DEFAULT_AUTO_FOCUS_MODE = AutoFocusMode.SAFE;
@@ -235,7 +235,6 @@ public class CodeScanner {
      *
      * @see ScanMode
      */
-    @MainThread
     public void setScanMode(@NonNull ScanMode scanMode) {
         mScanMode = scanMode;
     }
@@ -250,8 +249,7 @@ public class CodeScanner {
             boolean changed = mAutoFocusEnabled != autoFocusEnabled;
             mAutoFocusEnabled = autoFocusEnabled;
             mScannerView.setAutoFocusEnabled(autoFocusEnabled);
-            if (mInitialized && mPreviewActive && changed &&
-                    mDecoderWrapper.isAutoFocusSupported()) {
+            if (mInitialized && mPreviewActive && changed && mDecoderWrapper.isAutoFocusSupported()) {
                 setAutoFocusEnabledInternal(autoFocusEnabled);
             }
         } finally {
@@ -417,8 +415,7 @@ public class CodeScanner {
             Camera camera = decoderWrapper.getCamera();
             if (!internal && decoderWrapper.isFlashSupported() && mFlashEnabled) {
                 Camera.Parameters parameters = camera.getParameters();
-                if (parameters != null &&
-                        Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_OFF)) {
+                if (parameters != null && Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_OFF)) {
                     camera.setParameters(parameters);
                 }
             }
@@ -558,17 +555,12 @@ public class CodeScanner {
                 return;
             }
             DecoderWrapper decoderWrapper = mDecoderWrapper;
-            Decoder decoder = decoderWrapper.getDecoder();
-            if (decoder.isProcessing()) {
-                return;
-            }
             Point imageSize = decoderWrapper.getImageSize();
             Point previewSize = decoderWrapper.getPreviewSize();
-            decoder.decode(
-                    new DecodeTask(data, imageSize, previewSize, decoderWrapper.getViewSize(),
+            decoderWrapper.getDecoder()
+                    .decode(new DecodeTask(data, imageSize, previewSize, decoderWrapper.getViewSize(),
                             decoderWrapper.getDisplayOrientation(), mScannerView.isSquareFrame(),
-                            decoderWrapper.shouldReverseHorizontal(), mScanMode == ScanMode.SINGLE,
-                            mDecodeCallback));
+                            decoderWrapper.shouldReverseHorizontal(), mDecodeCallback));
         }
     }
 
@@ -597,7 +589,7 @@ public class CodeScanner {
     private final class DecoderStateListener implements Decoder.StateListener {
         @Override
         public void onStateChanged(@NonNull Decoder.State state) {
-            if (state == Decoder.State.DECODED) {
+            if (mScanMode == ScanMode.SINGLE && state == Decoder.State.DECODED) {
                 mStoppingPreview = true;
                 mMainThreadHandler.post(mStopPreviewTask);
             }
@@ -662,13 +654,14 @@ public class CodeScanner {
             }
             int orientation = Utils.getDisplayOrientation(mContext, cameraInfo);
             boolean portrait = Utils.isPortrait(orientation);
-            Point imageSize = Utils.findSuitableImageSize(parameters, portrait ? mHeight : mWidth,
-                    portrait ? mWidth : mHeight);
+            Point imageSize =
+                    Utils.findSuitableImageSize(parameters, portrait ? mHeight : mWidth, portrait ? mWidth : mHeight);
             int imageWidth = imageSize.getX();
             int imageHeight = imageSize.getY();
             parameters.setPreviewSize(imageWidth, imageHeight);
-            Point previewSize = Utils.getPreviewSize(portrait ? imageHeight : imageWidth,
-                    portrait ? imageWidth : imageHeight, mWidth, mHeight);
+            Point previewSize =
+                    Utils.getPreviewSize(portrait ? imageHeight : imageWidth, portrait ? imageWidth : imageHeight,
+                            mWidth, mHeight);
             List<String> focusModes = parameters.getSupportedFocusModes();
             boolean autoFocusSupported = focusModes != null &&
                     (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO) ||
@@ -680,8 +673,7 @@ public class CodeScanner {
                 Utils.setAutoFocusMode(parameters, mAutoFocusMode);
             }
             List<String> flashModes = parameters.getSupportedFlashModes();
-            boolean flashSupported =
-                    flashModes != null && flashModes.contains(Camera.Parameters.FLASH_MODE_TORCH);
+            boolean flashSupported = flashModes != null && flashModes.contains(Camera.Parameters.FLASH_MODE_TORCH);
             if (!flashSupported) {
                 mFlashEnabled = false;
             }
@@ -692,10 +684,8 @@ public class CodeScanner {
             mInitializeLock.lock();
             try {
                 Decoder decoder = new Decoder(mDecoderStateListener, mFormats);
-                mDecoderWrapper =
-                        new DecoderWrapper(camera, cameraInfo, decoder, imageSize, previewSize,
-                                new Point(mWidth, mHeight), orientation, autoFocusSupported,
-                                flashSupported);
+                mDecoderWrapper = new DecoderWrapper(camera, cameraInfo, decoder, imageSize, previewSize,
+                        new Point(mWidth, mHeight), orientation, autoFocusSupported, flashSupported);
                 decoder.start();
                 mInitialization = false;
                 mInitialized = true;

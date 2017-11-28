@@ -71,8 +71,7 @@ final class Rect {
             return true;
         } else if (obj instanceof Rect) {
             Rect other = (Rect) obj;
-            return mLeft == other.mLeft && mTop == other.mTop && mRight == other.mRight &&
-                    mBottom == other.mBottom;
+            return mLeft == other.mLeft && mTop == other.mTop && mRight == other.mRight && mBottom == other.mBottom;
         } else {
             return false;
         }

@@ -58,8 +58,7 @@ final class Utils {
     }
 
     @NonNull
-    public static Point findSuitableImageSize(@NonNull Camera.Parameters parameters, int frameWidth,
-            int frameHeight) {
+    public static Point findSuitableImageSize(@NonNull Camera.Parameters parameters, int frameWidth, int frameHeight) {
         List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
         if (sizes != null && !sizes.isEmpty()) {
             Collections.sort(sizes, new CameraSizeComparator());
@@ -105,8 +104,7 @@ final class Utils {
         return false;
     }
 
-    public static boolean setAutoFocusMode(@NonNull Camera.Parameters parameters,
-            AutoFocusMode autoFocusMode) {
+    public static boolean setAutoFocusMode(@NonNull Camera.Parameters parameters, AutoFocusMode autoFocusMode) {
         List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes == null || focusModes.isEmpty()) {
             return false;
@@ -131,8 +129,7 @@ final class Utils {
         }
     }
 
-    public static boolean setFlashMode(@NonNull Camera.Parameters parameters,
-            @NonNull String flashMode) {
+    public static boolean setFlashMode(@NonNull Camera.Parameters parameters, @NonNull String flashMode) {
         if (flashMode.equals(parameters.getFlashMode())) {
             return false;
         }
@@ -144,10 +141,8 @@ final class Utils {
         return false;
     }
 
-    public static int getDisplayOrientation(@NonNull Context context,
-            @NonNull Camera.CameraInfo cameraInfo) {
-        WindowManager windowManager =
-                (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    public static int getDisplayOrientation(@NonNull Context context, @NonNull Camera.CameraInfo cameraInfo) {
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         if (windowManager == null) {
             throw new CodeScannerException("Unable to access window manager");
         }
@@ -173,8 +168,8 @@ final class Utils {
                     throw new CodeScannerException("Invalid display rotation");
                 }
         }
-        return ((cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT ? 180 : 360) +
-                cameraInfo.orientation - degrees) % 360;
+        return ((cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT ? 180 : 360) + cameraInfo.orientation -
+                degrees) % 360;
     }
 
     public static boolean isPortrait(int orientation) {
@@ -190,8 +185,7 @@ final class Utils {
     }
 
     @NonNull
-    public static Point getPreviewSize(int imageWidth, int imageHeight, int frameWidth,
-            int frameHeight) {
+    public static Point getPreviewSize(int imageWidth, int imageHeight, int frameWidth, int frameHeight) {
         if (imageWidth == frameWidth && imageHeight == frameHeight) {
             return new Point(frameWidth, frameHeight);
         }
@@ -240,10 +234,8 @@ final class Utils {
         int hD = (previewHeight - viewHeight) / 2;
         float wR = (float) imageWidth / (float) previewWidth;
         float hR = (float) imageHeight / (float) previewHeight;
-        return new Rect(Math.round((viewFrameRect.getLeft() + wD) * wR),
-                Math.round((viewFrameRect.getTop() + hD) * hR),
-                Math.round((viewFrameRect.getRight() + wD) * wR),
-                Math.round((viewFrameRect.getBottom() + hD) * hR));
+        return new Rect(Math.round((viewFrameRect.getLeft() + wD) * wR), Math.round((viewFrameRect.getTop() + hD) * hR),
+                Math.round((viewFrameRect.getRight() + wD) * wR), Math.round((viewFrameRect.getBottom() + hD) * hR));
     }
 
     public static byte[] rotateNV21(byte[] yuv, int width, int height, int rotation) {

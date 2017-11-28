@@ -48,8 +48,8 @@ public class CodeScannerException extends RuntimeException {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    protected CodeScannerException(@Nullable String message, @Nullable Throwable cause,
-            boolean enableSuppression, boolean writableStackTrace) {
+    protected CodeScannerException(@Nullable String message, @Nullable Throwable cause, boolean enableSuppression,
+            boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }
