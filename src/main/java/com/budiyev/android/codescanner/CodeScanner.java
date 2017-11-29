@@ -173,10 +173,9 @@ public class CodeScanner {
     public void setFormats(@NonNull List<BarcodeFormat> formats) {
         mInitializeLock.lock();
         try {
+            mFormats = formats;
             if (mInitialized) {
                 mDecoderWrapper.getDecoder().setFormats(formats);
-            } else {
-                mFormats = formats;
             }
         } finally {
             mInitializeLock.unlock();
@@ -215,7 +214,15 @@ public class CodeScanner {
      * @see DecodeCallback
      */
     public void setDecodeCallback(@Nullable DecodeCallback decodeCallback) {
-        mDecodeCallback = decodeCallback;
+        mInitializeLock.lock();
+        try {
+            mDecodeCallback = decodeCallback;
+            if (mInitialized) {
+                mDecoderWrapper.getDecoder().setCallback(decodeCallback);
+            }
+        } finally {
+            mInitializeLock.unlock();
+        }
     }
 
     /**
@@ -551,7 +558,7 @@ public class CodeScanner {
     private final class PreviewCallback implements Camera.PreviewCallback {
         @Override
         public void onPreviewFrame(byte[] data, Camera camera) {
-            if (!mInitialized || mStoppingPreview || data == null) {
+            if (!mInitialized || mStoppingPreview || mScanMode == ScanMode.PREVIEW || data == null) {
                 return;
             }
             DecoderWrapper decoderWrapper = mDecoderWrapper;
@@ -566,7 +573,7 @@ public class CodeScanner {
             Point previewSize = decoderWrapper.getPreviewSize();
             decoder.decode(new DecodeTask(data, imageSize, previewSize, decoderWrapper.getViewSize(),
                     decoderWrapper.getDisplayOrientation(), mScannerView.isSquareFrame(),
-                    decoderWrapper.shouldReverseHorizontal(), mDecodeCallback));
+                    decoderWrapper.shouldReverseHorizontal()));
         }
     }
 
@@ -594,11 +601,17 @@ public class CodeScanner {
 
     private final class DecoderStateListener implements Decoder.StateListener {
         @Override
-        public void onStateChanged(@NonNull Decoder.State state) {
-            if (mScanMode == ScanMode.SINGLE && state == Decoder.State.DECODED) {
-                mStoppingPreview = true;
-                mMainThreadHandler.post(mStopPreviewTask);
+        public boolean onStateChanged(@NonNull Decoder.State state) {
+            if (state == Decoder.State.DECODED) {
+                ScanMode scanMode = mScanMode;
+                if (scanMode == ScanMode.PREVIEW) {
+                    return false;
+                } else if (scanMode == ScanMode.SINGLE) {
+                    mStoppingPreview = true;
+                    mMainThreadHandler.post(mStopPreviewTask);
+                }
             }
+            return true;
         }
     }
 
@@ -689,7 +702,7 @@ public class CodeScanner {
             camera.setDisplayOrientation(orientation);
             mInitializeLock.lock();
             try {
-                Decoder decoder = new Decoder(mDecoderStateListener, mFormats);
+                Decoder decoder = new Decoder(mDecoderStateListener, mFormats, mDecodeCallback);
                 mDecoderWrapper = new DecoderWrapper(camera, cameraInfo, decoder, imageSize, previewSize,
                         new Point(mWidth, mHeight), orientation, autoFocusSupported, flashSupported);
                 decoder.start();

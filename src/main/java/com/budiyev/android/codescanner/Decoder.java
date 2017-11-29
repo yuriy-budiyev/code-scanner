@@ -30,6 +30,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
@@ -43,20 +44,27 @@ final class Decoder {
     private final DecoderThread mDecoderThread;
     private final StateListener mStateListener;
     private final Map<DecodeHintType, Object> mHints;
+    private volatile DecodeCallback mCallback;
     private volatile boolean mProcessing;
 
-    public Decoder(@NonNull StateListener stateListener, @NonNull List<BarcodeFormat> formats) {
+    public Decoder(@NonNull StateListener stateListener, @NonNull List<BarcodeFormat> formats,
+            @Nullable DecodeCallback callback) {
         mStateListener = stateListener;
         mReader = new MultiFormatReader();
         mDecoderThread = new DecoderThread();
         mHints = new EnumMap<>(DecodeHintType.class);
         mHints.put(DecodeHintType.POSSIBLE_FORMATS, formats);
         mReader.setHints(mHints);
+        mCallback = callback;
     }
 
     public void setFormats(@NonNull List<BarcodeFormat> formats) {
         mHints.put(DecodeHintType.POSSIBLE_FORMATS, formats);
         mReader.setHints(mHints);
+    }
+
+    public void setCallback(@Nullable DecodeCallback callback) {
+        mCallback = callback;
     }
 
     public void decode(@NonNull DecodeTask task) {
@@ -93,20 +101,20 @@ final class Decoder {
                 try {
                     mStateListener.onStateChanged(Decoder.State.IDLE);
                     Result result = null;
-                    DecodeCallback callback = null;
                     try {
                         DecodeTask task = mDecodeQueue.take();
                         mProcessing = true;
                         mStateListener.onStateChanged(Decoder.State.DECODING);
                         result = task.decode(mReader);
-                        callback = task.getCallback();
                     } catch (ReaderException ignored) {
                     } finally {
                         if (result != null) {
                             mDecodeQueue.clear();
-                            mStateListener.onStateChanged(Decoder.State.DECODED);
-                            if (callback != null) {
-                                callback.onDecoded(result);
+                            if (mStateListener.onStateChanged(Decoder.State.DECODED)) {
+                                DecodeCallback callback = mCallback;
+                                if (callback != null) {
+                                    callback.onDecoded(result);
+                                }
                             }
                         }
                         mProcessing = false;
@@ -119,7 +127,7 @@ final class Decoder {
     }
 
     public interface StateListener {
-        void onStateChanged(@NonNull State state);
+        boolean onStateChanged(@NonNull State state);
     }
 
     public enum State {

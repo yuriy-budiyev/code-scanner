@@ -30,12 +30,17 @@ package com.budiyev.android.codescanner;
  */
 public enum ScanMode {
     /**
-     * Scan will stop after first decoded code
+     * Preview will stop after first decoded code
      */
     SINGLE,
 
     /**
      * Continuous scan, don't stop preview after decoding the code
      */
-    CONTINUOUS
+    CONTINUOUS,
+
+    /**
+     * Preview only, no code recognition
+     */
+    PREVIEW
 }
