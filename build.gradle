@@ -7,7 +7,7 @@ buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
     }
 }
 
@@ -25,7 +25,7 @@ apply plugin: 'com.jfrog.bintray'
 ext {
     libraryName = 'CodeScanner'
     libraryDescription = 'Code scanner library for Android, based on ZXing'
-    libraryVersion = '1.7.1'
+    libraryVersion = '1.7.2'
     artifact = 'code-scanner'
     developerId = 'yuriy-budiyev'
     developerName = 'Yuriy Budiyev'
@@ -40,13 +40,13 @@ ext {
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.3"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.2'
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 26
-        versionCode 32
+        targetSdkVersion 27
+        versionCode 33
         versionName libraryVersion
     }
 
@@ -65,7 +65,7 @@ android {
 dependencies {
     api 'com.google.zxing:core:3.3.0'
     api 'com.google.zxing:android-core:3.3.0'
-    api 'com.android.support:support-annotations:26.1.0'
+    api 'com.android.support:support-annotations:27.0.2'
 }
 
 group = publishedGroupId
