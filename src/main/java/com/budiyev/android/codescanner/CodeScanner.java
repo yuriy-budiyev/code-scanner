@@ -136,7 +136,7 @@ public class CodeScanner {
     }
 
     /**
-     * Set camera
+     * Camera to use
      *
      * @param cameraId Camera id (between {@code 0} and
      *                 {@link Camera#getNumberOfCameras()} - {@code 1})
@@ -161,7 +161,7 @@ public class CodeScanner {
     }
 
     /**
-     * Set formats, decoder to react to ({@link #ALL_FORMATS} by default)
+     * Formats, decoder to react to ({@link #ALL_FORMATS} by default)
      *
      * @param formats Formats
      * @see BarcodeFormat
@@ -183,7 +183,7 @@ public class CodeScanner {
     }
 
     /**
-     * Set formats, decoder to react to ({@link #ALL_FORMATS} by default)
+     * Formats, decoder to react to ({@link #ALL_FORMATS} by default)
      *
      * @param formats Formats
      * @see BarcodeFormat
@@ -197,7 +197,7 @@ public class CodeScanner {
     }
 
     /**
-     * Set format, decoder to react to
+     * Format, decoder to react to
      *
      * @param format Format
      * @see BarcodeFormat
@@ -208,7 +208,7 @@ public class CodeScanner {
     }
 
     /**
-     * Set callback of decoding process
+     * Callback of decoding process
      *
      * @param decodeCallback Callback
      * @see DecodeCallback
@@ -226,7 +226,7 @@ public class CodeScanner {
     }
 
     /**
-     * Set camera initialization error callback.
+     * Camera initialization error callback.
      * If not set, an exception will be thrown when error will occur.
      *
      * @param errorCallback Callback
@@ -238,7 +238,7 @@ public class CodeScanner {
     }
 
     /**
-     * Set scan mode, {@link ScanMode#SINGLE} by default
+     * Scan mode, {@link ScanMode#SINGLE} by default
      *
      * @see ScanMode
      */
@@ -272,7 +272,7 @@ public class CodeScanner {
     }
 
     /**
-     * Set auto focus mode, {@link AutoFocusMode#SAFE} by default
+     * Auto focus mode, {@link AutoFocusMode#SAFE} by default
      *
      * @see AutoFocusMode
      */
@@ -290,7 +290,7 @@ public class CodeScanner {
     }
 
     /**
-     * Set auto focus interval in milliseconds for {@link AutoFocusMode#SAFE} mode, 2000 by default
+     * Auto focus interval in milliseconds for {@link AutoFocusMode#SAFE} mode, 2000 by default
      *
      * @see #setAutoFocusMode(AutoFocusMode)
      */
@@ -835,7 +835,7 @@ public class CodeScanner {
         }
 
         /**
-         * Set format, decoder to react to
+         * Format, decoder to react to
          *
          * @param format Format
          * @see BarcodeFormat
@@ -876,17 +876,7 @@ public class CodeScanner {
         }
 
         /**
-         * Whether to enable or disable auto focus if it's supported, {@code true} by default
-         */
-        @NonNull
-        @MainThread
-        public Builder autoFocus(boolean enabled) {
-            mAutoFocusEnabled = enabled;
-            return this;
-        }
-
-        /**
-         * Set scan mode, {@link ScanMode#SINGLE} by default
+         * Scan mode, {@link ScanMode#SINGLE} by default
          *
          * @see ScanMode
          */
@@ -894,6 +884,16 @@ public class CodeScanner {
         @MainThread
         public Builder scanMode(@NonNull ScanMode mode) {
             mScanMode = mode;
+            return this;
+        }
+
+        /**
+         * Whether to enable or disable auto focus if it's supported, {@code true} by default
+         */
+        @NonNull
+        @MainThread
+        public Builder autoFocus(boolean enabled) {
+            mAutoFocusEnabled = enabled;
             return this;
         }
 
