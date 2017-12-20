@@ -641,7 +641,7 @@ public class CodeScanner {
                 if (errorCallback != null) {
                     errorCallback.onError(e);
                 } else {
-                    throw new RuntimeException(e);
+                    throw e;
                 }
             }
         }

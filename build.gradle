@@ -60,15 +60,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_6
-        targetCompatibility JavaVersion.VERSION_1_6
-    }
 }
 
 dependencies {
-    api 'com.google.zxing:core:3.3.1'
+    api 'com.google.zxing:core:3.3.0'
     api 'com.google.zxing:android-core:3.3.0'
     api 'com.android.support:support-annotations:27.0.2'
 }
