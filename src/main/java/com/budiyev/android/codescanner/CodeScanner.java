@@ -641,16 +641,12 @@ public class CodeScanner {
                 if (errorCallback != null) {
                     errorCallback.onError(e);
                 } else {
-                    if (e instanceof RuntimeException) {
-                        throw (RuntimeException) e;
-                    } else {
-                        throw new CodeScannerException(e);
-                    }
+                    throw e;
                 }
             }
         }
 
-        private void initialize() throws Exception {
+        private void initialize() {
             Camera camera = null;
             Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
             int cameraId = mCameraId;
