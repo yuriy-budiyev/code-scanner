@@ -39,7 +39,7 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 
 final class Decoder {
-    private final BlockingQueue<DecodeTask> mDecodeQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<DecodeTask> mDecodeQueue = new LinkedBlockingQueue<DecodeTask>();
     private final MultiFormatReader mReader;
     private final DecoderThread mDecoderThread;
     private final StateListener mStateListener;
@@ -52,7 +52,7 @@ final class Decoder {
         mStateListener = stateListener;
         mReader = new MultiFormatReader();
         mDecoderThread = new DecoderThread();
-        mHints = new EnumMap<>(DecodeHintType.class);
+        mHints = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
         mHints.put(DecodeHintType.POSSIBLE_FORMATS, formats);
         mReader.setHints(mHints);
         mCallback = callback;
