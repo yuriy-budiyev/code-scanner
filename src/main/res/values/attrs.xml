@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CodeScannerView">
-        <attr name="maskColor" format="color"/>
-        <attr name="frameColor" format="color"/>
-        <attr name="autoFocusButtonColor" format="color"/>
-        <attr name="flashButtonColor" format="color"/>
-        <attr name="autoFocusButtonVisible" format="boolean"/>
-        <attr name="flashButtonVisible" format="boolean"/>
-        <attr name="squareFrame" format="boolean"/>
-        <attr name="frameWidth" format="dimension"/>
-        <attr name="frameCornersSize" format="dimension"/>
+        <attr format="color" name="maskColor"/>
+        <attr format="color" name="frameColor"/>
+        <attr format="color" name="autoFocusButtonColor"/>
+        <attr format="color" name="flashButtonColor"/>
+        <attr format="boolean" name="autoFocusButtonVisible"/>
+        <attr format="boolean" name="flashButtonVisible"/>
+        <attr format="boolean" name="squareFrame"/>
+        <attr format="dimension" name="frameThickness"/>
+        <attr format="dimension" name="frameCornersSize"/>
     </declare-styleable>
 </resources>

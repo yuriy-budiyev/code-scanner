@@ -56,7 +56,7 @@ public class CodeScannerView extends ViewGroup {
     private static final int DEFAULT_FRAME_COLOR = Color.WHITE;
     private static final int DEFAULT_AUTO_FOCUS_BUTTON_COLOR = Color.WHITE;
     private static final int DEFAULT_FLASH_BUTTON_COLOR = Color.WHITE;
-    private static final float DEFAULT_FRAME_WIDTH_DP = 2f;
+    private static final float DEFAULT_FRAME_THICKNESS_DP = 2f;
     private static final float DEFAULT_FRAME_CORNER_SIZE_DP = 50f;
     private static final float BUTTON_SIZE_DP = 56f;
     private SurfaceView mPreviewView;
@@ -131,7 +131,7 @@ public class CodeScannerView extends ViewGroup {
             mViewFinderView.setSquareFrame(DEFAULT_SQUARE_FRAME);
             mViewFinderView.setMaskColor(DEFAULT_MASK_COLOR);
             mViewFinderView.setFrameColor(DEFAULT_FRAME_COLOR);
-            mViewFinderView.setFrameWidth(Math.round(DEFAULT_FRAME_WIDTH_DP * displayMetrics.density));
+            mViewFinderView.setFrameThickness(Math.round(DEFAULT_FRAME_THICKNESS_DP * displayMetrics.density));
             mViewFinderView.setFrameCornersSize(Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * displayMetrics.density));
             mAutoFocusButton.setColorFilter(DEFAULT_AUTO_FOCUS_BUTTON_COLOR);
             mFlashButton.setColorFilter(DEFAULT_FLASH_BUTTON_COLOR);
@@ -148,8 +148,9 @@ public class CodeScannerView extends ViewGroup {
                         .setMaskColor(attributes.getColor(R.styleable.CodeScannerView_maskColor, DEFAULT_MASK_COLOR));
                 mViewFinderView.setFrameColor(
                         attributes.getColor(R.styleable.CodeScannerView_frameColor, DEFAULT_FRAME_COLOR));
-                mViewFinderView.setFrameWidth(attributes.getDimensionPixelSize(R.styleable.CodeScannerView_frameWidth,
-                        Math.round(DEFAULT_FRAME_WIDTH_DP * displayMetrics.density)));
+                mViewFinderView.setFrameThickness(attributes
+                        .getDimensionPixelSize(R.styleable.CodeScannerView_frameThickness,
+                                Math.round(DEFAULT_FRAME_THICKNESS_DP * displayMetrics.density)));
                 mViewFinderView.setFrameCornersSize(attributes
                         .getDimensionPixelSize(R.styleable.CodeScannerView_frameCornersSize,
                                 Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * displayMetrics.density)));
@@ -238,12 +239,12 @@ public class CodeScannerView extends ViewGroup {
     }
 
     /**
-     * Set frame width
+     * Set frame thickness
      *
-     * @param width Frame width in pixels
+     * @param width Frame thickness in pixels
      */
-    public void setFrameWidth(@Px int width) {
-        mViewFinderView.setFrameWidth(width);
+    public void setFrameThickness(@Px int width) {
+        mViewFinderView.setFrameThickness(width);
     }
 
     /**

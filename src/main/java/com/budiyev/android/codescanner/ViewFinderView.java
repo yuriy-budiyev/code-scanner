@@ -113,7 +113,7 @@ final class ViewFinderView extends View {
         }
     }
 
-    void setFrameWidth(@Px int width) {
+    void setFrameThickness(@Px int width) {
         mFramePaint.setStrokeWidth(width);
         if (Utils.isLaidOut(this)) {
             invalidate();
