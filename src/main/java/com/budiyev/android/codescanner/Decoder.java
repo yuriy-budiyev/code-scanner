@@ -47,7 +47,7 @@ final class Decoder {
     private final Map<DecodeHintType, Object> mHints;
     private volatile DecodeCallback mCallback;
     private volatile boolean mProcessingResult;
-    private volatile boolean mForceSkip;
+    private volatile boolean mFinishingScan;
 
     public Decoder(@NonNull StateListener stateListener, @NonNull List<BarcodeFormat> formats,
             @Nullable DecodeCallback callback) {
@@ -83,11 +83,11 @@ final class Decoder {
     }
 
     public boolean shouldSkipTask() {
-        return mForceSkip || mProcessingResult || mDecodeQueue.remainingCapacity() == 0;
+        return mFinishingScan || mProcessingResult || mDecodeQueue.remainingCapacity() == 0;
     }
 
-    public void setForceSkip(boolean forceSkip) {
-        mForceSkip = forceSkip;
+    public void setFinishingScan(boolean finishing) {
+        mFinishingScan = finishing;
     }
 
     private final class DecoderThread extends Thread {

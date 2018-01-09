@@ -606,8 +606,8 @@ public class CodeScanner {
                     return false;
                 } else if (scanMode == ScanMode.SINGLE) {
                     mStoppingPreview = true;
-                    decoder.setForceSkip(true);
-                    mMainThreadHandler.post(new StopPreviewTask(decoder));
+                    decoder.setFinishingScan(true);
+                    mMainThreadHandler.post(new FinishScanTask(decoder));
                 }
             }
             return true;
@@ -731,17 +731,17 @@ public class CodeScanner {
         }
     }
 
-    private final class StopPreviewTask implements Runnable {
+    private final class FinishScanTask implements Runnable {
         private final Decoder mDecoder;
 
-        private StopPreviewTask(@NonNull Decoder decoder) {
+        private FinishScanTask(@NonNull Decoder decoder) {
             mDecoder = decoder;
         }
 
         @Override
         public void run() {
             stopPreview();
-            mDecoder.setForceSkip(false);
+            mDecoder.setFinishingScan(false);
         }
     }
 
