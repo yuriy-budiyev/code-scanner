@@ -46,7 +46,6 @@ final class Decoder {
     private final StateListener mStateListener;
     private final Map<DecodeHintType, Object> mHints;
     private volatile DecodeCallback mCallback;
-    private volatile boolean mProcessing;
 
     public Decoder(@NonNull StateListener stateListener, @NonNull List<BarcodeFormat> formats,
             @Nullable DecodeCallback callback) {
@@ -81,8 +80,8 @@ final class Decoder {
         mDecodeQueue.clear();
     }
 
-    public boolean isProcessing() {
-        return mProcessing;
+    public boolean isQueueFull() {
+        return mDecodeQueue.remainingCapacity() != 0;
     }
 
     private final class DecoderThread extends Thread {
@@ -104,7 +103,6 @@ final class Decoder {
                     Result result = null;
                     try {
                         DecodeTask task = mDecodeQueue.take();
-                        mProcessing = true;
                         mStateListener.onStateChanged(Decoder.State.DECODING);
                         result = task.decode(mReader);
                     } catch (ReaderException ignored) {
@@ -118,7 +116,6 @@ final class Decoder {
                                 }
                             }
                         }
-                        mProcessing = false;
                     }
                 } catch (InterruptedException e) {
                     break;
