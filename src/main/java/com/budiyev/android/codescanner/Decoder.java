@@ -39,13 +39,14 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 
 final class Decoder {
-    private static final int MAX_QUEUE_SIZE = 8;
+    private static final int MAX_QUEUE_SIZE = 4;
     private final BlockingQueue<DecodeTask> mDecodeQueue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
     private final MultiFormatReader mReader;
     private final DecoderThread mDecoderThread;
     private final StateListener mStateListener;
     private final Map<DecodeHintType, Object> mHints;
     private volatile DecodeCallback mCallback;
+    private volatile boolean mProcessingResult;
 
     public Decoder(@NonNull StateListener stateListener, @NonNull List<BarcodeFormat> formats,
             @Nullable DecodeCallback callback) {
@@ -80,8 +81,8 @@ final class Decoder {
         mDecodeQueue.clear();
     }
 
-    public boolean isQueueFull() {
-        return mDecodeQueue.remainingCapacity() == 0;
+    public boolean shouldSkipTask() {
+        return mProcessingResult || mDecodeQueue.remainingCapacity() == 0;
     }
 
     private final class DecoderThread extends Thread {
@@ -108,6 +109,7 @@ final class Decoder {
                     } catch (ReaderException ignored) {
                     } finally {
                         if (result != null) {
+                            mProcessingResult = true;
                             mDecodeQueue.clear();
                             if (mStateListener.onStateChanged(Decoder.State.DECODED)) {
                                 DecodeCallback callback = mCallback;
@@ -115,6 +117,7 @@ final class Decoder {
                                     callback.onDecoded(result);
                                 }
                             }
+                            mProcessingResult = false;
                         }
                     }
                 } catch (InterruptedException e) {

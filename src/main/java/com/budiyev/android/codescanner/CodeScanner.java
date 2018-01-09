@@ -566,7 +566,7 @@ public class CodeScanner {
                 return;
             }
             Decoder decoder = decoderWrapper.getDecoder();
-            if (decoder.isQueueFull()) {
+            if (decoder.shouldSkipTask()) {
                 return;
             }
             Point imageSize = decoderWrapper.getImageSize();
