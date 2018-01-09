@@ -242,6 +242,9 @@ final class Utils {
         if (rotation == 0 || rotation == 360) {
             return source;
         }
+        if (rotation % 90 != 0 || rotation < 0 || rotation > 270) {
+            throw new IllegalArgumentException("Invalid rotation (0 <= rotation < 360, rotation % 90 == 0)");
+        }
         byte[] output = new byte[source.length];
         int frameSize = width * height;
         boolean swap = rotation % 180 != 0;
