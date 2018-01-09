@@ -49,7 +49,7 @@ final class ViewFinderView extends View {
     }
 
     @Override
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         Rect frameRect = mFrameRect;
         if (frameRect == null) {
             return;
@@ -113,8 +113,8 @@ final class ViewFinderView extends View {
         }
     }
 
-    void setFrameThickness(@Px int width) {
-        mFramePaint.setStrokeWidth(width);
+    void setFrameThickness(@Px int thickness) {
+        mFramePaint.setStrokeWidth(thickness);
         if (Utils.isLaidOut(this)) {
             invalidate();
         }

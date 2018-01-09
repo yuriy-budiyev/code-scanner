@@ -241,10 +241,10 @@ public class CodeScannerView extends ViewGroup {
     /**
      * Set frame thickness
      *
-     * @param width Frame thickness in pixels
+     * @param thickness Frame thickness in pixels
      */
-    public void setFrameThickness(@Px int width) {
-        mViewFinderView.setFrameThickness(width);
+    public void setFrameThickness(@Px int thickness) {
+        mViewFinderView.setFrameThickness(thickness);
     }
 
     /**

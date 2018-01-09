@@ -238,14 +238,11 @@ final class Utils {
                 Math.round((viewFrameRect.getRight() + wD) * wR), Math.round((viewFrameRect.getBottom() + hD) * hR));
     }
 
-    public static byte[] rotateNV21(byte[] yuv, int width, int height, int rotation) {
+    public static byte[] rotateNV21(byte[] source, int width, int height, int rotation) {
         if (rotation == 0 || rotation == 360) {
-            return yuv;
+            return source;
         }
-        if (rotation % 90 != 0 || rotation < 0 || rotation > 270) {
-            throw new IllegalArgumentException("0 <= rotation < 360, rotation % 90 == 0");
-        }
-        byte[] output = new byte[yuv.length];
+        byte[] output = new byte[source.length];
         int frameSize = width * height;
         boolean swap = rotation % 180 != 0;
         boolean flipX = rotation % 270 != 0;
@@ -264,9 +261,9 @@ final class Utils {
                 int yOut = jOut * wOut + iOut;
                 int uOut = frameSize + (jOut >> 1) * wOut + (iOut & ~1);
                 int vOut = uOut + 1;
-                output[yOut] = (byte) (0xff & yuv[yIn]);
-                output[uOut] = (byte) (0xff & yuv[uIn]);
-                output[vOut] = (byte) (0xff & yuv[vIn]);
+                output[yOut] = (byte) (0xff & source[yIn]);
+                output[uOut] = (byte) (0xff & source[uIn]);
+                output[vOut] = (byte) (0xff & source[vIn]);
             }
         }
         return output;
