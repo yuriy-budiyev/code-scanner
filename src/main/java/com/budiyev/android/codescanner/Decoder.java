@@ -26,8 +26,8 @@ package com.budiyev.android.codescanner;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,7 +39,8 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 
 final class Decoder {
-    private final BlockingQueue<DecodeTask> mDecodeQueue = new LinkedBlockingQueue<>();
+    private static final int MAX_QUEUE_SIZE = 8;
+    private final BlockingQueue<DecodeTask> mDecodeQueue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
     private final MultiFormatReader mReader;
     private final DecoderThread mDecoderThread;
     private final StateListener mStateListener;
@@ -68,7 +69,7 @@ final class Decoder {
     }
 
     public void decode(@NonNull DecodeTask task) {
-        mDecodeQueue.add(task);
+        mDecodeQueue.offer(task);
     }
 
     public void start() {
