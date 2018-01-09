@@ -81,7 +81,7 @@ final class Decoder {
     }
 
     public boolean isQueueFull() {
-        return mDecodeQueue.remainingCapacity() != 0;
+        return mDecodeQueue.remainingCapacity() == 0;
     }
 
     private final class DecoderThread extends Thread {
