@@ -78,7 +78,6 @@ public class CodeScanner {
     private final Camera.PreviewCallback mPreviewCallback;
     private final Camera.AutoFocusCallback mSafeAutoFocusCallback;
     private final Runnable mSafeAutoFocusTask;
-    private final Runnable mStopPreviewTask;
     private final DecoderStateListener mDecoderStateListener;
     private volatile List<BarcodeFormat> mFormats = DEFAULT_FORMATS;
     private volatile ScanMode mScanMode = DEFAULT_SCAN_MODE;
@@ -115,7 +114,6 @@ public class CodeScanner {
         mPreviewCallback = new PreviewCallback();
         mSafeAutoFocusCallback = new SafeAutoFocusCallback();
         mSafeAutoFocusTask = new SafeAutoFocusTask();
-        mStopPreviewTask = new StopPreviewTask();
         mDecoderStateListener = new DecoderStateListener();
         mScannerView.setCodeScanner(this);
     }
@@ -601,14 +599,15 @@ public class CodeScanner {
 
     private final class DecoderStateListener implements Decoder.StateListener {
         @Override
-        public boolean onStateChanged(@NonNull Decoder.State state) {
+        public boolean onStateChanged(@NonNull Decoder decoder, @NonNull Decoder.State state) {
             if (state == Decoder.State.DECODED) {
                 ScanMode scanMode = mScanMode;
                 if (scanMode == ScanMode.PREVIEW) {
                     return false;
                 } else if (scanMode == ScanMode.SINGLE) {
                     mStoppingPreview = true;
-                    mMainThreadHandler.post(mStopPreviewTask);
+                    decoder.setForceSkip(true);
+                    mMainThreadHandler.post(new StopPreviewTask(decoder));
                 }
             }
             return true;
@@ -733,9 +732,16 @@ public class CodeScanner {
     }
 
     private final class StopPreviewTask implements Runnable {
+        private final Decoder mDecoder;
+
+        private StopPreviewTask(@NonNull Decoder decoder) {
+            mDecoder = decoder;
+        }
+
         @Override
         public void run() {
             stopPreview();
+            mDecoder.setForceSkip(false);
         }
     }
 
