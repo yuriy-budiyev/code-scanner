@@ -26,8 +26,8 @@ package com.budiyev.android.codescanner;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.SynchronousQueue;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,14 +39,13 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 
 final class Decoder {
-    private static final int MAX_QUEUE_SIZE = 4;
-    private final BlockingQueue<DecodeTask> mDecodeQueue = new ArrayBlockingQueue<>(MAX_QUEUE_SIZE);
+    private final BlockingQueue<DecodeTask> mDecodeQueue = new SynchronousQueue<>();
     private final MultiFormatReader mReader;
     private final DecoderThread mDecoderThread;
     private final StateListener mStateListener;
     private final Map<DecodeHintType, Object> mHints;
     private volatile DecodeCallback mCallback;
-    private volatile boolean mProcessingResult;
+    private volatile boolean mProcessing;
 
     public Decoder(@NonNull StateListener stateListener, @NonNull List<BarcodeFormat> formats,
             @Nullable DecodeCallback callback) {
@@ -81,8 +80,8 @@ final class Decoder {
         mDecodeQueue.clear();
     }
 
-    public boolean shouldSkipTask() {
-        return mProcessingResult || mDecodeQueue.remainingCapacity() == 0;
+    public boolean isProcessing() {
+        return mProcessing;
     }
 
     private final class DecoderThread extends Thread {
@@ -104,12 +103,12 @@ final class Decoder {
                     Result result = null;
                     try {
                         DecodeTask task = mDecodeQueue.take();
+                        mProcessing = true;
                         mStateListener.onStateChanged(Decoder.State.DECODING);
                         result = task.decode(mReader);
                     } catch (ReaderException ignored) {
                     } finally {
                         if (result != null) {
-                            mProcessingResult = true;
                             mDecodeQueue.clear();
                             if (mStateListener.onStateChanged(Decoder.State.DECODED)) {
                                 DecodeCallback callback = mCallback;
@@ -117,8 +116,8 @@ final class Decoder {
                                     callback.onDecoded(result);
                                 }
                             }
-                            mProcessingResult = false;
                         }
+                        mProcessing = false;
                     }
                 } catch (InterruptedException e) {
                     break;
