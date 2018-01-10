@@ -47,7 +47,6 @@ final class Decoder {
     private final Map<DecodeHintType, Object> mHints;
     private volatile DecodeCallback mCallback;
     private volatile boolean mProcessingResult;
-    private volatile boolean mFinishingScan;
 
     public Decoder(@NonNull StateListener stateListener, @NonNull List<BarcodeFormat> formats,
             @Nullable DecodeCallback callback) {
@@ -83,11 +82,7 @@ final class Decoder {
     }
 
     public boolean shouldSkipTask() {
-        return mFinishingScan || mProcessingResult || mDecodeQueue.remainingCapacity() == 0;
-    }
-
-    public void setFinishingScan(boolean finishing) {
-        mFinishingScan = finishing;
+        return mProcessingResult || mDecodeQueue.remainingCapacity() == 0;
     }
 
     private final class DecoderThread extends Thread {
@@ -105,18 +100,18 @@ final class Decoder {
         public void run() {
             for (; ; ) {
                 try {
-                    mStateListener.onStateChanged(Decoder.this, Decoder.State.IDLE);
+                    mStateListener.onStateChanged(Decoder.State.IDLE);
                     Result result = null;
                     try {
                         DecodeTask task = mDecodeQueue.take();
-                        mStateListener.onStateChanged(Decoder.this, Decoder.State.DECODING);
+                        mStateListener.onStateChanged(Decoder.State.DECODING);
                         result = task.decode(mReader);
                     } catch (ReaderException ignored) {
                     } finally {
                         if (result != null) {
                             mProcessingResult = true;
                             mDecodeQueue.clear();
-                            if (mStateListener.onStateChanged(Decoder.this, Decoder.State.DECODED)) {
+                            if (mStateListener.onStateChanged(Decoder.State.DECODED)) {
                                 DecodeCallback callback = mCallback;
                                 if (callback != null) {
                                     callback.onDecoded(result);
@@ -133,7 +128,7 @@ final class Decoder {
     }
 
     public interface StateListener {
-        boolean onStateChanged(@NonNull Decoder decoder, @NonNull State state);
+        boolean onStateChanged(@NonNull State state);
     }
 
     public enum State {

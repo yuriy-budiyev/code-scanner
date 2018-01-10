@@ -78,6 +78,7 @@ public class CodeScanner {
     private final Camera.PreviewCallback mPreviewCallback;
     private final Camera.AutoFocusCallback mSafeAutoFocusCallback;
     private final Runnable mSafeAutoFocusTask;
+    private final Runnable mStopPreviewTask;
     private final DecoderStateListener mDecoderStateListener;
     private volatile List<BarcodeFormat> mFormats = DEFAULT_FORMATS;
     private volatile ScanMode mScanMode = DEFAULT_SCAN_MODE;
@@ -114,6 +115,7 @@ public class CodeScanner {
         mPreviewCallback = new PreviewCallback();
         mSafeAutoFocusCallback = new SafeAutoFocusCallback();
         mSafeAutoFocusTask = new SafeAutoFocusTask();
+        mStopPreviewTask = new StopPreviewTask();
         mDecoderStateListener = new DecoderStateListener();
         mScannerView.setCodeScanner(this);
     }
@@ -599,15 +601,14 @@ public class CodeScanner {
 
     private final class DecoderStateListener implements Decoder.StateListener {
         @Override
-        public boolean onStateChanged(@NonNull Decoder decoder, @NonNull Decoder.State state) {
+        public boolean onStateChanged(@NonNull Decoder.State state) {
             if (state == Decoder.State.DECODED) {
                 ScanMode scanMode = mScanMode;
                 if (scanMode == ScanMode.PREVIEW) {
                     return false;
                 } else if (scanMode == ScanMode.SINGLE) {
                     mStoppingPreview = true;
-                    decoder.setFinishingScan(true);
-                    mMainThreadHandler.post(new FinishScanTask(decoder));
+                    mMainThreadHandler.post(mStopPreviewTask);
                 }
             }
             return true;
@@ -731,17 +732,10 @@ public class CodeScanner {
         }
     }
 
-    private final class FinishScanTask implements Runnable {
-        private final Decoder mDecoder;
-
-        private FinishScanTask(@NonNull Decoder decoder) {
-            mDecoder = decoder;
-        }
-
+    private final class StopPreviewTask implements Runnable {
         @Override
         public void run() {
             stopPreview();
-            mDecoder.setFinishingScan(false);
         }
     }
 
