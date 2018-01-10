@@ -109,7 +109,6 @@ final class Decoder {
                     } catch (ReaderException ignored) {
                     } finally {
                         if (result != null) {
-                            mDecodeQueue.clear();
                             if (mStateListener.onStateChanged(Decoder.State.DECODED)) {
                                 DecodeCallback callback = mCallback;
                                 if (callback != null) {
