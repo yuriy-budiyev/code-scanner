@@ -44,7 +44,6 @@ final class Utils {
     private static final float PORTRAIT_HEIGHT_RATIO = 0.75f;
     private static final float LANDSCAPE_WIDTH_RATIO = 1.4f;
     private static final float LANDSCAPE_HEIGHT_RATIO = 0.625f;
-    private static final float MAX_DISTORTION = 0.5f;
     private static final int MIN_PREVIEW_PIXELS = 442368;
 
     private Utils() {
@@ -58,7 +57,8 @@ final class Utils {
     }
 
     @NonNull
-    public static Point findSuitableImageSize(@NonNull Camera.Parameters parameters, int frameWidth, int frameHeight) {
+    public static Point findSuitableImageSize(@NonNull Camera.Parameters parameters, int frameWidth, int frameHeight,
+            float distortion) {
         List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
         if (sizes != null && !sizes.isEmpty()) {
             Collections.sort(sizes, new CameraSizeComparator());
@@ -67,7 +67,7 @@ final class Utils {
                 int width = size.width;
                 int height = size.height;
                 if (width * height >= MIN_PREVIEW_PIXELS &&
-                        Math.abs(frameRatio - (float) width / (float) height) <= MAX_DISTORTION) {
+                        Math.abs(frameRatio - (float) width / (float) height) <= distortion) {
                     return new Point(width, height);
                 }
             }

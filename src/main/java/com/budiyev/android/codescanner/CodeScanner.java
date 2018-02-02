@@ -68,6 +68,7 @@ public class CodeScanner {
     private static final int DEFAULT_CAMERA = -1;
     private static final boolean DEFAULT_AUTO_FOCUS_ENABLED = true;
     private static final boolean DEFAULT_FLASH_ENABLED = false;
+    private static final float DEFAULT_ASPECT_RATIO_DISTORTION = 0.5f;
     private static final int SAFE_AUTO_FOCUS_ATTEMPTS_THRESHOLD = 2;
     private final Lock mInitializeLock = new ReentrantLock();
     private final Context mContext;
@@ -92,6 +93,7 @@ public class CodeScanner {
     private volatile boolean mAutoFocusEnabled = DEFAULT_AUTO_FOCUS_ENABLED;
     private volatile boolean mFlashEnabled = DEFAULT_FLASH_ENABLED;
     private volatile long mSafeAutoFocusInterval = DEFAULT_SAFE_AUTO_FOCUS_INTERVAL;
+    private volatile float mAspectRatioDistortion = DEFAULT_ASPECT_RATIO_DISTORTION;
     private volatile int mCameraId = DEFAULT_CAMERA;
     private boolean mPreviewActive;
     private boolean mSafeAutoFocusing;
@@ -147,6 +149,30 @@ public class CodeScanner {
         try {
             if (mCameraId != cameraId) {
                 mCameraId = cameraId;
+                if (mInitialized) {
+                    boolean previewActive = mPreviewActive;
+                    releaseResources();
+                    if (previewActive) {
+                        initialize();
+                    }
+                }
+            }
+        } finally {
+            mInitializeLock.unlock();
+        }
+    }
+
+    /**
+     * Set max preview aspect ratio distortion (preview view size to camera preview size)
+     *
+     * @param distortion Distortion
+     */
+    @MainThread
+    public void setAspectRatioDistortion(float distortion) {
+        mInitializeLock.lock();
+        try {
+            if (mAspectRatioDistortion != distortion) {
+                mAspectRatioDistortion = distortion;
                 if (mInitialized) {
                     boolean previewActive = mPreviewActive;
                     releaseResources();
@@ -674,7 +700,8 @@ public class CodeScanner {
             int orientation = Utils.getDisplayOrientation(mContext, cameraInfo);
             boolean portrait = Utils.isPortrait(orientation);
             Point imageSize =
-                    Utils.findSuitableImageSize(parameters, portrait ? mHeight : mWidth, portrait ? mWidth : mHeight);
+                    Utils.findSuitableImageSize(parameters, portrait ? mHeight : mWidth, portrait ? mWidth : mHeight,
+                            mAspectRatioDistortion);
             int imageWidth = imageSize.getX();
             int imageHeight = imageSize.getY();
             parameters.setPreviewSize(imageWidth, imageHeight);
@@ -776,6 +803,7 @@ public class CodeScanner {
      */
     public static final class Builder {
         private int mCameraId = DEFAULT_CAMERA;
+        private float mAspectRatioDistortion = DEFAULT_ASPECT_RATIO_DISTORTION;
         private List<BarcodeFormat> mFormats = DEFAULT_FORMATS;
         private DecodeCallback mDecodeCallback;
         private ErrorCallback mErrorCallback;
@@ -799,6 +827,18 @@ public class CodeScanner {
         @MainThread
         public Builder camera(int cameraId) {
             mCameraId = cameraId;
+            return this;
+        }
+
+        /**
+         * Set max preview aspect ratio distortion (preview view size to camera preview size)
+         *
+         * @param distortion Distortion
+         */
+        @NonNull
+        @MainThread
+        public Builder aspectRatioDistortion(float distortion) {
+            mAspectRatioDistortion = distortion;
             return this;
         }
 
@@ -944,6 +984,7 @@ public class CodeScanner {
         public CodeScanner build(@NonNull Context context, @NonNull CodeScannerView view) {
             CodeScanner scanner = new CodeScanner(context, view);
             scanner.mCameraId = mCameraId;
+            scanner.mAspectRatioDistortion = mAspectRatioDistortion;
             scanner.mFormats = mFormats;
             scanner.mDecodeCallback = mDecodeCallback;
             scanner.mErrorCallback = mErrorCallback;
