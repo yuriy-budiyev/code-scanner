@@ -84,7 +84,6 @@ public class CodeScanner {
     private volatile ScanMode mScanMode = DEFAULT_SCAN_MODE;
     private volatile AutoFocusMode mAutoFocusMode = DEFAULT_AUTO_FOCUS_MODE;
     private volatile DecodeCallback mDecodeCallback;
-    private volatile CameraCallback mCameraCallback;
     private volatile ErrorCallback mErrorCallback;
     private volatile DecoderWrapper mDecoderWrapper;
     private volatile boolean mInitialization;
@@ -224,16 +223,6 @@ public class CodeScanner {
         } finally {
             mInitializeLock.unlock();
         }
-    }
-
-    /**
-     * Camera initialization callback
-     *
-     * @param cameraCallback Callback
-     * @see CameraCallback
-     */
-    public void setCameraCallback(@Nullable CameraCallback cameraCallback) {
-        mCameraCallback = cameraCallback;
     }
 
     /**
@@ -711,10 +700,6 @@ public class CodeScanner {
             CameraConfigurationUtils.setBestExposure(parameters, mFlashEnabled);
             camera.setParameters(parameters);
             camera.setDisplayOrientation(orientation);
-            CameraCallback cameraCallback = mCameraCallback;
-            if (cameraCallback != null) {
-                cameraCallback.onCameraReady(camera);
-            }
             mInitializeLock.lock();
             try {
                 Decoder decoder = new Decoder(mDecoderStateListener, mFormats, mDecodeCallback);
@@ -793,7 +778,6 @@ public class CodeScanner {
         private int mCameraId = DEFAULT_CAMERA;
         private List<BarcodeFormat> mFormats = DEFAULT_FORMATS;
         private DecodeCallback mDecodeCallback;
-        private CameraCallback mCameraCallback;
         private ErrorCallback mErrorCallback;
         private boolean mAutoFocusEnabled = DEFAULT_AUTO_FOCUS_ENABLED;
         private ScanMode mScanMode = DEFAULT_SCAN_MODE;
@@ -873,17 +857,6 @@ public class CodeScanner {
         @MainThread
         public Builder onDecoded(@Nullable DecodeCallback callback) {
             mDecodeCallback = callback;
-            return this;
-        }
-
-        /**
-         * Camera initialization callback
-         *
-         * @param callback Callback
-         */
-        @NonNull
-        public Builder onCameraReady(@Nullable CameraCallback callback) {
-            mCameraCallback = callback;
             return this;
         }
 
@@ -973,7 +946,6 @@ public class CodeScanner {
             scanner.mCameraId = mCameraId;
             scanner.mFormats = mFormats;
             scanner.mDecodeCallback = mDecodeCallback;
-            scanner.mCameraCallback = mCameraCallback;
             scanner.mErrorCallback = mErrorCallback;
             scanner.mAutoFocusEnabled = mAutoFocusEnabled;
             scanner.mSafeAutoFocusInterval = mAutoFocusInterval;
