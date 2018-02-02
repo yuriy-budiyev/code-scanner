@@ -64,12 +64,12 @@ public class CodeScanner {
     private static final List<BarcodeFormat> DEFAULT_FORMATS = ALL_FORMATS;
     private static final ScanMode DEFAULT_SCAN_MODE = ScanMode.SINGLE;
     private static final AutoFocusMode DEFAULT_AUTO_FOCUS_MODE = AutoFocusMode.SAFE;
-    private static final long DEFAULT_SAFE_AUTO_FOCUS_INTERVAL = 2000L;
-    private static final int DEFAULT_CAMERA = -1;
     private static final boolean DEFAULT_AUTO_FOCUS_ENABLED = true;
     private static final boolean DEFAULT_FLASH_ENABLED = false;
+    private static final long DEFAULT_SAFE_AUTO_FOCUS_INTERVAL = 2000L;
     private static final float DEFAULT_ASPECT_RATIO_DISTORTION = 0.5f;
     private static final int SAFE_AUTO_FOCUS_ATTEMPTS_THRESHOLD = 2;
+    private static final int DEFAULT_CAMERA = -1;
     private final Lock mInitializeLock = new ReentrantLock();
     private final Context mContext;
     private final Handler mMainThreadHandler;
