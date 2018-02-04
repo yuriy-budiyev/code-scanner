@@ -163,7 +163,7 @@ public class CodeScanner {
     }
 
     /**
-     * Set max preview aspect ratio distortion (preview view size to camera preview size)
+     * Set max preview aspect ratio distortion (preview view size and camera preview size)
      *
      * @param distortion Distortion
      */
@@ -831,7 +831,7 @@ public class CodeScanner {
         }
 
         /**
-         * Set max preview aspect ratio distortion (preview view size to camera preview size)
+         * Set max preview aspect ratio distortion (preview view size and camera preview size)
          *
          * @param distortion Distortion
          */
