@@ -44,7 +44,7 @@ final class Utils {
     private static final float PORTRAIT_HEIGHT_RATIO = 0.75f;
     private static final float LANDSCAPE_WIDTH_RATIO = 1.4f;
     private static final float LANDSCAPE_HEIGHT_RATIO = 0.625f;
-    private static final float MIN_DISTORTION = 0.1f;
+    private static final float MIN_DISTORTION = 0.3f;
     private static final float MAX_DISTORTION = 1f;
     private static final float DISTORTION_STEP = 0.1f;
     private static final int MIN_PREVIEW_PIXELS = 589824;
