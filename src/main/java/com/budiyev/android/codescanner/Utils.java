@@ -44,7 +44,10 @@ final class Utils {
     private static final float PORTRAIT_HEIGHT_RATIO = 0.75f;
     private static final float LANDSCAPE_WIDTH_RATIO = 1.4f;
     private static final float LANDSCAPE_HEIGHT_RATIO = 0.625f;
-    private static final int MIN_PREVIEW_PIXELS = 442368;
+    private static final float MIN_DISTORTION = 0.1f;
+    private static final float MAX_DISTORTION = 1f;
+    private static final float DISTORTION_STEP = 0.1f;
+    private static final int MIN_PREVIEW_PIXELS = 589824;
 
     private Utils() {
     }
@@ -62,12 +65,14 @@ final class Utils {
         if (sizes != null && !sizes.isEmpty()) {
             Collections.sort(sizes, new CameraSizeComparator());
             float frameRatio = (float) frameWidth / (float) frameHeight;
-            for (Camera.Size size : sizes) {
-                int width = size.width;
-                int height = size.height;
-                if (width * height >= MIN_PREVIEW_PIXELS &&
-                        Math.abs(frameRatio - (float) width / (float) height) <= 0.5f) {
-                    return new Point(width, height);
+            for (float distortion = MIN_DISTORTION; distortion <= MAX_DISTORTION; distortion += DISTORTION_STEP) {
+                for (Camera.Size size : sizes) {
+                    int width = size.width;
+                    int height = size.height;
+                    if (width * height >= MIN_PREVIEW_PIXELS &&
+                            Math.abs(frameRatio - (float) width / (float) height) <= distortion) {
+                        return new Point(width, height);
+                    }
                 }
             }
         }
