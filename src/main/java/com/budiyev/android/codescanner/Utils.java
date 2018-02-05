@@ -57,8 +57,7 @@ final class Utils {
     }
 
     @NonNull
-    public static Point findSuitableImageSize(@NonNull Camera.Parameters parameters, int frameWidth, int frameHeight,
-            float distortion) {
+    public static Point findSuitableImageSize(@NonNull Camera.Parameters parameters, int frameWidth, int frameHeight) {
         List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
         if (sizes != null && !sizes.isEmpty()) {
             Collections.sort(sizes, new CameraSizeComparator());
@@ -67,7 +66,7 @@ final class Utils {
                 int width = size.width;
                 int height = size.height;
                 if (width * height >= MIN_PREVIEW_PIXELS &&
-                        Math.abs(frameRatio - (float) width / (float) height) <= distortion) {
+                        Math.abs(frameRatio - (float) width / (float) height) <= 0.5f) {
                     return new Point(width, height);
                 }
             }
