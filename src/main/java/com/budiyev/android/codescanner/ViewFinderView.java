@@ -30,10 +30,12 @@ import android.graphics.Path;
 import android.support.annotation.ColorInt;
 import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.annotation.Px;
 import android.view.View;
 
 final class ViewFinderView extends View {
+    private static final float MAX_FRAME_SIZE = 0.75f;
     private final Paint mMaskPaint;
     private final Paint mFramePaint;
     private final Path mFramePath;
@@ -84,44 +86,35 @@ final class ViewFinderView extends View {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        mFrameRect = Utils.getViewFrameRect(right - left, bottom - top, mFrameRatioWidth, mFrameRatioHeight);
+        invalidateFrameRect(right - left, bottom - top);
     }
 
-    float getFrameRatioWidth() {
-        return mFrameRatioWidth;
-    }
-
-    void setFrameRatioWidth(@FloatRange(from = 0, fromInclusive = false) float ratio) {
-        mFrameRatioWidth = ratio;
-        if (mFrameRect != null) {
-            mFrameRect = Utils.getViewFrameRect(getWidth(), getHeight(), ratio, mFrameRatioHeight);
-        }
-        if (Utils.isLaidOut(this)) {
-            invalidate();
-        }
+    @Nullable
+    Rect getFrameRect() {
+        return mFrameRect;
     }
 
     void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) float ratioWidth,
             @FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
         mFrameRatioWidth = ratioWidth;
         mFrameRatioHeight = ratioHeight;
-        if (mFrameRect != null) {
-            mFrameRect = Utils.getViewFrameRect(getWidth(), getHeight(), ratioWidth, ratioHeight);
-        }
+        invalidateFrameRect();
         if (Utils.isLaidOut(this)) {
             invalidate();
         }
     }
 
-    float getFrameRatioHeight() {
-        return mFrameRatioHeight;
+    void setFrameRatioWidth(@FloatRange(from = 0, fromInclusive = false) float ratioWidth) {
+        mFrameRatioWidth = ratioWidth;
+        invalidateFrameRect();
+        if (Utils.isLaidOut(this)) {
+            invalidate();
+        }
     }
 
-    void setFrameRatioHeight(@FloatRange(from = 0, fromInclusive = false) float ratio) {
-        mFrameRatioHeight = ratio;
-        if (mFrameRect != null) {
-            mFrameRect = Utils.getViewFrameRect(getWidth(), getHeight(), mFrameRatioWidth, ratio);
-        }
+    void setFrameRatioHeight(@FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
+        mFrameRatioHeight = ratioHeight;
+        invalidateFrameRect();
         if (Utils.isLaidOut(this)) {
             invalidate();
         }
@@ -152,6 +145,29 @@ final class ViewFinderView extends View {
         mFrameCornerSize = size;
         if (Utils.isLaidOut(this)) {
             invalidate();
+        }
+    }
+
+    private void invalidateFrameRect() {
+        invalidateFrameRect(getWidth(), getHeight());
+    }
+
+    private void invalidateFrameRect(int width, int height) {
+        if (width > 0 && height > 0) {
+            float viewAR = (float) width / (float) height;
+            float frameAR = mFrameRatioWidth / mFrameRatioHeight;
+            int frameWidth;
+            int frameHeight;
+            if (viewAR <= frameAR) {
+                frameWidth = Math.round(width * MAX_FRAME_SIZE);
+                frameHeight = Math.round(frameWidth / frameAR);
+            } else {
+                frameHeight = Math.round(height * MAX_FRAME_SIZE);
+                frameWidth = Math.round(frameHeight * frameAR);
+            }
+            int frameLeft = (width - frameWidth) / 2;
+            int frameTop = (height - frameHeight) / 2;
+            mFrameRect = new Rect(frameLeft, frameTop, frameLeft + frameWidth, frameTop + frameHeight);
         }
     }
 }

@@ -39,7 +39,6 @@ import android.view.WindowManager;
 import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
 final class Utils {
-    private static final float MAX_FRAME_SIZE = 0.75f;
     private static final float MIN_DISTORTION = 0.3f;
     private static final float MAX_DISTORTION = 1f;
     private static final float DISTORTION_STEP = 0.1f;
@@ -201,31 +200,12 @@ final class Utils {
     }
 
     @NonNull
-    public static Rect getViewFrameRect(int width, int height, float ratioWidth, float ratioHeight) {
-        float viewAR = (float) width / (float) height;
-        float frameAR = ratioWidth / ratioHeight;
-        int frameWidth;
-        int frameHeight;
-        if (viewAR <= frameAR) {
-            frameWidth = Math.round(width * MAX_FRAME_SIZE);
-            frameHeight = Math.round(frameWidth / frameAR);
-        } else {
-            frameHeight = Math.round(height * MAX_FRAME_SIZE);
-            frameWidth = Math.round(frameHeight * frameAR);
-        }
-        int frameLeft = (width - frameWidth) / 2;
-        int frameTop = (height - frameHeight) / 2;
-        return new Rect(frameLeft, frameTop, frameLeft + frameWidth, frameTop + frameHeight);
-    }
-
-    @NonNull
-    public static Rect getImageFrameRect(int imageWidth, int imageHeight, float ratioWidth, float ratioHeight,
+    public static Rect getImageFrameRect(int imageWidth, int imageHeight, @NonNull Rect viewFrameRect,
             @NonNull Point previewSize, @NonNull Point viewSize) {
         int previewWidth = previewSize.getX();
         int previewHeight = previewSize.getY();
         int viewWidth = viewSize.getX();
         int viewHeight = viewSize.getY();
-        Rect viewFrameRect = getViewFrameRect(viewWidth, viewHeight, ratioWidth, ratioHeight);
         int wD = (previewWidth - viewWidth) / 2;
         int hD = (previewHeight - viewHeight) / 2;
         float wR = (float) imageWidth / (float) previewWidth;

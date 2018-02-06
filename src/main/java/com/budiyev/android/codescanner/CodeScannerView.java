@@ -297,20 +297,19 @@ public class CodeScannerView extends ViewGroup {
         }
     }
 
-    float getFrameRatioWidth() {
-        return mViewFinderView.getFrameRatioWidth();
-    }
-
-    float getFrameRatioHeight() {
-        return mViewFinderView.getFrameRatioHeight();
-    }
-
+    @NonNull
     SurfaceView getPreviewView() {
         return mPreviewView;
     }
 
+    @NonNull
     ViewFinderView getViewFinderView() {
         return mViewFinderView;
+    }
+
+    @Nullable
+    Rect getFrameRect() {
+        return mViewFinderView.getFrameRect();
     }
 
     void setPreviewSize(@Nullable Point previewSize) {
