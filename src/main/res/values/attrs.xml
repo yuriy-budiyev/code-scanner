@@ -9,7 +9,7 @@
         <attr format="boolean" name="flashButtonVisible"/>
         <attr format="dimension" name="frameThickness"/>
         <attr format="dimension" name="frameCornersSize"/>
-        <attr format="float" name="frameRatioWidth"/>
-        <attr format="float" name="frameRatioHeight"/>
+        <attr format="float" name="frameAspectRatioWidth"/>
+        <attr format="float" name="frameAspectRatioHeight"/>
     </declare-styleable>
 </resources>
