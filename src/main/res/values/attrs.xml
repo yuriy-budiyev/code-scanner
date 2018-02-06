@@ -7,7 +7,6 @@
         <attr format="color" name="flashButtonColor"/>
         <attr format="boolean" name="autoFocusButtonVisible"/>
         <attr format="boolean" name="flashButtonVisible"/>
-        <attr format="boolean" name="squareFrame"/>
         <attr format="dimension" name="frameThickness"/>
         <attr format="dimension" name="frameCornersSize"/>
         <attr format="float" name="frameRatioWidth"/>
