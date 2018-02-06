@@ -317,7 +317,7 @@ public class CodeScannerView extends ViewGroup {
      */
     public void setFlashButtonColor(@ColorInt int color) {
         if (color < 0) {
-            throw new IllegalArgumentException("Flash button color value can't be negative");
+            throw new IllegalArgumentException("Flash button color can't be negative");
         }
         mFlashButton.setColorFilter(color);
     }
