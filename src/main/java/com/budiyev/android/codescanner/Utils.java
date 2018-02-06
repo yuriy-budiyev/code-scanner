@@ -39,12 +39,7 @@ import android.view.WindowManager;
 import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
 final class Utils {
-    private static final float MAX_FRAME_SIZE = 0.8f;
-    private static final float SQUARE_RATIO = 0.75f;
-    private static final float PORTRAIT_WIDTH_RATIO = 0.75f;
-    private static final float PORTRAIT_HEIGHT_RATIO = 0.75f;
-    private static final float LANDSCAPE_WIDTH_RATIO = 1.4f;
-    private static final float LANDSCAPE_HEIGHT_RATIO = 0.625f;
+    private static final float MAX_FRAME_SIZE = 0.75f;
     private static final float MIN_DISTORTION = 0.3f;
     private static final float MAX_DISTORTION = 1f;
     private static final float DISTORTION_STEP = 0.1f;
@@ -211,39 +206,17 @@ final class Utils {
         float frameAR = ratioWidth / ratioHeight;
         int frameWidth;
         int frameHeight;
-        if (viewAR >= frameAR) {
+        if (viewAR <= frameAR) {
             frameWidth = Math.round(width * MAX_FRAME_SIZE);
             frameHeight = Math.round(frameWidth / frameAR);
         } else {
             frameHeight = Math.round(height * MAX_FRAME_SIZE);
             frameWidth = Math.round(frameHeight * frameAR);
         }
-        int frameLeft = width - frameWidth / 2;
-        int frameTop = height - frameHeight / 2;
+        int frameLeft = (width - frameWidth) / 2;
+        int frameTop = (height - frameHeight) / 2;
         return new Rect(frameLeft, frameTop, frameLeft + frameWidth, frameTop + frameHeight);
     }
-
-    /*@NonNull
-    @SuppressWarnings("SuspiciousNameCombination")
-    public static Rect getViewFrameRect(boolean squareFrame, int width, int height) {
-        int frameWidth;
-        int frameHeight;
-        if (squareFrame) {
-            frameWidth = Math.round(Math.min(width, height) * SQUARE_RATIO);
-            frameHeight = frameWidth;
-        } else {
-            if (width >= height) {
-                frameHeight = Math.round(height * LANDSCAPE_HEIGHT_RATIO);
-                frameWidth = Math.round(LANDSCAPE_WIDTH_RATIO * frameHeight);
-            } else {
-                frameWidth = Math.round(width * PORTRAIT_WIDTH_RATIO);
-                frameHeight = Math.round(PORTRAIT_HEIGHT_RATIO * frameWidth);
-            }
-        }
-        int left = (width - frameWidth) / 2;
-        int top = (height - frameHeight) / 2;
-        return new Rect(left, top, left + frameWidth, top + frameHeight);
-    }*/
 
     @NonNull
     public static Rect getImageFrameRect(int imageWidth, int imageHeight, float ratioWidth, float ratioHeight,
