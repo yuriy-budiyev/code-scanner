@@ -335,19 +335,13 @@ public class CodeScannerView extends ViewGroup {
     }
 
     void setAutoFocusEnabled(boolean enabled) {
-        if (enabled) {
-            mAutoFocusButton.setImageResource(R.drawable.ic_code_scanner_auto_focus_on);
-        } else {
-            mAutoFocusButton.setImageResource(R.drawable.ic_code_scanner_auto_focus_off);
-        }
+        mAutoFocusButton.setImageResource(
+                enabled ? R.drawable.ic_code_scanner_auto_focus_on : R.drawable.ic_code_scanner_auto_focus_off);
     }
 
     void setFlashEnabled(boolean enabled) {
-        if (enabled) {
-            mFlashButton.setImageResource(R.drawable.ic_code_scanner_flash_on);
-        } else {
-            mFlashButton.setImageResource(R.drawable.ic_code_scanner_flash_off);
-        }
+        mFlashButton
+                .setImageResource(enabled ? R.drawable.ic_code_scanner_flash_on : R.drawable.ic_code_scanner_flash_off);
     }
 
     interface LayoutListener {
