@@ -24,6 +24,7 @@
 package com.budiyev.android.codescanner;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.MultiFormatReader;
@@ -52,7 +53,7 @@ final class DecodeTask {
         mReverseHorizontal = reverseHorizontal;
     }
 
-    @NonNull
+    @Nullable
     @SuppressWarnings("SuspiciousNameCombination")
     public Result decode(@NonNull MultiFormatReader reader) throws ReaderException {
         int imageWidth = mImageSize.getX();
@@ -75,8 +76,12 @@ final class DecodeTask {
             }
         }
         Rect frameRect = Utils.getImageFrameRect(width, height, mViewFrameRect, mPreviewSize, mViewSize);
-        return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(
-                new PlanarYUVLuminanceSource(image, width, height, frameRect.getLeft(), frameRect.getTop(),
-                        frameRect.getWidth(), frameRect.getHeight(), mReverseHorizontal))));
+        if (frameRect.getWidth() > 0 && frameRect.getHeight() > 0) {
+            return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(
+                    new PlanarYUVLuminanceSource(image, width, height, frameRect.getLeft(), frameRect.getTop(),
+                            frameRect.getWidth(), frameRect.getHeight(), mReverseHorizontal))));
+        } else {
+            return null;
+        }
     }
 }

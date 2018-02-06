@@ -144,20 +144,15 @@ public class CodeScannerView extends ViewGroup {
             try {
                 attributes = context.getTheme()
                         .obtainStyledAttributes(attrs, R.styleable.CodeScannerView, defStyleAttr, defStyleRes);
-                mViewFinderView.setFrameRatioWidth(
-                        attributes.getFloat(R.styleable.CodeScannerView_frameRatioWidth, DEFAULT_FRAME_RATIO_WIDTH));
-                mViewFinderView.setFrameRatioHeight(
+                setFrameAspectRatio(
+                        attributes.getFloat(R.styleable.CodeScannerView_frameRatioWidth, DEFAULT_FRAME_RATIO_WIDTH),
                         attributes.getFloat(R.styleable.CodeScannerView_frameRatioHeight, DEFAULT_FRAME_RATIO_HEIGHT));
-                mViewFinderView
-                        .setMaskColor(attributes.getColor(R.styleable.CodeScannerView_maskColor, DEFAULT_MASK_COLOR));
-                mViewFinderView.setFrameColor(
-                        attributes.getColor(R.styleable.CodeScannerView_frameColor, DEFAULT_FRAME_COLOR));
-                mViewFinderView.setFrameThickness(attributes
-                        .getDimensionPixelSize(R.styleable.CodeScannerView_frameThickness,
-                                Math.round(DEFAULT_FRAME_THICKNESS_DP * displayMetrics.density)));
-                mViewFinderView.setFrameCornersSize(attributes
-                        .getDimensionPixelSize(R.styleable.CodeScannerView_frameCornersSize,
-                                Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * displayMetrics.density)));
+                setMaskColor(attributes.getColor(R.styleable.CodeScannerView_maskColor, DEFAULT_MASK_COLOR));
+                setFrameColor(attributes.getColor(R.styleable.CodeScannerView_frameColor, DEFAULT_FRAME_COLOR));
+                setFrameThickness(attributes.getDimensionPixelSize(R.styleable.CodeScannerView_frameThickness,
+                        Math.round(DEFAULT_FRAME_THICKNESS_DP * displayMetrics.density)));
+                setFrameCornersSize(attributes.getDimensionPixelSize(R.styleable.CodeScannerView_frameCornersSize,
+                        Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * displayMetrics.density)));
                 mAutoFocusButton.setColorFilter(attributes
                         .getColor(R.styleable.CodeScannerView_autoFocusButtonColor, DEFAULT_AUTO_FOCUS_BUTTON_COLOR));
                 mFlashButton.setColorFilter(
@@ -221,6 +216,9 @@ public class CodeScannerView extends ViewGroup {
      * @param color Mask color
      */
     public void setMaskColor(@ColorInt int color) {
+        if (color < 0) {
+            throw new IllegalArgumentException("Color value can't be negative");
+        }
         mViewFinderView.setMaskColor(color);
     }
 
@@ -230,6 +228,9 @@ public class CodeScannerView extends ViewGroup {
      * @param color Frame color
      */
     public void setFrameColor(@ColorInt int color) {
+        if (color < 0) {
+            throw new IllegalArgumentException("Color value can't be negative");
+        }
         mViewFinderView.setFrameColor(color);
     }
 
@@ -239,6 +240,9 @@ public class CodeScannerView extends ViewGroup {
      * @param thickness Frame thickness in pixels
      */
     public void setFrameThickness(@Px int thickness) {
+        if (thickness < 0) {
+            throw new IllegalArgumentException("Frame thickness can't be negative");
+        }
         mViewFinderView.setFrameThickness(thickness);
     }
 
@@ -248,6 +252,9 @@ public class CodeScannerView extends ViewGroup {
      * @param size Length in pixels
      */
     public void setFrameCornersSize(@Px int size) {
+        if (size < 0) {
+            throw new IllegalArgumentException("Frame corners size can't be negative");
+        }
         mViewFinderView.setFrameCornersSize(size);
     }
 
@@ -259,6 +266,9 @@ public class CodeScannerView extends ViewGroup {
      */
     public void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) float ratioWidth,
             @FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
+        if (ratioWidth <= 0 || ratioHeight <= 0) {
+            throw new IllegalArgumentException("Frame aspect ratio values should be greater than zero");
+        }
         mViewFinderView.setFrameAspectRatio(ratioWidth, ratioHeight);
     }
 
