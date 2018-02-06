@@ -76,10 +76,12 @@ final class DecodeTask {
             }
         }
         Rect frameRect = Utils.getImageFrameRect(width, height, mViewFrameRect, mPreviewSize, mViewSize);
-        if (frameRect.getWidth() > 0 && frameRect.getHeight() > 0) {
+        int frameWidth = frameRect.getWidth();
+        int frameHeight = frameRect.getHeight();
+        if (frameWidth > 0 && frameHeight > 0) {
             return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(
                     new PlanarYUVLuminanceSource(image, width, height, frameRect.getLeft(), frameRect.getTop(),
-                            frameRect.getWidth(), frameRect.getHeight(), mReverseHorizontal))));
+                            frameWidth, frameHeight, mReverseHorizontal))));
         } else {
             return null;
         }
