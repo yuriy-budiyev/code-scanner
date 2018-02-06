@@ -252,23 +252,14 @@ public class CodeScannerView extends ViewGroup {
     }
 
     /**
-     * Set frame aspect ratio (ex. 4:3)
+     * Set frame aspect ratio
      *
-     * @param ratioWidth  Ratio width
-     * @param ratioHeight Ratio height
+     * @param ratioWidth  Frame aspect ratio width
+     * @param ratioHeight Frame aspect ratio height
      */
     public void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) float ratioWidth,
             @FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
         mViewFinderView.setFrameAspectRatio(ratioWidth, ratioHeight);
-    }
-
-    /**
-     * Set frame aspect ratio (ex. 1.3333)
-     *
-     * @param ratio Side aspect ratio
-     */
-    public void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) float ratio) {
-        mViewFinderView.setFrameAspectRatio(ratio, 1f);
     }
 
     /**
