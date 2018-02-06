@@ -27,7 +27,7 @@ Code scanner library for [Android](https://developer.android.com), based on [ZXi
 Add dependency:
 ```gradle
 dependencies {
-    implementation 'com.budiyev.android:code-scanner:1.7.8'
+    implementation 'com.budiyev.android:code-scanner:1.8.0'
 }
 ```
 Add camera permission to AndroidManifest.xml (Don't forget about dynamic permissions on API >= 23):
@@ -47,15 +47,16 @@ Define a view in your layout file:
         android:id="@+id/scanner_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:autoFocusButtonColor="@android:color/white"
+        app:autoFocusButtonVisible="true"
+        app:flashButtonColor="@android:color/white"
+        app:flashButtonVisible="true"
         app:frameColor="@android:color/white"
         app:frameCornersSize="50dp"
+        app:frameRatioWidth="1"
+        app:frameRatioHeight="1"
         app:frameThickness="2dp"
-        app:maskColor="#77000000"
-        app:squareFrame="true"
-        app:autoFocusButtonColor="@android:color/white"
-        app:flashButtonColor="@android:color/white"
-        app:autoFocusButtonVisible="true"
-        app:flashButtonVisible="true"/>
+        app:maskColor="#77000000"/>
 </FrameLayout>
 ```
 And add following code to your activity:
