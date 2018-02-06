@@ -29,6 +29,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.Px;
@@ -57,6 +58,8 @@ public class CodeScannerView extends ViewGroup {
     private static final int DEFAULT_AUTO_FOCUS_BUTTON_COLOR = Color.WHITE;
     private static final int DEFAULT_FLASH_BUTTON_COLOR = Color.WHITE;
     private static final float DEFAULT_FRAME_THICKNESS_DP = 2f;
+    private static final float DEFAULT_FRAME_RATIO_WIDTH = 15f;
+    private static final float DEFAULT_FRAME_RATIO_HEIGHT = 10f;
     private static final float DEFAULT_FRAME_CORNER_SIZE_DP = 50f;
     private static final float BUTTON_SIZE_DP = 56f;
     private SurfaceView mPreviewView;
@@ -128,7 +131,7 @@ public class CodeScannerView extends ViewGroup {
         mFlashButton.setImageResource(R.drawable.ic_code_scanner_flash_on);
         mFlashButton.setOnClickListener(new FlashClickListener());
         if (attrs == null) {
-            mViewFinderView.setSquareFrame(DEFAULT_SQUARE_FRAME);
+            mViewFinderView.setFrameAspectRatio(DEFAULT_FRAME_RATIO_WIDTH, DEFAULT_FRAME_RATIO_HEIGHT);
             mViewFinderView.setMaskColor(DEFAULT_MASK_COLOR);
             mViewFinderView.setFrameColor(DEFAULT_FRAME_COLOR);
             mViewFinderView.setFrameThickness(Math.round(DEFAULT_FRAME_THICKNESS_DP * displayMetrics.density));
@@ -142,8 +145,10 @@ public class CodeScannerView extends ViewGroup {
             try {
                 attributes = context.getTheme()
                         .obtainStyledAttributes(attrs, R.styleable.CodeScannerView, defStyleAttr, defStyleRes);
-                mViewFinderView.setSquareFrame(
-                        attributes.getBoolean(R.styleable.CodeScannerView_squareFrame, DEFAULT_SQUARE_FRAME));
+                mViewFinderView.setFrameRatioWidth(
+                        attributes.getFloat(R.styleable.CodeScannerView_frameRatioWidth, DEFAULT_FRAME_RATIO_WIDTH));
+                mViewFinderView.setFrameRatioHeight(
+                        attributes.getFloat(R.styleable.CodeScannerView_frameRatioHeight, DEFAULT_FRAME_RATIO_HEIGHT));
                 mViewFinderView
                         .setMaskColor(attributes.getColor(R.styleable.CodeScannerView_maskColor, DEFAULT_MASK_COLOR));
                 mViewFinderView.setFrameColor(
@@ -212,15 +217,6 @@ public class CodeScannerView extends ViewGroup {
     }
 
     /**
-     * Set whether frame is square or a rectangle
-     *
-     * @param squareFrame is {@code true}, the frame will be square, rectangle otherwise
-     */
-    public void setSquareFrame(boolean squareFrame) {
-        mViewFinderView.setSquareFrame(squareFrame);
-    }
-
-    /**
      * Set color of the space outside of the framing rect
      *
      * @param color Mask color
@@ -257,6 +253,26 @@ public class CodeScannerView extends ViewGroup {
     }
 
     /**
+     * Set frame aspect ratio (ex. 4:3)
+     *
+     * @param ratioWidth  Ratio width
+     * @param ratioHeight Ratio height
+     */
+    public void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) float ratioWidth,
+            @FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
+        mViewFinderView.setFrameAspectRatio(ratioWidth, ratioHeight);
+    }
+
+    /**
+     * Set frame aspect ratio (ex. 1.3333)
+     *
+     * @param ratio Side aspect ratio
+     */
+    public void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) float ratio) {
+        mViewFinderView.setFrameAspectRatio(ratio, 1f);
+    }
+
+    /**
      * Set whether auto focus button is visible or not
      *
      * @param visible Visibility
@@ -282,8 +298,12 @@ public class CodeScannerView extends ViewGroup {
         }
     }
 
-    boolean isSquareFrame() {
-        return mViewFinderView.isSquareFrame();
+    float getFrameRatioWidth() {
+        return mViewFinderView.getFrameRatioWidth();
+    }
+
+    float getFrameRatioHeight() {
+        return mViewFinderView.getFrameRatioHeight();
     }
 
     SurfaceView getPreviewView() {

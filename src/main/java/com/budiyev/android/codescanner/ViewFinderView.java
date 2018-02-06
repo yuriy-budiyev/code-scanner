@@ -28,6 +28,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.support.annotation.ColorInt;
+import android.support.annotation.FloatRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Px;
 import android.view.View;
@@ -37,8 +38,9 @@ final class ViewFinderView extends View {
     private final Paint mFramePaint;
     private final Path mFramePath;
     private Rect mFrameRect;
-    private boolean mSquareFrame;
     private int mFrameCornerSize;
+    private float mFrameRatioWidth = 1f;
+    private float mFrameRatioHeight = 1f;
 
     public ViewFinderView(@NonNull Context context) {
         super(context);
@@ -82,21 +84,47 @@ final class ViewFinderView extends View {
 
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        mFrameRect = Utils.getViewFrameRect(mSquareFrame, right - left, bottom - top);
+        mFrameRect = Utils.getViewFrameRect(right - left, bottom - top, mFrameRatioWidth, mFrameRatioHeight);
     }
 
-    void setSquareFrame(boolean squareFrame) {
-        mSquareFrame = squareFrame;
+    float getFrameRatioWidth() {
+        return mFrameRatioWidth;
+    }
+
+    void setFrameRatioWidth(@FloatRange(from = 0, fromInclusive = false) float ratio) {
+        mFrameRatioWidth = ratio;
         if (mFrameRect != null) {
-            mFrameRect = Utils.getViewFrameRect(mSquareFrame, getWidth(), getHeight());
+            mFrameRect = Utils.getViewFrameRect(getWidth(), getHeight(), ratio, mFrameRatioHeight);
         }
         if (Utils.isLaidOut(this)) {
             invalidate();
         }
     }
 
-    boolean isSquareFrame() {
-        return mSquareFrame;
+    void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) float ratioWidth,
+            @FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
+        mFrameRatioWidth = ratioWidth;
+        mFrameRatioHeight = ratioHeight;
+        if (mFrameRect != null) {
+            mFrameRect = Utils.getViewFrameRect(getWidth(), getHeight(), ratioWidth, ratioHeight);
+        }
+        if (Utils.isLaidOut(this)) {
+            invalidate();
+        }
+    }
+
+    float getFrameRatioHeight() {
+        return mFrameRatioHeight;
+    }
+
+    void setFrameRatioHeight(@FloatRange(from = 0, fromInclusive = false) float ratio) {
+        mFrameRatioHeight = ratio;
+        if (mFrameRect != null) {
+            mFrameRect = Utils.getViewFrameRect(getWidth(), getHeight(), mFrameRatioWidth, ratio);
+        }
+        if (Utils.isLaidOut(this)) {
+            invalidate();
+        }
     }
 
     void setMaskColor(@ColorInt int color) {

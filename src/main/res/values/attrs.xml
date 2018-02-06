@@ -10,5 +10,7 @@
         <attr format="boolean" name="squareFrame"/>
         <attr format="dimension" name="frameThickness"/>
         <attr format="dimension" name="frameCornersSize"/>
+        <attr format="float" name="frameRatioWidth"/>
+        <attr format="float" name="frameRatioHeight"/>
     </declare-styleable>
 </resources>

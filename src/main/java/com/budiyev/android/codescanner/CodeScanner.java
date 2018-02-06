@@ -591,8 +591,8 @@ public class CodeScanner {
             Point imageSize = decoderWrapper.getImageSize();
             Point previewSize = decoderWrapper.getPreviewSize();
             decoder.decode(new DecodeTask(data, imageSize, previewSize, decoderWrapper.getViewSize(),
-                    decoderWrapper.getDisplayOrientation(), mScannerView.isSquareFrame(),
-                    decoderWrapper.shouldReverseHorizontal()));
+                    decoderWrapper.getDisplayOrientation(), mScannerView.getFrameRatioWidth(),
+                    mScannerView.getFrameRatioHeight(), decoderWrapper.shouldReverseHorizontal()));
         }
     }
 

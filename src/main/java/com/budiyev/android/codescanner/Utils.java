@@ -39,6 +39,7 @@ import android.view.WindowManager;
 import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
 final class Utils {
+    private static final float MAX_FRAME_SIZE = 0.8f;
     private static final float SQUARE_RATIO = 0.75f;
     private static final float PORTRAIT_WIDTH_RATIO = 0.75f;
     private static final float PORTRAIT_HEIGHT_RATIO = 0.75f;
@@ -205,6 +206,24 @@ final class Utils {
     }
 
     @NonNull
+    public static Rect getViewFrameRect(int width, int height, float ratioWidth, float ratioHeight) {
+        float viewAR = (float) width / (float) height;
+        float frameAR = ratioWidth / ratioHeight;
+        int frameWidth;
+        int frameHeight;
+        if (viewAR >= frameAR) {
+            frameWidth = Math.round(width * MAX_FRAME_SIZE);
+            frameHeight = Math.round(frameWidth / frameAR);
+        } else {
+            frameHeight = Math.round(height * MAX_FRAME_SIZE);
+            frameWidth = Math.round(frameHeight * frameAR);
+        }
+        int frameLeft = width - frameWidth / 2;
+        int frameTop = height - frameHeight / 2;
+        return new Rect(frameLeft, frameTop, frameLeft + frameWidth, frameTop + frameHeight);
+    }
+
+    /*@NonNull
     @SuppressWarnings("SuspiciousNameCombination")
     public static Rect getViewFrameRect(boolean squareFrame, int width, int height) {
         int frameWidth;
@@ -224,16 +243,16 @@ final class Utils {
         int left = (width - frameWidth) / 2;
         int top = (height - frameHeight) / 2;
         return new Rect(left, top, left + frameWidth, top + frameHeight);
-    }
+    }*/
 
     @NonNull
-    public static Rect getImageFrameRect(boolean squareFrame, int imageWidth, int imageHeight,
+    public static Rect getImageFrameRect(int imageWidth, int imageHeight, float ratioWidth, float ratioHeight,
             @NonNull Point previewSize, @NonNull Point viewSize) {
         int previewWidth = previewSize.getX();
         int previewHeight = previewSize.getY();
         int viewWidth = viewSize.getX();
         int viewHeight = viewSize.getY();
-        Rect viewFrameRect = getViewFrameRect(squareFrame, viewWidth, viewHeight);
+        Rect viewFrameRect = getViewFrameRect(viewWidth, viewHeight, ratioWidth, ratioHeight);
         int wD = (previewWidth - viewWidth) / 2;
         int hD = (previewHeight - viewHeight) / 2;
         float wR = (float) imageWidth / (float) previewWidth;
