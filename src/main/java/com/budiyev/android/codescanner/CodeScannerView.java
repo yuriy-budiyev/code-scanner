@@ -271,11 +271,7 @@ public class CodeScannerView extends ViewGroup {
      * @param visible Visibility
      */
     public void setAutoFocusButtonVisible(boolean visible) {
-        if (visible) {
-            mAutoFocusButton.setVisibility(VISIBLE);
-        } else {
-            mAutoFocusButton.setVisibility(INVISIBLE);
-        }
+        mAutoFocusButton.setVisibility(visible ? VISIBLE : INVISIBLE);
     }
 
     /**
@@ -284,11 +280,7 @@ public class CodeScannerView extends ViewGroup {
      * @param visible Visibility
      */
     public void setFlashButtonVisible(boolean visible) {
-        if (visible) {
-            mFlashButton.setVisibility(VISIBLE);
-        } else {
-            mFlashButton.setVisibility(INVISIBLE);
-        }
+        mFlashButton.setVisibility(visible ? VISIBLE : INVISIBLE);
     }
 
     /**
