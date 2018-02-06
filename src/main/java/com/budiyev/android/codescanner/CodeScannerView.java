@@ -153,9 +153,9 @@ public class CodeScannerView extends ViewGroup {
                         Math.round(DEFAULT_FRAME_THICKNESS_DP * displayMetrics.density)));
                 setFrameCornersSize(attributes.getDimensionPixelSize(R.styleable.CodeScannerView_frameCornersSize,
                         Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * displayMetrics.density)));
-                mAutoFocusButton.setColorFilter(attributes
+                setAutoFocusButtonColor(attributes
                         .getColor(R.styleable.CodeScannerView_autoFocusButtonColor, DEFAULT_AUTO_FOCUS_BUTTON_COLOR));
-                mFlashButton.setColorFilter(
+                setFlashButtonColor(
                         attributes.getColor(R.styleable.CodeScannerView_flashButtonColor, DEFAULT_FLASH_BUTTON_COLOR));
                 mAutoFocusButton.setVisibility(attributes.getBoolean(R.styleable.CodeScannerView_autoFocusButtonVisible,
                         DEFAULT_AUTO_FOCUS_BUTTON_VISIBLE) ? VISIBLE : INVISIBLE);
@@ -296,6 +296,30 @@ public class CodeScannerView extends ViewGroup {
         } else {
             mFlashButton.setVisibility(INVISIBLE);
         }
+    }
+
+    /**
+     * Set auto focus button color
+     *
+     * @param color Color
+     */
+    public void setAutoFocusButtonColor(@ColorInt int color) {
+        if (color < 0) {
+            throw new IllegalArgumentException("Color value can't be negative");
+        }
+        mAutoFocusButton.setColorFilter(color);
+    }
+
+    /**
+     * Set flash button color
+     *
+     * @param color Color
+     */
+    public void setFlashButtonColor(@ColorInt int color) {
+        if (color < 0) {
+            throw new IllegalArgumentException("Color value can't be negative");
+        }
+        mFlashButton.setColorFilter(color);
     }
 
     @NonNull
