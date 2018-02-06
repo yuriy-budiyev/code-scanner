@@ -140,31 +140,31 @@ public class CodeScannerView extends ViewGroup {
             mAutoFocusButton.setVisibility(DEFAULT_AUTO_FOCUS_BUTTON_VISIBILITY);
             mFlashButton.setVisibility(DEFAULT_FLASH_BUTTON_VISIBILITY);
         } else {
-            TypedArray attributes = null;
+            TypedArray a = null;
             try {
-                attributes = context.getTheme()
+                a = context.getTheme()
                         .obtainStyledAttributes(attrs, R.styleable.CodeScannerView, defStyleAttr, defStyleRes);
-                setMaskColor(attributes.getColor(R.styleable.CodeScannerView_maskColor, DEFAULT_MASK_COLOR));
-                setFrameColor(attributes.getColor(R.styleable.CodeScannerView_frameColor, DEFAULT_FRAME_COLOR));
-                setFrameThickness(attributes.getDimensionPixelOffset(R.styleable.CodeScannerView_frameThickness,
+                setMaskColor(a.getColor(R.styleable.CodeScannerView_maskColor, DEFAULT_MASK_COLOR));
+                setFrameColor(a.getColor(R.styleable.CodeScannerView_frameColor, DEFAULT_FRAME_COLOR));
+                setFrameThickness(a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameThickness,
                         Math.round(DEFAULT_FRAME_THICKNESS_DP * displayMetrics.density)));
-                setFrameCornersSize(attributes.getDimensionPixelOffset(R.styleable.CodeScannerView_frameCornersSize,
+                setFrameCornersSize(a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameCornersSize,
                         Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * displayMetrics.density)));
-                setFrameAspectRatio(attributes
-                                .getFloat(R.styleable.CodeScannerView_frameAspectRatioWidth, DEFAULT_FRAME_ASPECT_RATIO_WIDTH),
-                        attributes.getFloat(R.styleable.CodeScannerView_frameAspectRatioHeight,
+                setFrameAspectRatio(
+                        a.getFloat(R.styleable.CodeScannerView_frameAspectRatioWidth, DEFAULT_FRAME_ASPECT_RATIO_WIDTH),
+                        a.getFloat(R.styleable.CodeScannerView_frameAspectRatioHeight,
                                 DEFAULT_FRAME_ASPECT_RATIO_HEIGHT));
-                setAutoFocusButtonVisible(attributes.getBoolean(R.styleable.CodeScannerView_autoFocusButtonVisible,
+                setAutoFocusButtonVisible(a.getBoolean(R.styleable.CodeScannerView_autoFocusButtonVisible,
                         DEFAULT_AUTO_FOCUS_BUTTON_VISIBLE));
-                setFlashButtonVisible(attributes
-                        .getBoolean(R.styleable.CodeScannerView_flashButtonVisible, DEFAULT_FLASH_BUTTON_VISIBLE));
-                setAutoFocusButtonColor(attributes
-                        .getColor(R.styleable.CodeScannerView_autoFocusButtonColor, DEFAULT_AUTO_FOCUS_BUTTON_COLOR));
+                setFlashButtonVisible(
+                        a.getBoolean(R.styleable.CodeScannerView_flashButtonVisible, DEFAULT_FLASH_BUTTON_VISIBLE));
+                setAutoFocusButtonColor(
+                        a.getColor(R.styleable.CodeScannerView_autoFocusButtonColor, DEFAULT_AUTO_FOCUS_BUTTON_COLOR));
                 setFlashButtonColor(
-                        attributes.getColor(R.styleable.CodeScannerView_flashButtonColor, DEFAULT_FLASH_BUTTON_COLOR));
+                        a.getColor(R.styleable.CodeScannerView_flashButtonColor, DEFAULT_FLASH_BUTTON_COLOR));
             } finally {
-                if (attributes != null) {
-                    attributes.recycle();
+                if (a != null) {
+                    a.recycle();
                 }
             }
         }
