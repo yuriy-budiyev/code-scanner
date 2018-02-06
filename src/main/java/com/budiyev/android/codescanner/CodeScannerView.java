@@ -144,24 +144,23 @@ public class CodeScannerView extends ViewGroup {
             try {
                 attributes = context.getTheme()
                         .obtainStyledAttributes(attrs, R.styleable.CodeScannerView, defStyleAttr, defStyleRes);
-                setFrameAspectRatio(
-                        attributes.getFloat(R.styleable.CodeScannerView_frameRatioWidth, DEFAULT_FRAME_RATIO_WIDTH),
-                        attributes.getFloat(R.styleable.CodeScannerView_frameRatioHeight, DEFAULT_FRAME_RATIO_HEIGHT));
                 setMaskColor(attributes.getColor(R.styleable.CodeScannerView_maskColor, DEFAULT_MASK_COLOR));
                 setFrameColor(attributes.getColor(R.styleable.CodeScannerView_frameColor, DEFAULT_FRAME_COLOR));
                 setFrameThickness(attributes.getDimensionPixelOffset(R.styleable.CodeScannerView_frameThickness,
                         Math.round(DEFAULT_FRAME_THICKNESS_DP * displayMetrics.density)));
                 setFrameCornersSize(attributes.getDimensionPixelOffset(R.styleable.CodeScannerView_frameCornersSize,
                         Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * displayMetrics.density)));
+                setFrameAspectRatio(
+                        attributes.getFloat(R.styleable.CodeScannerView_frameRatioWidth, DEFAULT_FRAME_RATIO_WIDTH),
+                        attributes.getFloat(R.styleable.CodeScannerView_frameRatioHeight, DEFAULT_FRAME_RATIO_HEIGHT));
+                setAutoFocusButtonVisible(attributes.getBoolean(R.styleable.CodeScannerView_autoFocusButtonVisible,
+                        DEFAULT_AUTO_FOCUS_BUTTON_VISIBLE));
+                setFlashButtonVisible(attributes
+                        .getBoolean(R.styleable.CodeScannerView_flashButtonVisible, DEFAULT_FLASH_BUTTON_VISIBLE));
                 setAutoFocusButtonColor(attributes
                         .getColor(R.styleable.CodeScannerView_autoFocusButtonColor, DEFAULT_AUTO_FOCUS_BUTTON_COLOR));
                 setFlashButtonColor(
                         attributes.getColor(R.styleable.CodeScannerView_flashButtonColor, DEFAULT_FLASH_BUTTON_COLOR));
-                mAutoFocusButton.setVisibility(attributes.getBoolean(R.styleable.CodeScannerView_autoFocusButtonVisible,
-                        DEFAULT_AUTO_FOCUS_BUTTON_VISIBLE) ? VISIBLE : INVISIBLE);
-                mFlashButton.setVisibility(attributes
-                        .getBoolean(R.styleable.CodeScannerView_flashButtonVisible, DEFAULT_FLASH_BUTTON_VISIBLE) ?
-                        VISIBLE : INVISIBLE);
             } finally {
                 if (attributes != null) {
                     attributes.recycle();
@@ -216,9 +215,6 @@ public class CodeScannerView extends ViewGroup {
      * @param color Mask color
      */
     public void setMaskColor(@ColorInt int color) {
-        if (color < 0) {
-            throw new IllegalArgumentException("Mask color can't be negative");
-        }
         mViewFinderView.setMaskColor(color);
     }
 
@@ -228,9 +224,6 @@ public class CodeScannerView extends ViewGroup {
      * @param color Frame color
      */
     public void setFrameColor(@ColorInt int color) {
-        if (color < 0) {
-            throw new IllegalArgumentException("Frame color can't be negative");
-        }
         mViewFinderView.setFrameColor(color);
     }
 
@@ -304,9 +297,6 @@ public class CodeScannerView extends ViewGroup {
      * @param color Color
      */
     public void setAutoFocusButtonColor(@ColorInt int color) {
-        if (color < 0) {
-            throw new IllegalArgumentException("Auto focus button color can't be negative");
-        }
         mAutoFocusButton.setColorFilter(color);
     }
 
@@ -316,9 +306,6 @@ public class CodeScannerView extends ViewGroup {
      * @param color Color
      */
     public void setFlashButtonColor(@ColorInt int color) {
-        if (color < 0) {
-            throw new IllegalArgumentException("Flash button color can't be negative");
-        }
         mFlashButton.setColorFilter(color);
     }
 
