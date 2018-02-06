@@ -53,8 +53,8 @@ Define a view in your layout file:
         app:flashButtonVisible="true"
         app:frameColor="@android:color/white"
         app:frameCornersSize="50dp"
-        app:frameRatioWidth="1"
-        app:frameRatioHeight="1"
+        app:frameAspectRatioWidth="1"
+        app:frameAspectRatioHeight="1"
         app:frameThickness="2dp"
         app:maskColor="#77000000"/>
 </FrameLayout>
