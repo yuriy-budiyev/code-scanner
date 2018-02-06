@@ -96,7 +96,10 @@ public class CodeScanner {
     private boolean mPreviewActive;
     private boolean mSafeAutoFocusing;
     private boolean mSafeAutoFocusTaskScheduled;
+    private boolean mInitializationRequested;
     private int mSafeAutoFocusAttemptsCount;
+    private int mViewWidth;
+    private int mViewHeight;
 
     /**
      * CodeScanner, associated with the first back-facing camera on the device
@@ -118,6 +121,7 @@ public class CodeScanner {
         mStopPreviewTask = new StopPreviewTask();
         mDecoderStateListener = new DecoderStateListener();
         mScannerView.setCodeScanner(this);
+        mScannerView.setLayoutListener(new ScannerLayoutListener());
     }
 
     /**
@@ -377,16 +381,19 @@ public class CodeScanner {
     }
 
     private void initialize() {
-        mInitialization = true;
-        if (Utils.isLaidOut(mScannerView)) {
-            initialize(mScannerView.getWidth(), mScannerView.getHeight());
-        } else {
-            mScannerView.setLayoutListener(new ScannerLayoutListener());
-        }
+        initialize(mScannerView.getWidth(), mScannerView.getHeight());
     }
 
     private void initialize(int width, int height) {
-        new InitializationThread(width, height).start();
+        mViewWidth = width;
+        mViewHeight = height;
+        if (width > 0 && height > 0) {
+            mInitialization = true;
+            mInitializationRequested = false;
+            new InitializationThread(width, height).start();
+        } else {
+            mInitializationRequested = true;
+        }
     }
 
     private void startPreviewInternal(boolean internal) {
@@ -550,8 +557,20 @@ public class CodeScanner {
     private final class ScannerLayoutListener implements CodeScannerView.LayoutListener {
         @Override
         public void onLayout(int width, int height) {
-            initialize(width, height);
-            mScannerView.setLayoutListener(null);
+            mInitializeLock.lock();
+            try {
+                if (width != mViewWidth || height != mViewHeight) {
+                    boolean previewActive = mPreviewActive;
+                    if (mInitialized) {
+                        releaseResources();
+                    }
+                    if (previewActive || mInitializationRequested) {
+                        initialize(width, height);
+                    }
+                }
+            } finally {
+                mInitializeLock.unlock();
+            }
         }
     }
 
