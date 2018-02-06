@@ -58,8 +58,8 @@ public class CodeScannerView extends ViewGroup {
     private static final int DEFAULT_AUTO_FOCUS_BUTTON_COLOR = Color.WHITE;
     private static final int DEFAULT_FLASH_BUTTON_COLOR = Color.WHITE;
     private static final float DEFAULT_FRAME_THICKNESS_DP = 2f;
-    private static final float DEFAULT_FRAME_RATIO_WIDTH = 15f;
-    private static final float DEFAULT_FRAME_RATIO_HEIGHT = 10f;
+    private static final float DEFAULT_FRAME_RATIO_WIDTH = 1f;
+    private static final float DEFAULT_FRAME_RATIO_HEIGHT = 1f;
     private static final float DEFAULT_FRAME_CORNER_SIZE_DP = 50f;
     private static final float BUTTON_SIZE_DP = 56f;
     private SurfaceView mPreviewView;
