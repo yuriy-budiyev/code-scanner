@@ -10,16 +10,58 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.ViewGroup;
 
+import com.google.zxing.BarcodeFormat;
 import com.google.zxing.Result;
 
+/**
+ * Common code scanner activity
+ */
 public class CodeScannerActivity extends Activity {
+    /**
+     * Text representation of decode result ({@link String)}
+     *
+     * @see #RESULT_DECODED
+     */
     public static final String EXTRA_RESULT_TEXT = "result_text";
+
+    /**
+     * Raw byte array representation of decode result (byte array)
+     *
+     * @see #RESULT_DECODED
+     */
     public static final String EXTRA_RESULT_BYTES = "result_bytes";
+
+    /**
+     * Format of decoded code ({@link BarcodeFormat})
+     *
+     * @see #RESULT_DECODED
+     */
     public static final String EXTRA_RESULT_FORMAT = "result_format";
+
+    /**
+     * Code scanner error ({@link Exception})
+     *
+     * @see #RESULT_SCANNER_ERROR
+     */
     public static final String EXTRA_SCANNER_ERROR = "scanner_error";
+
+    /**
+     * Activity result, code decoded successfully
+     */
     public static final int RESULT_DECODED = 2;
+
+    /**
+     * Activity result, camera permission denied
+     *
+     * @see Manifest.permission#CAMERA
+     */
     public static final int RESULT_PERMISSION_DENIED = 3;
+
+    /**
+     * Activity result, code scanner error
+     */
     public static final int RESULT_SCANNER_ERROR = 4;
+
     private static final int RC_PERMISSION = 1;
     private CodeScanner mCodeScanner;
     private boolean mPermissionGranted;
@@ -40,6 +82,7 @@ public class CodeScannerActivity extends Activity {
                         setResult(RESULT_DECODED, new Intent().putExtra(EXTRA_RESULT_TEXT, result.getText())
                                 .putExtra(EXTRA_RESULT_BYTES, result.getRawBytes())
                                 .putExtra(EXTRA_RESULT_FORMAT, result.getBarcodeFormat()));
+                        finish();
                     }
                 });
             }
