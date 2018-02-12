@@ -16,7 +16,7 @@ public class CodeScannerActivity extends Activity {
     public static final String EXTRA_RESULT_TEXT = "result_text";
     public static final String EXTRA_RESULT_BYTES = "result_bytes";
     public static final String EXTRA_RESULT_FORMAT = "result_format";
-    public static final String EXTRA_EXCEPTION = "exception";
+    public static final String EXTRA_SCANNER_ERROR = "scanner_error";
     public static final int RESULT_PERMISSION_DENIED = 2;
     public static final int RESULT_SCANNER_ERROR = 3;
     private static final int RC_PERMISSION = 1;
@@ -49,7 +49,7 @@ public class CodeScannerActivity extends Activity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        setResult(RESULT_SCANNER_ERROR, new Intent().putExtra(EXTRA_EXCEPTION, error));
+                        setResult(RESULT_SCANNER_ERROR, new Intent().putExtra(EXTRA_SCANNER_ERROR, error));
                         finish();
                     }
                 });
