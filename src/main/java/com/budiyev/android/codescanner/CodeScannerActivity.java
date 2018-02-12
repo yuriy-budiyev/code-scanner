@@ -17,9 +17,9 @@ public class CodeScannerActivity extends Activity {
     public static final String EXTRA_RESULT_BYTES = "result_bytes";
     public static final String EXTRA_RESULT_FORMAT = "result_format";
     public static final String EXTRA_SCANNER_ERROR = "scanner_error";
-    public static final int RESULT_DECODED = RESULT_OK;
-    public static final int RESULT_PERMISSION_DENIED = 2;
-    public static final int RESULT_SCANNER_ERROR = 3;
+    public static final int RESULT_DECODED = 2;
+    public static final int RESULT_PERMISSION_DENIED = 3;
+    public static final int RESULT_SCANNER_ERROR = 4;
     private static final int RC_PERMISSION = 1;
     private CodeScanner mCodeScanner;
     private boolean mPermissionGranted;
