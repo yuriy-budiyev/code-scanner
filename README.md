@@ -156,6 +156,12 @@ public class MainFragment extends Fragment {
                 });
             }
         });
+        scannerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCodeScanner.startPreview();
+            }
+        });        
         return root;
     }
 
