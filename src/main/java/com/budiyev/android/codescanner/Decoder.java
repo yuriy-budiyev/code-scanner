@@ -45,17 +45,18 @@ final class Decoder {
     private final StateListener mStateListener;
     private final Map<DecodeHintType, Object> mHints;
     private volatile DecodeCallback mCallback;
-    private volatile State mState = State.INIT;
+    private volatile State mState;
 
     public Decoder(@NonNull StateListener stateListener, @NonNull List<BarcodeFormat> formats,
             @Nullable DecodeCallback callback) {
-        mStateListener = stateListener;
         mReader = new MultiFormatReader();
         mDecoderThread = new DecoderThread();
         mHints = new EnumMap<>(DecodeHintType.class);
         mHints.put(DecodeHintType.POSSIBLE_FORMATS, formats);
         mReader.setHints(mHints);
         mCallback = callback;
+        mStateListener = stateListener;
+        mState = State.INITIALIZED;
     }
 
     public void setFormats(@NonNull List<BarcodeFormat> formats) {
@@ -72,6 +73,9 @@ final class Decoder {
     }
 
     public void start() {
+        if (mState != State.INITIALIZED) {
+            throw new IllegalStateException("Illegal decoder state");
+        }
         mDecoderThread.start();
     }
 
@@ -124,7 +128,7 @@ final class Decoder {
                         }
                     }
                 } catch (InterruptedException e) {
-                    setState(Decoder.State.INTERRUPTED);
+                    setState(Decoder.State.STOPPED);
                     break;
                 }
             }
@@ -136,10 +140,10 @@ final class Decoder {
     }
 
     public enum State {
-        INIT,
+        INITIALIZED,
         IDLE,
         DECODING,
         DECODED,
-        INTERRUPTED
+        STOPPED
     }
 }
