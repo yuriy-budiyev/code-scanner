@@ -585,7 +585,7 @@ public class CodeScanner {
                 return;
             }
             Decoder decoder = decoderWrapper.getDecoder();
-            if (decoder.shouldSkipTask()) {
+            if (decoder.getState() != Decoder.State.IDLE) {
                 return;
             }
             Rect frameRect = mScannerView.getFrameRect();
