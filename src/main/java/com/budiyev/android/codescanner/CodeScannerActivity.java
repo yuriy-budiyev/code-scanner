@@ -1,8 +1,8 @@
 package com.budiyev.android.codescanner;
 
 import android.Manifest;
+import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -100,6 +100,10 @@ public class CodeScannerActivity extends Activity {
                 });
             }
         });
+        ActionBar actionBar = getActionBar();
+        if (actionBar != null) {
+            actionBar.hide();
+        }
         setContentView(scannerView);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -140,26 +144,5 @@ public class CodeScannerActivity extends Activity {
     protected void onPause() {
         mCodeScanner.stopPreview();
         super.onPause();
-    }
-
-    /**
-     * Intent to start scanner activity
-     *
-     * @param context Package context
-     */
-    @NonNull
-    public static Intent intent(@NonNull Context context) {
-        return new Intent(context, CodeScannerActivity.class);
-    }
-
-    /**
-     * Start code scanner activity
-     *
-     * @param activity    Activity
-     * @param requestCode Request code
-     * @see Activity#onActivityResult
-     */
-    public static void start(@NonNull Activity activity, int requestCode) {
-        activity.startActivityForResult(intent(activity), requestCode);
     }
 }
