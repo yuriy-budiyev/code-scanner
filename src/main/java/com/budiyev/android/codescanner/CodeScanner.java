@@ -589,7 +589,7 @@ public class CodeScanner {
                 return;
             }
             Rect frameRect = mScannerView.getFrameRect();
-            if (frameRect == null || frameRect.getWidth() <= 0 || frameRect.getHeight() <= 0) {
+            if (frameRect == null || frameRect.getWidth() < 1 || frameRect.getHeight() < 1) {
                 return;
             }
             decoder.decode(new DecodeTask(data, decoderWrapper.getImageSize(), decoderWrapper.getPreviewSize(),

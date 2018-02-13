@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -150,5 +151,16 @@ public class CodeScannerActivity extends Activity {
     @NonNull
     public static Intent intent(@NonNull Context context) {
         return new Intent(context, CodeScannerActivity.class);
+    }
+
+    /**
+     * Start code scanner activity
+     *
+     * @param activity    Activity
+     * @param requestCode Request code
+     * @see Activity#onActivityResult
+     */
+    public static void start(@NonNull Activity activity, int requestCode) {
+        activity.startActivityForResult(intent(activity), requestCode);
     }
 }

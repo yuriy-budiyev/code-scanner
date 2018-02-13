@@ -58,32 +58,21 @@ final class DecodeTask {
     public Result decode(@NonNull MultiFormatReader reader) throws ReaderException {
         int imageWidth = mImageSize.getX();
         int imageHeight = mImageSize.getY();
-        byte[] image;
-        int width;
-        int height;
-        if (mOrientation == 0) {
-            image = mImage;
-            width = imageWidth;
-            height = imageHeight;
-        } else {
-            image = Utils.rotateNV21(mImage, imageWidth, imageHeight, mOrientation);
-            if (mOrientation == 90 || mOrientation == 270) {
-                width = imageHeight;
-                height = imageWidth;
-            } else {
-                width = imageWidth;
-                height = imageHeight;
-            }
+        int orientation = mOrientation;
+        byte[] image = Utils.rotateNV21(mImage, imageWidth, imageHeight, orientation);
+        if (orientation == 90 || orientation == 270) {
+            int width = imageWidth;
+            imageWidth = imageHeight;
+            imageHeight = width;
         }
-        Rect frameRect = Utils.getImageFrameRect(width, height, mViewFrameRect, mPreviewSize, mViewSize);
+        Rect frameRect = Utils.getImageFrameRect(imageWidth, imageHeight, mViewFrameRect, mPreviewSize, mViewSize);
         int frameWidth = frameRect.getWidth();
         int frameHeight = frameRect.getHeight();
-        if (frameWidth > 0 && frameHeight > 0) {
-            return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(
-                    new PlanarYUVLuminanceSource(image, width, height, frameRect.getLeft(), frameRect.getTop(),
-                            frameWidth, frameHeight, mReverseHorizontal))));
-        } else {
+        if (frameWidth < 1 || frameHeight < 1) {
             return null;
         }
+        return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(
+                new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.getLeft(), frameRect.getTop(),
+                        frameWidth, frameHeight, mReverseHorizontal))));
     }
 }
