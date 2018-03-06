@@ -23,7 +23,7 @@ Code scanner library for [Android](https://developer.android.com), based on [ZXi
 |            | RSS-14        |
 |            | RSS-Expanded  |
 
-### Usage
+### Usage ([sample](https://github.com/yuriy-budiyev/lib-demo-app))
 Add dependency:
 ```gradle
 dependencies {
