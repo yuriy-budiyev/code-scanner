@@ -42,7 +42,6 @@ final class Utils {
     private static final float MIN_DISTORTION = 0.3f;
     private static final float MAX_DISTORTION = 1f;
     private static final float DISTORTION_STEP = 0.1f;
-    private static final float FRAME_THRESHOLD = 0.05f;
     private static final int MIN_PREVIEW_PIXELS = 589824;
 
     private Utils() {
@@ -211,14 +210,10 @@ final class Utils {
         int hD = (previewHeight - viewHeight) / 2;
         float wR = (float) imageWidth / (float) previewWidth;
         float hR = (float) imageHeight / (float) previewHeight;
-        float left = (viewFrameRect.getLeft() + wD) * wR;
-        float top = (viewFrameRect.getTop() + hD) * hR;
-        float right = (viewFrameRect.getRight() + wD) * wR;
-        float bottom = (viewFrameRect.getBottom() + hD) * hR;
-        return new Rect(Math.max(Math.round(left - left * FRAME_THRESHOLD), 0),
-                Math.max(Math.round(top - top * FRAME_THRESHOLD), 0),
-                Math.min(Math.round(right + right * FRAME_THRESHOLD), imageWidth),
-                Math.min(Math.round(bottom + bottom * FRAME_THRESHOLD), imageHeight));
+        return new Rect(Math.max(Math.round((viewFrameRect.getLeft() + wD) * wR), 0),
+                Math.max(Math.round((viewFrameRect.getTop() + hD) * hR), 0),
+                Math.min(Math.round((viewFrameRect.getRight() + wD) * wR), imageWidth),
+                Math.min(Math.round((viewFrameRect.getBottom() + hD) * hR), imageHeight));
     }
 
     public static byte[] rotateNV21(byte[] source, int width, int height, int rotation) {
