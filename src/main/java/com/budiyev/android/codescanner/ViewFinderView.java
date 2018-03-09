@@ -35,7 +35,6 @@ import android.support.annotation.Px;
 import android.view.View;
 
 final class ViewFinderView extends View {
-    private static final float MAX_FRAME_SIZE = 0.75f;
     private final Paint mMaskPaint;
     private final Paint mFramePaint;
     private final Path mFramePath;
@@ -43,6 +42,7 @@ final class ViewFinderView extends View {
     private int mFrameCornerSize;
     private float mFrameRatioWidth = 1f;
     private float mFrameRatioHeight = 1f;
+    private float mFrameMaxSize = 0.75f;
 
     public ViewFinderView(@NonNull Context context) {
         super(context);
@@ -95,7 +95,7 @@ final class ViewFinderView extends View {
     }
 
     void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) float ratioWidth,
-            @FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
+                             @FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
         mFrameRatioWidth = ratioWidth;
         mFrameRatioHeight = ratioHeight;
         invalidateFrameRect();
@@ -148,6 +148,14 @@ final class ViewFinderView extends View {
         }
     }
 
+    void setFrameMaxSize(@FloatRange(from = 0.1, to = 1.0) float maxSize) {
+        mFrameMaxSize = maxSize;
+        invalidateFrameRect();
+        if (Utils.isLaidOut(this)) {
+            invalidate();
+        }
+    }
+
     private void invalidateFrameRect() {
         invalidateFrameRect(getWidth(), getHeight());
     }
@@ -159,10 +167,10 @@ final class ViewFinderView extends View {
             int frameWidth;
             int frameHeight;
             if (viewAR <= frameAR) {
-                frameWidth = Math.round(width * MAX_FRAME_SIZE);
+                frameWidth = Math.round(width * mFrameMaxSize);
                 frameHeight = Math.round(frameWidth / frameAR);
             } else {
-                frameHeight = Math.round(height * MAX_FRAME_SIZE);
+                frameHeight = Math.round(height * mFrameMaxSize);
                 frameWidth = Math.round(frameHeight * frameAR);
             }
             int frameLeft = (width - frameWidth) / 2;
