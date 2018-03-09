@@ -55,6 +55,7 @@ Define a view in your layout file:
         app:frameCornersSize="50dp"
         app:frameAspectRatioWidth="1"
         app:frameAspectRatioHeight="1"
+        app:frameSize="0.75"
         app:frameThickness="2dp"
         app:maskColor="#77000000"/>
 </FrameLayout>
