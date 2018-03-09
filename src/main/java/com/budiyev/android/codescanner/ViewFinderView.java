@@ -42,7 +42,7 @@ final class ViewFinderView extends View {
     private int mFrameCornerSize;
     private float mFrameRatioWidth = 1f;
     private float mFrameRatioHeight = 1f;
-    private float mFrameMaxSize = 0.75f;
+    private float mFrameSize = 0.75f;
 
     public ViewFinderView(@NonNull Context context) {
         super(context);
@@ -95,7 +95,7 @@ final class ViewFinderView extends View {
     }
 
     void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) float ratioWidth,
-                             @FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
+            @FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
         mFrameRatioWidth = ratioWidth;
         mFrameRatioHeight = ratioHeight;
         invalidateFrameRect();
@@ -148,8 +148,8 @@ final class ViewFinderView extends View {
         }
     }
 
-    void setFrameMaxSize(@FloatRange(from = 0.1, to = 1.0) float maxSize) {
-        mFrameMaxSize = maxSize;
+    void setFrameSize(@FloatRange(from = 0.1, to = 1.0) float size) {
+        mFrameSize = size;
         invalidateFrameRect();
         if (Utils.isLaidOut(this)) {
             invalidate();
@@ -167,10 +167,10 @@ final class ViewFinderView extends View {
             int frameWidth;
             int frameHeight;
             if (viewAR <= frameAR) {
-                frameWidth = Math.round(width * mFrameMaxSize);
+                frameWidth = Math.round(width * mFrameSize);
                 frameHeight = Math.round(frameWidth / frameAR);
             } else {
-                frameHeight = Math.round(height * mFrameMaxSize);
+                frameHeight = Math.round(height * mFrameSize);
                 frameWidth = Math.round(frameHeight * frameAR);
             }
             int frameLeft = (width - frameWidth) / 2;

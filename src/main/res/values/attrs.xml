@@ -11,6 +11,6 @@
         <attr format="dimension" name="frameCornersSize"/>
         <attr format="float" name="frameAspectRatioWidth"/>
         <attr format="float" name="frameAspectRatioHeight"/>
-        <attr format="float" name="frameMaxSize"/>
+        <attr format="float" name="frameSize"/>
     </declare-styleable>
 </resources>

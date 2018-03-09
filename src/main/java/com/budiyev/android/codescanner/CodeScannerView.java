@@ -58,9 +58,9 @@ public class CodeScannerView extends ViewGroup {
     private static final int DEFAULT_FLASH_BUTTON_COLOR = Color.WHITE;
     private static final float DEFAULT_FRAME_THICKNESS_DP = 2f;
     private static final float DEFAULT_FRAME_ASPECT_RATIO_WIDTH = 1f;
-    private static final float DEFAULT_FRAME_MAX_SIZE = 0.75f;
     private static final float DEFAULT_FRAME_ASPECT_RATIO_HEIGHT = 1f;
     private static final float DEFAULT_FRAME_CORNER_SIZE_DP = 50f;
+    private static final float DEFAULT_FRAME_SIZE = 0.75f;
     private static final float BUTTON_SIZE_DP = 56f;
     private SurfaceView mPreviewView;
     private ViewFinderView mViewFinderView;
@@ -113,7 +113,7 @@ public class CodeScannerView extends ViewGroup {
     }
 
     private void initialize(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr,
-                            @StyleRes int defStyleRes) {
+            @StyleRes int defStyleRes) {
         mPreviewView = new SurfaceView(context);
         mPreviewView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         mViewFinderView = new ViewFinderView(context);
@@ -136,7 +136,7 @@ public class CodeScannerView extends ViewGroup {
             mViewFinderView.setFrameColor(DEFAULT_FRAME_COLOR);
             mViewFinderView.setFrameThickness(Math.round(DEFAULT_FRAME_THICKNESS_DP * displayMetrics.density));
             mViewFinderView.setFrameCornersSize(Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * displayMetrics.density));
-            mViewFinderView.setFrameMaxSize(DEFAULT_FRAME_MAX_SIZE);
+            mViewFinderView.setFrameSize(DEFAULT_FRAME_SIZE);
             mAutoFocusButton.setColorFilter(DEFAULT_AUTO_FOCUS_BUTTON_COLOR);
             mFlashButton.setColorFilter(DEFAULT_FLASH_BUTTON_COLOR);
             mAutoFocusButton.setVisibility(DEFAULT_AUTO_FOCUS_BUTTON_VISIBILITY);
@@ -156,7 +156,7 @@ public class CodeScannerView extends ViewGroup {
                         a.getFloat(R.styleable.CodeScannerView_frameAspectRatioWidth, DEFAULT_FRAME_ASPECT_RATIO_WIDTH),
                         a.getFloat(R.styleable.CodeScannerView_frameAspectRatioHeight,
                                 DEFAULT_FRAME_ASPECT_RATIO_HEIGHT));
-                setFrameMaxSize(a.getFloat(R.styleable.CodeScannerView_frameMaxSize, DEFAULT_FRAME_MAX_SIZE));
+                setFrameSize(a.getFloat(R.styleable.CodeScannerView_frameSize, DEFAULT_FRAME_SIZE));
                 setAutoFocusButtonVisible(a.getBoolean(R.styleable.CodeScannerView_autoFocusButtonVisible,
                         DEFAULT_AUTO_FOCUS_BUTTON_VISIBLE));
                 setFlashButtonVisible(
@@ -256,25 +256,25 @@ public class CodeScannerView extends ViewGroup {
     }
 
     /**
-     * Set the max frame size where 1.0 means full width
+     * Set relative frame size where 1.0 means full width
      *
-     * @param maxSize Max frame size between 0.1 and 1.0 where 1.0 means full width
+     * @param size Relative frame size between 0.1 and 1.0
      */
-    public void setFrameMaxSize(@FloatRange(from = 0.1, to = 1.0) float maxSize) {
-        if (maxSize <= 0.1) {
+    public void setFrameSize(@FloatRange(from = 0.1, to = 1) float size) {
+        if (size < 0.1 || size > 1) {
             throw new IllegalArgumentException("Max frame size value should be between 0.1 and 1, inclusive");
         }
-        mViewFinderView.setFrameMaxSize(maxSize);
+        mViewFinderView.setFrameSize(size);
     }
 
     /**
-     * Set frame aspect ratio (ex. 4:3, 16:9, 1:1)
+     * Set frame aspect ratio (ex. 4:3, 15:10, 16:9, 1:1)
      *
      * @param ratioWidth  Frame aspect ratio width
      * @param ratioHeight Frame aspect ratio height
      */
     public void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) float ratioWidth,
-                                    @FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
+            @FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
         if (ratioWidth <= 0 || ratioHeight <= 0) {
             throw new IllegalArgumentException("Frame aspect ratio values should be greater than zero");
         }
