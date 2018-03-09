@@ -256,7 +256,7 @@ public class CodeScannerView extends ViewGroup {
     }
 
     /**
-     * Set relative frame size where 1.0 means full width
+     * Set relative frame size where 1.0 means full size
      *
      * @param size Relative frame size between 0.1 and 1.0
      */
