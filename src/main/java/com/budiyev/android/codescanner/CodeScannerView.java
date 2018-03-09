@@ -268,7 +268,7 @@ public class CodeScannerView extends ViewGroup {
     }
 
     /**
-     * Set frame aspect ratio (ex. 4:3, 15:10, 16:9, 1:1)
+     * Set frame aspect ratio (ex. 1:1, 15:10, 16:9, 4:3)
      *
      * @param ratioWidth  Frame aspect ratio width
      * @param ratioHeight Frame aspect ratio height
