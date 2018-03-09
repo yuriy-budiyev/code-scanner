@@ -217,8 +217,8 @@ final class Utils {
         float bottom = (viewFrameRect.getBottom() + hD) * hR;
         return new Rect(Math.max(Math.round(left - left * FRAME_THRESHOLD), 0),
                 Math.max(Math.round(top - top * FRAME_THRESHOLD), 0),
-                Math.max(Math.round(right + right * FRAME_THRESHOLD), imageWidth),
-                Math.max(Math.round(bottom + bottom * FRAME_THRESHOLD), imageHeight));
+                Math.min(Math.round(right + right * FRAME_THRESHOLD), imageWidth),
+                Math.min(Math.round(bottom + bottom * FRAME_THRESHOLD), imageHeight));
     }
 
     public static byte[] rotateNV21(byte[] source, int width, int height, int rotation) {
