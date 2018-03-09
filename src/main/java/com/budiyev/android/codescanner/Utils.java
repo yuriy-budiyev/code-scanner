@@ -210,8 +210,13 @@ final class Utils {
         int hD = (previewHeight - viewHeight) / 2;
         float wR = (float) imageWidth / (float) previewWidth;
         float hR = (float) imageHeight / (float) previewHeight;
-        return new Rect(Math.round((viewFrameRect.getLeft() + wD) * wR), Math.round((viewFrameRect.getTop() + hD) * hR),
-                Math.round((viewFrameRect.getRight() + wD) * wR), Math.round((viewFrameRect.getBottom() + hD) * hR));
+        float left = (viewFrameRect.getLeft() + wD) * wR;
+        float top = (viewFrameRect.getTop() + hD) * hR;
+        float right = (viewFrameRect.getRight() + wD) * wR;
+        float bottom = (viewFrameRect.getBottom() + hD) * hR;
+        return new Rect(Math.max(Math.round(left - left * 0.1f), 0), Math.max(Math.round(top - top * 0.1f), 0),
+                Math.max(Math.round(right + right * 0.1f), imageWidth),
+                Math.max(Math.round(bottom + bottom * 0.1f), imageHeight));
     }
 
     public static byte[] rotateNV21(byte[] source, int width, int height, int rotation) {
