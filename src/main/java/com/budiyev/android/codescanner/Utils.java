@@ -23,10 +23,6 @@
  */
 package com.budiyev.android.codescanner;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
@@ -37,6 +33,10 @@ import android.view.View;
 import android.view.WindowManager;
 
 import com.google.zxing.client.android.camera.CameraConfigurationUtils;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 final class Utils {
     private static final float MIN_DISTORTION = 0.3f;
@@ -188,12 +188,9 @@ final class Utils {
         if (imageWidth == frameWidth && imageHeight == frameHeight) {
             return new Point(frameWidth, frameHeight);
         }
-        int imageDivisor = greatestCommonDivisor(imageWidth, imageHeight);
-        int imageRatioWidth = imageWidth / imageDivisor;
-        int imageRatioHeight = imageHeight / imageDivisor;
-        int resultWidth = imageRatioWidth * frameHeight / imageRatioHeight;
+        int resultWidth = imageWidth * frameHeight / imageHeight;
         if (resultWidth < frameWidth) {
-            return new Point(frameWidth, imageRatioHeight * frameWidth / imageRatioWidth);
+            return new Point(frameWidth, imageWidth * frameWidth / imageHeight);
         } else {
             return new Point(resultWidth, frameHeight);
         }
@@ -248,17 +245,6 @@ final class Utils {
             }
         }
         return output;
-    }
-
-    private static int greatestCommonDivisor(int a, int b) {
-        while (a > 0 && b > 0) {
-            if (a > b) {
-                a %= b;
-            } else {
-                b %= a;
-            }
-        }
-        return a + b;
     }
 
     public static final class SuppressErrorCallback implements ErrorCallback {
