@@ -188,12 +188,9 @@ final class Utils {
         if (imageWidth == frameWidth && imageHeight == frameHeight) {
             return new Point(frameWidth, frameHeight);
         }
-        int imageDivisor = greatestCommonDivisor(imageWidth, imageHeight);
-        int imageRatioWidth = imageWidth / imageDivisor;
-        int imageRatioHeight = imageHeight / imageDivisor;
-        int resultWidth = imageRatioWidth * frameHeight / imageRatioHeight;
+        int resultWidth = imageWidth * frameHeight / imageHeight;
         if (resultWidth < frameWidth) {
-            return new Point(frameWidth, imageRatioHeight * frameWidth / imageRatioWidth);
+            return new Point(frameWidth, imageHeight * frameWidth / imageWidth);
         } else {
             return new Point(resultWidth, frameHeight);
         }
@@ -248,17 +245,6 @@ final class Utils {
             }
         }
         return output;
-    }
-
-    private static int greatestCommonDivisor(int a, int b) {
-        while (a > 0 && b > 0) {
-            if (a > b) {
-                a %= b;
-            } else {
-                b %= a;
-            }
-        }
-        return a + b;
     }
 
     public static final class SuppressErrorCallback implements ErrorCallback {
