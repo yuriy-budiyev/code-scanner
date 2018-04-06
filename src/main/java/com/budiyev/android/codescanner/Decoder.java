@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 
+import android.os.Process;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -96,17 +97,12 @@ final class Decoder {
 
     private final class DecoderThread extends Thread {
         public DecoderThread() {
-            super("Code scanner decode thread");
-            if (getPriority() != Thread.MIN_PRIORITY) {
-                setPriority(Thread.MIN_PRIORITY);
-            }
-            if (isDaemon()) {
-                setDaemon(false);
-            }
+            super("cs-decoder");
         }
 
         @Override
         public void run() {
+            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             for (; ; ) {
                 try {
                     setState(Decoder.State.IDLE);

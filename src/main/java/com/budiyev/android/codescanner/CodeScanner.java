@@ -34,6 +34,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
 import android.os.Handler;
+import android.os.Process;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -641,19 +642,14 @@ public class CodeScanner {
         private final int mHeight;
 
         public InitializationThread(int width, int height) {
-            super("Code scanner initialization thread");
-            if (getPriority() != Thread.MIN_PRIORITY) {
-                setPriority(Thread.MIN_PRIORITY);
-            }
-            if (isDaemon()) {
-                setDaemon(false);
-            }
+            super("cs-init");
             mWidth = width;
             mHeight = height;
         }
 
         @Override
         public void run() {
+            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             try {
                 initialize();
             } catch (Exception e) {
