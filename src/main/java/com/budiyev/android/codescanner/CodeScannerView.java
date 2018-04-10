@@ -76,7 +76,7 @@ public class CodeScannerView extends ViewGroup {
      *
      * @see CodeScanner
      */
-    public CodeScannerView(@NonNull Context context) {
+    public CodeScannerView(@NonNull final Context context) {
         super(context);
         initialize(context, null, 0, 0);
     }
@@ -86,7 +86,7 @@ public class CodeScannerView extends ViewGroup {
      *
      * @see CodeScanner
      */
-    public CodeScannerView(@NonNull Context context, @Nullable AttributeSet attrs) {
+    public CodeScannerView(@NonNull final Context context, @Nullable final AttributeSet attrs) {
         super(context, attrs);
         initialize(context, attrs, 0, 0);
     }
@@ -96,7 +96,8 @@ public class CodeScannerView extends ViewGroup {
      *
      * @see CodeScanner
      */
-    public CodeScannerView(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr) {
+    public CodeScannerView(@NonNull final Context context, @Nullable final AttributeSet attrs,
+            @AttrRes final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initialize(context, attrs, defStyleAttr, 0);
     }
@@ -107,18 +108,19 @@ public class CodeScannerView extends ViewGroup {
      * @see CodeScanner
      */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    public CodeScannerView(Context context, AttributeSet attrs, @AttrRes int defStyleAttr, @StyleRes int defStyleRes) {
+    public CodeScannerView(final Context context, final AttributeSet attrs, @AttrRes final int defStyleAttr,
+            @StyleRes final int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initialize(context, attrs, defStyleAttr, defStyleRes);
     }
 
-    private void initialize(@NonNull Context context, @Nullable AttributeSet attrs, @AttrRes int defStyleAttr,
-            @StyleRes int defStyleRes) {
+    private void initialize(@NonNull final Context context, @Nullable final AttributeSet attrs,
+            @AttrRes final int defStyleAttr, @StyleRes final int defStyleRes) {
         mPreviewView = new SurfaceView(context);
         mPreviewView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         mViewFinderView = new ViewFinderView(context);
         mViewFinderView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        final DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         mButtonSize = Math.round(displayMetrics.density * BUTTON_SIZE_DP);
         mAutoFocusButton = new ImageView(context);
         mAutoFocusButton.setLayoutParams(new LayoutParams(mButtonSize, mButtonSize));
@@ -178,10 +180,10 @@ public class CodeScannerView extends ViewGroup {
     }
 
     @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        int width = right - left;
-        int height = bottom - top;
-        Point previewSize = mPreviewSize;
+    protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
+        final int width = right - left;
+        final int height = bottom - top;
+        final Point previewSize = mPreviewSize;
         if (previewSize == null) {
             mPreviewView.layout(0, 0, width, height);
         } else {
@@ -189,25 +191,25 @@ public class CodeScannerView extends ViewGroup {
             int frameTop = 0;
             int frameRight = width;
             int frameBottom = height;
-            int previewWidth = previewSize.getX();
+            final int previewWidth = previewSize.getX();
             if (previewWidth > width) {
-                int d = (previewWidth - width) / 2;
+                final int d = (previewWidth - width) / 2;
                 frameLeft -= d;
                 frameRight += d;
             }
-            int previewHeight = previewSize.getY();
+            final int previewHeight = previewSize.getY();
             if (previewHeight > height) {
-                int d = (previewHeight - height) / 2;
+                final int d = (previewHeight - height) / 2;
                 frameTop -= d;
                 frameBottom += d;
             }
             mPreviewView.layout(frameLeft, frameTop, frameRight, frameBottom);
         }
         mViewFinderView.layout(0, 0, width, height);
-        int buttonSize = mButtonSize;
+        final int buttonSize = mButtonSize;
         mAutoFocusButton.layout(0, 0, buttonSize, buttonSize);
         mFlashButton.layout(width - buttonSize, 0, width, buttonSize);
-        LayoutListener listener = mLayoutListener;
+        final LayoutListener listener = mLayoutListener;
         if (listener != null) {
             listener.onLayout(width, height);
         }
@@ -218,7 +220,7 @@ public class CodeScannerView extends ViewGroup {
      *
      * @param color Mask color
      */
-    public void setMaskColor(@ColorInt int color) {
+    public void setMaskColor(@ColorInt final int color) {
         mViewFinderView.setMaskColor(color);
     }
 
@@ -227,7 +229,7 @@ public class CodeScannerView extends ViewGroup {
      *
      * @param color Frame color
      */
-    public void setFrameColor(@ColorInt int color) {
+    public void setFrameColor(@ColorInt final int color) {
         mViewFinderView.setFrameColor(color);
     }
 
@@ -236,7 +238,7 @@ public class CodeScannerView extends ViewGroup {
      *
      * @param thickness Frame thickness in pixels
      */
-    public void setFrameThickness(@Px int thickness) {
+    public void setFrameThickness(@Px final int thickness) {
         if (thickness < 0) {
             throw new IllegalArgumentException("Frame thickness can't be negative");
         }
@@ -248,7 +250,7 @@ public class CodeScannerView extends ViewGroup {
      *
      * @param size Length in pixels
      */
-    public void setFrameCornersSize(@Px int size) {
+    public void setFrameCornersSize(@Px final int size) {
         if (size < 0) {
             throw new IllegalArgumentException("Frame corners size can't be negative");
         }
@@ -260,7 +262,7 @@ public class CodeScannerView extends ViewGroup {
      *
      * @param size Relative frame size between 0.1 and 1.0
      */
-    public void setFrameSize(@FloatRange(from = 0.1, to = 1) float size) {
+    public void setFrameSize(@FloatRange(from = 0.1, to = 1) final float size) {
         if (size < 0.1 || size > 1) {
             throw new IllegalArgumentException("Max frame size value should be between 0.1 and 1, inclusive");
         }
@@ -273,8 +275,8 @@ public class CodeScannerView extends ViewGroup {
      * @param ratioWidth  Frame aspect ratio width
      * @param ratioHeight Frame aspect ratio height
      */
-    public void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) float ratioWidth,
-            @FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
+    public void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) final float ratioWidth,
+            @FloatRange(from = 0, fromInclusive = false) final float ratioHeight) {
         if (ratioWidth <= 0 || ratioHeight <= 0) {
             throw new IllegalArgumentException("Frame aspect ratio values should be greater than zero");
         }
@@ -286,7 +288,7 @@ public class CodeScannerView extends ViewGroup {
      *
      * @param visible Visibility
      */
-    public void setAutoFocusButtonVisible(boolean visible) {
+    public void setAutoFocusButtonVisible(final boolean visible) {
         mAutoFocusButton.setVisibility(visible ? VISIBLE : INVISIBLE);
     }
 
@@ -295,7 +297,7 @@ public class CodeScannerView extends ViewGroup {
      *
      * @param visible Visibility
      */
-    public void setFlashButtonVisible(boolean visible) {
+    public void setFlashButtonVisible(final boolean visible) {
         mFlashButton.setVisibility(visible ? VISIBLE : INVISIBLE);
     }
 
@@ -304,7 +306,7 @@ public class CodeScannerView extends ViewGroup {
      *
      * @param color Color
      */
-    public void setAutoFocusButtonColor(@ColorInt int color) {
+    public void setAutoFocusButtonColor(@ColorInt final int color) {
         mAutoFocusButton.setColorFilter(color);
     }
 
@@ -313,7 +315,7 @@ public class CodeScannerView extends ViewGroup {
      *
      * @param color Color
      */
-    public void setFlashButtonColor(@ColorInt int color) {
+    public void setFlashButtonColor(@ColorInt final int color) {
         mFlashButton.setColorFilter(color);
     }
 
@@ -332,16 +334,16 @@ public class CodeScannerView extends ViewGroup {
         return mViewFinderView.getFrameRect();
     }
 
-    void setPreviewSize(@Nullable Point previewSize) {
+    void setPreviewSize(@Nullable final Point previewSize) {
         mPreviewSize = previewSize;
         requestLayout();
     }
 
-    void setLayoutListener(@Nullable LayoutListener layoutListener) {
+    void setLayoutListener(@Nullable final LayoutListener layoutListener) {
         mLayoutListener = layoutListener;
     }
 
-    void setCodeScanner(@NonNull CodeScanner codeScanner) {
+    void setCodeScanner(@NonNull final CodeScanner codeScanner) {
         if (mCodeScanner != null) {
             throw new IllegalStateException("Code scanner has already been set");
         }
@@ -350,12 +352,12 @@ public class CodeScannerView extends ViewGroup {
         setFlashEnabled(codeScanner.isFlashEnabled());
     }
 
-    void setAutoFocusEnabled(boolean enabled) {
+    void setAutoFocusEnabled(final boolean enabled) {
         mAutoFocusButton.setImageResource(
                 enabled ? R.drawable.ic_code_scanner_auto_focus_on : R.drawable.ic_code_scanner_auto_focus_off);
     }
 
-    void setFlashEnabled(boolean enabled) {
+    void setFlashEnabled(final boolean enabled) {
         mFlashButton
                 .setImageResource(enabled ? R.drawable.ic_code_scanner_flash_on : R.drawable.ic_code_scanner_flash_off);
     }
@@ -366,12 +368,12 @@ public class CodeScannerView extends ViewGroup {
 
     private final class AutoFocusClickListener implements OnClickListener {
         @Override
-        public void onClick(View view) {
-            CodeScanner scanner = mCodeScanner;
+        public void onClick(final View view) {
+            final CodeScanner scanner = mCodeScanner;
             if (scanner == null || !scanner.isAutoFocusSupportedOrUnknown()) {
                 return;
             }
-            boolean enabled = !scanner.isAutoFocusEnabled();
+            final boolean enabled = !scanner.isAutoFocusEnabled();
             scanner.setAutoFocusEnabled(enabled);
             setAutoFocusEnabled(enabled);
         }
@@ -379,12 +381,12 @@ public class CodeScannerView extends ViewGroup {
 
     private final class FlashClickListener implements OnClickListener {
         @Override
-        public void onClick(View view) {
-            CodeScanner scanner = mCodeScanner;
+        public void onClick(final View view) {
+            final CodeScanner scanner = mCodeScanner;
             if (scanner == null || !scanner.isFlashSupportedOrUnknown()) {
                 return;
             }
-            boolean enabled = !scanner.isFlashEnabled();
+            final boolean enabled = !scanner.isFlashEnabled();
             scanner.setFlashEnabled(enabled);
             setFlashEnabled(enabled);
         }

@@ -35,21 +35,21 @@ public class CodeScannerException extends RuntimeException {
         super();
     }
 
-    public CodeScannerException(@Nullable String message) {
+    public CodeScannerException(@Nullable final String message) {
         super(message);
     }
 
-    public CodeScannerException(@Nullable String message, @Nullable Throwable cause) {
+    public CodeScannerException(@Nullable final String message, @Nullable final Throwable cause) {
         super(message, cause);
     }
 
-    public CodeScannerException(@Nullable Throwable cause) {
+    public CodeScannerException(@Nullable final Throwable cause) {
         super(cause);
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    protected CodeScannerException(@Nullable String message, @Nullable Throwable cause, boolean enableSuppression,
-            boolean writableStackTrace) {
+    protected CodeScannerException(@Nullable final String message, @Nullable final Throwable cause,
+            final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

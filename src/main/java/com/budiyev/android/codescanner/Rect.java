@@ -29,7 +29,7 @@ final class Rect {
     private final int mRight;
     private final int mBottom;
 
-    public Rect(int left, int top, int right, int bottom) {
+    public Rect(final int left, final int top, final int right, final int bottom) {
         mLeft = left;
         mTop = top;
         mRight = right;
@@ -66,11 +66,11 @@ final class Rect {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof Rect) {
-            Rect other = (Rect) obj;
+            final Rect other = (Rect) obj;
             return mLeft == other.mLeft && mTop == other.mTop && mRight == other.mRight && mBottom == other.mBottom;
         } else {
             return false;

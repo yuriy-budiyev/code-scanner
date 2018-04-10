@@ -38,9 +38,10 @@ final class DecoderWrapper {
     private final boolean mAutoFocusSupported;
     private final boolean mFlashSupported;
 
-    public DecoderWrapper(@NonNull Camera camera, @NonNull Camera.CameraInfo cameraInfo, @NonNull Decoder decoder,
-            @NonNull Point imageSize, @NonNull Point previewSize, @NonNull Point viewSize, int displayOrientation,
-            boolean autoFocusSupported, boolean flashSupported) {
+    public DecoderWrapper(@NonNull final Camera camera, @NonNull final Camera.CameraInfo cameraInfo,
+            @NonNull final Decoder decoder, @NonNull final Point imageSize, @NonNull final Point previewSize,
+            @NonNull final Point viewSize, final int displayOrientation, final boolean autoFocusSupported,
+            final boolean flashSupported) {
         mCamera = camera;
         mCameraInfo = cameraInfo;
         mDecoder = decoder;

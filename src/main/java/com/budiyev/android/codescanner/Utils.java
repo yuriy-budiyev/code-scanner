@@ -47,7 +47,7 @@ final class Utils {
     private Utils() {
     }
 
-    public static void optimizeParameters(@NonNull Camera.Parameters parameters) {
+    public static void optimizeParameters(@NonNull final Camera.Parameters parameters) {
         CameraConfigurationUtils.setBestPreviewFPS(parameters);
         CameraConfigurationUtils.setBarcodeSceneMode(parameters);
         CameraConfigurationUtils.setVideoStabilization(parameters);
@@ -55,15 +55,16 @@ final class Utils {
     }
 
     @NonNull
-    public static Point findSuitableImageSize(@NonNull Camera.Parameters parameters, int frameWidth, int frameHeight) {
-        List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+    public static Point findSuitableImageSize(@NonNull final Camera.Parameters parameters, final int frameWidth,
+            final int frameHeight) {
+        final List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
         if (sizes != null && !sizes.isEmpty()) {
             Collections.sort(sizes, new CameraSizeComparator());
-            float frameRatio = (float) frameWidth / (float) frameHeight;
+            final float frameRatio = (float) frameWidth / (float) frameHeight;
             for (float distortion = MIN_DISTORTION; distortion <= MAX_DISTORTION; distortion += DISTORTION_STEP) {
-                for (Camera.Size size : sizes) {
-                    int width = size.width;
-                    int height = size.height;
+                for (final Camera.Size size : sizes) {
+                    final int width = size.width;
+                    final int height = size.height;
                     if (width * height >= MIN_PREVIEW_PIXELS &&
                             Math.abs(frameRatio - (float) width / (float) height) <= distortion) {
                         return new Point(width, height);
@@ -71,19 +72,19 @@ final class Utils {
                 }
             }
         }
-        Camera.Size defaultSize = parameters.getPreviewSize();
+        final Camera.Size defaultSize = parameters.getPreviewSize();
         if (defaultSize == null) {
             throw new CodeScannerException("Unable to configure camera preview size");
         }
         return new Point(defaultSize.width, defaultSize.height);
     }
 
-    public static boolean disableAutoFocus(@NonNull Camera.Parameters parameters) {
-        List<String> focusModes = parameters.getSupportedFocusModes();
+    public static boolean disableAutoFocus(@NonNull final Camera.Parameters parameters) {
+        final List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes == null || focusModes.isEmpty()) {
             return false;
         }
-        String focusMode = parameters.getFocusMode();
+        final String focusMode = parameters.getFocusMode();
         if (focusModes.contains(Camera.Parameters.FOCUS_MODE_FIXED)) {
             if (Camera.Parameters.FOCUS_MODE_FIXED.equals(focusMode)) {
                 return false;
@@ -103,8 +104,9 @@ final class Utils {
         return false;
     }
 
-    public static boolean setAutoFocusMode(@NonNull Camera.Parameters parameters, AutoFocusMode autoFocusMode) {
-        List<String> focusModes = parameters.getSupportedFocusModes();
+    public static boolean setAutoFocusMode(@NonNull final Camera.Parameters parameters,
+            final AutoFocusMode autoFocusMode) {
+        final List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes == null || focusModes.isEmpty()) {
             return false;
         }
@@ -128,11 +130,11 @@ final class Utils {
         }
     }
 
-    public static boolean setFlashMode(@NonNull Camera.Parameters parameters, @NonNull String flashMode) {
+    public static boolean setFlashMode(@NonNull final Camera.Parameters parameters, @NonNull final String flashMode) {
         if (flashMode.equals(parameters.getFlashMode())) {
             return false;
         }
-        List<String> flashModes = parameters.getSupportedFlashModes();
+        final List<String> flashModes = parameters.getSupportedFlashModes();
         if (flashModes != null && flashModes.contains(flashMode)) {
             parameters.setFlashMode(flashMode);
             return true;
@@ -140,13 +142,14 @@ final class Utils {
         return false;
     }
 
-    public static int getDisplayOrientation(@NonNull Context context, @NonNull Camera.CameraInfo cameraInfo) {
-        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    public static int getDisplayOrientation(@NonNull final Context context,
+            @NonNull final Camera.CameraInfo cameraInfo) {
+        final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         if (windowManager == null) {
             throw new CodeScannerException("Unable to access window manager");
         }
-        int degrees;
-        int rotation = windowManager.getDefaultDisplay().getRotation();
+        final int degrees;
+        final int rotation = windowManager.getDefaultDisplay().getRotation();
         switch (rotation) {
             case Surface.ROTATION_0:
                 degrees = 0;
@@ -171,11 +174,11 @@ final class Utils {
                 degrees) % 360;
     }
 
-    public static boolean isPortrait(int orientation) {
+    public static boolean isPortrait(final int orientation) {
         return orientation == 90 || orientation == 270;
     }
 
-    public static boolean isLaidOut(@NonNull View view) {
+    public static boolean isLaidOut(@NonNull final View view) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             return view.isLaidOut();
         } else {
@@ -184,11 +187,12 @@ final class Utils {
     }
 
     @NonNull
-    public static Point getPreviewSize(int imageWidth, int imageHeight, int frameWidth, int frameHeight) {
+    public static Point getPreviewSize(final int imageWidth, final int imageHeight, final int frameWidth,
+            final int frameHeight) {
         if (imageWidth == frameWidth && imageHeight == frameHeight) {
             return new Point(frameWidth, frameHeight);
         }
-        int resultWidth = imageWidth * frameHeight / imageHeight;
+        final int resultWidth = imageWidth * frameHeight / imageHeight;
         if (resultWidth < frameWidth) {
             return new Point(frameWidth, imageHeight * frameWidth / imageWidth);
         } else {
@@ -197,48 +201,48 @@ final class Utils {
     }
 
     @NonNull
-    public static Rect getImageFrameRect(int imageWidth, int imageHeight, @NonNull Rect viewFrameRect,
-            @NonNull Point previewSize, @NonNull Point viewSize) {
-        int previewWidth = previewSize.getX();
-        int previewHeight = previewSize.getY();
-        int viewWidth = viewSize.getX();
-        int viewHeight = viewSize.getY();
-        int wD = (previewWidth - viewWidth) / 2;
-        int hD = (previewHeight - viewHeight) / 2;
-        float wR = (float) imageWidth / (float) previewWidth;
-        float hR = (float) imageHeight / (float) previewHeight;
+    public static Rect getImageFrameRect(final int imageWidth, final int imageHeight, @NonNull final Rect viewFrameRect,
+            @NonNull final Point previewSize, @NonNull final Point viewSize) {
+        final int previewWidth = previewSize.getX();
+        final int previewHeight = previewSize.getY();
+        final int viewWidth = viewSize.getX();
+        final int viewHeight = viewSize.getY();
+        final int wD = (previewWidth - viewWidth) / 2;
+        final int hD = (previewHeight - viewHeight) / 2;
+        final float wR = (float) imageWidth / (float) previewWidth;
+        final float hR = (float) imageHeight / (float) previewHeight;
         return new Rect(Math.max(Math.round((viewFrameRect.getLeft() + wD) * wR), 0),
                 Math.max(Math.round((viewFrameRect.getTop() + hD) * hR), 0),
                 Math.min(Math.round((viewFrameRect.getRight() + wD) * wR), imageWidth),
                 Math.min(Math.round((viewFrameRect.getBottom() + hD) * hR), imageHeight));
     }
 
-    public static byte[] rotateNV21(byte[] source, int width, int height, int rotation) {
+    public static byte[] rotateNV21(final byte[] source, final int width, final int height, final int rotation) {
         if (rotation == 0 || rotation == 360) {
             return source;
         }
         if (rotation % 90 != 0 || rotation < 0 || rotation > 270) {
             throw new IllegalArgumentException("Invalid rotation (0 <= rotation < 360, rotation % 90 == 0)");
         }
-        byte[] output = new byte[source.length];
-        int frameSize = width * height;
-        boolean swap = rotation % 180 != 0;
-        boolean flipX = rotation % 270 != 0;
-        boolean flipY = rotation >= 180;
+        final byte[] output = new byte[source.length];
+        final int frameSize = width * height;
+        final boolean swap = rotation % 180 != 0;
+        final boolean flipX = rotation % 270 != 0;
+        final boolean flipY = rotation >= 180;
         for (int j = 0; j < height; j++) {
             for (int i = 0; i < width; i++) {
-                int yIn = j * width + i;
-                int uIn = frameSize + (j >> 1) * width + (i & ~1);
-                int vIn = uIn + 1;
-                int wOut = swap ? height : width;
-                int hOut = swap ? width : height;
-                int iSwapped = swap ? j : i;
-                int jSwapped = swap ? i : j;
-                int iOut = flipX ? wOut - iSwapped - 1 : iSwapped;
-                int jOut = flipY ? hOut - jSwapped - 1 : jSwapped;
-                int yOut = jOut * wOut + iOut;
-                int uOut = frameSize + (jOut >> 1) * wOut + (iOut & ~1);
-                int vOut = uOut + 1;
+                final int yIn = j * width + i;
+                final int uIn = frameSize + (j >> 1) * width + (i & ~1);
+                final int vIn = uIn + 1;
+                final int wOut = swap ? height : width;
+                final int hOut = swap ? width : height;
+                final int iSwapped = swap ? j : i;
+                final int jSwapped = swap ? i : j;
+                final int iOut = flipX ? wOut - iSwapped - 1 : iSwapped;
+                final int jOut = flipY ? hOut - jSwapped - 1 : jSwapped;
+                final int yOut = jOut * wOut + iOut;
+                final int uOut = frameSize + (jOut >> 1) * wOut + (iOut & ~1);
+                final int vOut = uOut + 1;
                 output[yOut] = (byte) (0xff & source[yIn]);
                 output[uOut] = (byte) (0xff & source[uIn]);
                 output[vOut] = (byte) (0xff & source[vIn]);
@@ -249,16 +253,16 @@ final class Utils {
 
     public static final class SuppressErrorCallback implements ErrorCallback {
         @Override
-        public void onError(@NonNull Exception error) {
+        public void onError(@NonNull final Exception error) {
             // Do nothing
         }
     }
 
     private static final class CameraSizeComparator implements Comparator<Camera.Size> {
         @Override
-        public int compare(@NonNull Camera.Size a, @NonNull Camera.Size b) {
-            int aPixels = a.height * a.width;
-            int bPixels = b.height * b.width;
+        public int compare(@NonNull final Camera.Size a, @NonNull final Camera.Size b) {
+            final int aPixels = a.height * a.width;
+            final int bPixels = b.height * b.width;
             if (bPixels < aPixels) {
                 return -1;
             } else if (bPixels > aPixels) {

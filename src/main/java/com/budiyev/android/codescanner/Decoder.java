@@ -48,8 +48,8 @@ final class Decoder {
     private volatile DecodeCallback mCallback;
     private volatile State mState;
 
-    public Decoder(@NonNull StateListener stateListener, @NonNull List<BarcodeFormat> formats,
-            @Nullable DecodeCallback callback) {
+    public Decoder(@NonNull final StateListener stateListener, @NonNull final List<BarcodeFormat> formats,
+            @Nullable final DecodeCallback callback) {
         mReader = new MultiFormatReader();
         mDecoderThread = new DecoderThread();
         mHints = new EnumMap<>(DecodeHintType.class);
@@ -60,16 +60,16 @@ final class Decoder {
         mState = State.INITIALIZED;
     }
 
-    public void setFormats(@NonNull List<BarcodeFormat> formats) {
+    public void setFormats(@NonNull final List<BarcodeFormat> formats) {
         mHints.put(DecodeHintType.POSSIBLE_FORMATS, formats);
         mReader.setHints(mHints);
     }
 
-    public void setCallback(@Nullable DecodeCallback callback) {
+    public void setCallback(@Nullable final DecodeCallback callback) {
         mCallback = callback;
     }
 
-    public void decode(@NonNull DecodeTask task) {
+    public void decode(@NonNull final DecodeTask task) {
         mDecodeQueue.offer(task);
     }
 
@@ -90,7 +90,7 @@ final class Decoder {
         return mState;
     }
 
-    private boolean setState(@NonNull State state) {
+    private boolean setState(@NonNull final State state) {
         mState = state;
         return mStateListener.onStateChanged(state);
     }
@@ -108,22 +108,22 @@ final class Decoder {
                     setState(Decoder.State.IDLE);
                     Result result = null;
                     try {
-                        DecodeTask task = mDecodeQueue.take();
+                        final DecodeTask task = mDecodeQueue.take();
                         setState(Decoder.State.DECODING);
                         result = task.decode(mReader);
-                    } catch (ReaderException ignored) {
+                    } catch (final ReaderException ignored) {
                     } finally {
                         if (result != null) {
                             mDecodeQueue.clear();
                             if (setState(Decoder.State.DECODED)) {
-                                DecodeCallback callback = mCallback;
+                                final DecodeCallback callback = mCallback;
                                 if (callback != null) {
                                     callback.onDecoded(result);
                                 }
                             }
                         }
                     }
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     setState(Decoder.State.STOPPED);
                     break;
                 }

@@ -110,7 +110,7 @@ public class CodeScanner {
      * @see CodeScannerView
      */
     @MainThread
-    public CodeScanner(@NonNull Context context, @NonNull CodeScannerView view) {
+    public CodeScanner(@NonNull final Context context, @NonNull final CodeScannerView view) {
         mContext = context;
         mScannerView = view;
         mSurfaceHolder = view.getPreviewView().getHolder();
@@ -135,7 +135,7 @@ public class CodeScanner {
      * @see CodeScannerView
      */
     @MainThread
-    public CodeScanner(@NonNull Context context, @NonNull CodeScannerView view, int cameraId) {
+    public CodeScanner(@NonNull final Context context, @NonNull final CodeScannerView view, final int cameraId) {
         this(context, view);
         mCameraId = cameraId;
     }
@@ -147,13 +147,13 @@ public class CodeScanner {
      *                 {@link Camera#getNumberOfCameras()} - {@code 1})
      */
     @MainThread
-    public void setCamera(int cameraId) {
+    public void setCamera(final int cameraId) {
         mInitializeLock.lock();
         try {
             if (mCameraId != cameraId) {
                 mCameraId = cameraId;
                 if (mInitialized) {
-                    boolean previewActive = mPreviewActive;
+                    final boolean previewActive = mPreviewActive;
                     releaseResources();
                     if (previewActive) {
                         initialize();
@@ -175,7 +175,7 @@ public class CodeScanner {
      * @see #TWO_DIMENSIONAL_FORMATS
      */
     @MainThread
-    public void setFormats(@NonNull List<BarcodeFormat> formats) {
+    public void setFormats(@NonNull final List<BarcodeFormat> formats) {
         mInitializeLock.lock();
         try {
             mFormats = formats;
@@ -197,7 +197,7 @@ public class CodeScanner {
      * @see #TWO_DIMENSIONAL_FORMATS
      */
     @MainThread
-    public void setFormats(@NonNull BarcodeFormat... formats) {
+    public void setFormats(@NonNull final BarcodeFormat... formats) {
         setFormats(Arrays.asList(formats));
     }
 
@@ -208,7 +208,7 @@ public class CodeScanner {
      * @see BarcodeFormat
      */
     @MainThread
-    public void setFormat(@NonNull BarcodeFormat format) {
+    public void setFormat(@NonNull final BarcodeFormat format) {
         setFormats(Collections.singletonList(format));
     }
 
@@ -218,7 +218,7 @@ public class CodeScanner {
      * @param decodeCallback Callback
      * @see DecodeCallback
      */
-    public void setDecodeCallback(@Nullable DecodeCallback decodeCallback) {
+    public void setDecodeCallback(@Nullable final DecodeCallback decodeCallback) {
         mInitializeLock.lock();
         try {
             mDecodeCallback = decodeCallback;
@@ -238,7 +238,7 @@ public class CodeScanner {
      * @see ErrorCallback#SUPPRESS
      * @see ErrorCallback
      */
-    public void setErrorCallback(@Nullable ErrorCallback errorCallback) {
+    public void setErrorCallback(@Nullable final ErrorCallback errorCallback) {
         mErrorCallback = errorCallback;
     }
 
@@ -247,7 +247,7 @@ public class CodeScanner {
      *
      * @see ScanMode
      */
-    public void setScanMode(@NonNull ScanMode scanMode) {
+    public void setScanMode(@NonNull final ScanMode scanMode) {
         mScanMode = scanMode;
     }
 
@@ -255,10 +255,10 @@ public class CodeScanner {
      * Whether to enable or disable auto focus if it's supported, {@code true} by default
      */
     @MainThread
-    public void setAutoFocusEnabled(boolean autoFocusEnabled) {
+    public void setAutoFocusEnabled(final boolean autoFocusEnabled) {
         mInitializeLock.lock();
         try {
-            boolean changed = mAutoFocusEnabled != autoFocusEnabled;
+            final boolean changed = mAutoFocusEnabled != autoFocusEnabled;
             mAutoFocusEnabled = autoFocusEnabled;
             mScannerView.setAutoFocusEnabled(autoFocusEnabled);
             if (mInitialized && mPreviewActive && changed && mDecoderWrapper.isAutoFocusSupported()) {
@@ -282,7 +282,7 @@ public class CodeScanner {
      * @see AutoFocusMode
      */
     @MainThread
-    public void setAutoFocusMode(@NonNull AutoFocusMode autoFocusMode) {
+    public void setAutoFocusMode(@NonNull final AutoFocusMode autoFocusMode) {
         mInitializeLock.lock();
         try {
             mAutoFocusMode = autoFocusMode;
@@ -299,7 +299,7 @@ public class CodeScanner {
      *
      * @see #setAutoFocusMode(AutoFocusMode)
      */
-    public void setAutoFocusInterval(long autoFocusInterval) {
+    public void setAutoFocusInterval(final long autoFocusInterval) {
         mSafeAutoFocusInterval = autoFocusInterval;
     }
 
@@ -307,10 +307,10 @@ public class CodeScanner {
      * Whether to enable or disable flash light if it's supported, {@code false} by default
      */
     @MainThread
-    public void setFlashEnabled(boolean flashEnabled) {
+    public void setFlashEnabled(final boolean flashEnabled) {
         mInitializeLock.lock();
         try {
-            boolean changed = mFlashEnabled != flashEnabled;
+            final boolean changed = mFlashEnabled != flashEnabled;
             mFlashEnabled = flashEnabled;
             mScannerView.setFlashEnabled(flashEnabled);
             if (mInitialized && mPreviewActive && changed && mDecoderWrapper.isFlashSupported()) {
@@ -385,7 +385,7 @@ public class CodeScanner {
         initialize(mScannerView.getWidth(), mScannerView.getHeight());
     }
 
-    private void initialize(int width, int height) {
+    private void initialize(final int width, final int height) {
         mViewWidth = width;
         mViewHeight = height;
         if (width > 0 && height > 0) {
@@ -397,10 +397,10 @@ public class CodeScanner {
         }
     }
 
-    private void startPreviewInternal(boolean internal) {
+    private void startPreviewInternal(final boolean internal) {
         try {
-            DecoderWrapper decoderWrapper = mDecoderWrapper;
-            Camera camera = decoderWrapper.getCamera();
+            final DecoderWrapper decoderWrapper = mDecoderWrapper;
+            final Camera camera = decoderWrapper.getCamera();
             camera.setPreviewCallback(mPreviewCallback);
             camera.setPreviewDisplay(mSurfaceHolder);
             if (!internal && decoderWrapper.isFlashSupported() && mFlashEnabled) {
@@ -414,7 +414,7 @@ public class CodeScanner {
             if (mAutoFocusMode == AutoFocusMode.SAFE) {
                 scheduleSafeAutoFocusTask();
             }
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
         }
     }
 
@@ -424,19 +424,19 @@ public class CodeScanner {
         }
     }
 
-    private void stopPreviewInternal(boolean internal) {
+    private void stopPreviewInternal(final boolean internal) {
         try {
-            DecoderWrapper decoderWrapper = mDecoderWrapper;
-            Camera camera = decoderWrapper.getCamera();
+            final DecoderWrapper decoderWrapper = mDecoderWrapper;
+            final Camera camera = decoderWrapper.getCamera();
             if (!internal && decoderWrapper.isFlashSupported() && mFlashEnabled) {
-                Camera.Parameters parameters = camera.getParameters();
+                final Camera.Parameters parameters = camera.getParameters();
                 if (parameters != null && Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_OFF)) {
                     camera.setParameters(parameters);
                 }
             }
             camera.setPreviewCallback(null);
             camera.stopPreview();
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
         }
         mStoppingPreview = false;
         mPreviewActive = false;
@@ -456,22 +456,22 @@ public class CodeScanner {
         mStoppingPreview = false;
         mPreviewActive = false;
         mSafeAutoFocusing = false;
-        DecoderWrapper decoderWrapper = mDecoderWrapper;
+        final DecoderWrapper decoderWrapper = mDecoderWrapper;
         if (decoderWrapper != null) {
             mDecoderWrapper = null;
             decoderWrapper.release();
         }
     }
 
-    private void setFlashEnabledInternal(boolean flashEnabled) {
+    private void setFlashEnabledInternal(final boolean flashEnabled) {
         try {
-            DecoderWrapper decoderWrapper = mDecoderWrapper;
-            Camera camera = decoderWrapper.getCamera();
-            Camera.Parameters parameters = camera.getParameters();
+            final DecoderWrapper decoderWrapper = mDecoderWrapper;
+            final Camera camera = decoderWrapper.getCamera();
+            final Camera.Parameters parameters = camera.getParameters();
             if (parameters == null) {
                 return;
             }
-            boolean changed;
+            final boolean changed;
             if (flashEnabled) {
                 changed = Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_TORCH);
             } else {
@@ -481,19 +481,19 @@ public class CodeScanner {
                 CameraConfigurationUtils.setBestExposure(parameters, flashEnabled);
                 camera.setParameters(parameters);
             }
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
         }
     }
 
-    private void setAutoFocusEnabledInternal(boolean autoFocusEnabled) {
+    private void setAutoFocusEnabledInternal(final boolean autoFocusEnabled) {
         try {
-            Camera camera = mDecoderWrapper.getCamera();
-            Camera.Parameters parameters = camera.getParameters();
+            final Camera camera = mDecoderWrapper.getCamera();
+            final Camera.Parameters parameters = camera.getParameters();
             if (parameters == null) {
                 return;
             }
-            boolean changed;
-            AutoFocusMode autoFocusMode = mAutoFocusMode;
+            final boolean changed;
+            final AutoFocusMode autoFocusMode = mAutoFocusMode;
             if (autoFocusEnabled) {
                 changed = Utils.setAutoFocusMode(parameters, autoFocusMode);
             } else {
@@ -510,7 +510,7 @@ public class CodeScanner {
                     scheduleSafeAutoFocusTask();
                 }
             }
-        } catch (Exception ignored) {
+        } catch (final Exception ignored) {
         }
     }
 
@@ -525,12 +525,12 @@ public class CodeScanner {
             mSafeAutoFocusAttemptsCount++;
         } else {
             try {
-                Camera camera = mDecoderWrapper.getCamera();
+                final Camera camera = mDecoderWrapper.getCamera();
                 camera.cancelAutoFocus();
                 camera.autoFocus(mSafeAutoFocusCallback);
                 mSafeAutoFocusAttemptsCount = 0;
                 mSafeAutoFocusing = true;
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 mSafeAutoFocusing = false;
             }
         }
@@ -546,22 +546,22 @@ public class CodeScanner {
     }
 
     boolean isAutoFocusSupportedOrUnknown() {
-        DecoderWrapper wrapper = mDecoderWrapper;
+        final DecoderWrapper wrapper = mDecoderWrapper;
         return wrapper == null || wrapper.isAutoFocusSupported();
     }
 
     boolean isFlashSupportedOrUnknown() {
-        DecoderWrapper wrapper = mDecoderWrapper;
+        final DecoderWrapper wrapper = mDecoderWrapper;
         return wrapper == null || wrapper.isFlashSupported();
     }
 
     private final class ScannerLayoutListener implements CodeScannerView.LayoutListener {
         @Override
-        public void onLayout(int width, int height) {
+        public void onLayout(final int width, final int height) {
             mInitializeLock.lock();
             try {
                 if (width != mViewWidth || height != mViewHeight) {
-                    boolean previewActive = mPreviewActive;
+                    final boolean previewActive = mPreviewActive;
                     if (mInitialized) {
                         releaseResources();
                     }
@@ -577,19 +577,19 @@ public class CodeScanner {
 
     private final class PreviewCallback implements Camera.PreviewCallback {
         @Override
-        public void onPreviewFrame(byte[] data, Camera camera) {
+        public void onPreviewFrame(final byte[] data, final Camera camera) {
             if (!mInitialized || mStoppingPreview || mScanMode == ScanMode.PREVIEW || data == null) {
                 return;
             }
-            DecoderWrapper decoderWrapper = mDecoderWrapper;
+            final DecoderWrapper decoderWrapper = mDecoderWrapper;
             if (decoderWrapper == null) {
                 return;
             }
-            Decoder decoder = decoderWrapper.getDecoder();
+            final Decoder decoder = decoderWrapper.getDecoder();
             if (decoder.getState() != Decoder.State.IDLE) {
                 return;
             }
-            Rect frameRect = mScannerView.getFrameRect();
+            final Rect frameRect = mScannerView.getFrameRect();
             if (frameRect == null || frameRect.getWidth() < 1 || frameRect.getHeight() < 1) {
                 return;
             }
@@ -601,12 +601,12 @@ public class CodeScanner {
 
     private final class SurfaceCallback implements SurfaceHolder.Callback {
         @Override
-        public void surfaceCreated(SurfaceHolder holder) {
+        public void surfaceCreated(final SurfaceHolder holder) {
             startPreviewInternalSafe();
         }
 
         @Override
-        public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+        public void surfaceChanged(final SurfaceHolder holder, final int format, final int width, final int height) {
             if (holder.getSurface() == null) {
                 mPreviewActive = false;
                 return;
@@ -616,16 +616,16 @@ public class CodeScanner {
         }
 
         @Override
-        public void surfaceDestroyed(SurfaceHolder holder) {
+        public void surfaceDestroyed(final SurfaceHolder holder) {
             stopPreviewInternalSafe();
         }
     }
 
     private final class DecoderStateListener implements Decoder.StateListener {
         @Override
-        public boolean onStateChanged(@NonNull Decoder.State state) {
+        public boolean onStateChanged(@NonNull final Decoder.State state) {
             if (state == Decoder.State.DECODED) {
-                ScanMode scanMode = mScanMode;
+                final ScanMode scanMode = mScanMode;
                 if (scanMode == ScanMode.PREVIEW) {
                     return false;
                 } else if (scanMode == ScanMode.SINGLE) {
@@ -641,7 +641,7 @@ public class CodeScanner {
         private final int mWidth;
         private final int mHeight;
 
-        public InitializationThread(int width, int height) {
+        public InitializationThread(final int width, final int height) {
             super("cs-init");
             mWidth = width;
             mHeight = height;
@@ -652,9 +652,9 @@ public class CodeScanner {
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             try {
                 initialize();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 releaseResourcesInternal();
-                ErrorCallback errorCallback = mErrorCallback;
+                final ErrorCallback errorCallback = mErrorCallback;
                 if (errorCallback != null) {
                     errorCallback.onError(e);
                 } else {
@@ -665,10 +665,10 @@ public class CodeScanner {
 
         private void initialize() {
             Camera camera = null;
-            Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-            int cameraId = mCameraId;
+            final Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
+            final int cameraId = mCameraId;
             if (cameraId == DEFAULT_CAMERA) {
-                int numberOfCameras = Camera.getNumberOfCameras();
+                final int numberOfCameras = Camera.getNumberOfCameras();
                 for (int i = 0; i < numberOfCameras; i++) {
                     Camera.getCameraInfo(i, cameraInfo);
                     if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
@@ -684,22 +684,22 @@ public class CodeScanner {
             if (camera == null) {
                 throw new CodeScannerException("Unable to access camera");
             }
-            Camera.Parameters parameters = camera.getParameters();
+            final Camera.Parameters parameters = camera.getParameters();
             if (parameters == null) {
                 throw new CodeScannerException("Unable to configure camera");
             }
-            int orientation = Utils.getDisplayOrientation(mContext, cameraInfo);
-            boolean portrait = Utils.isPortrait(orientation);
-            Point imageSize =
+            final int orientation = Utils.getDisplayOrientation(mContext, cameraInfo);
+            final boolean portrait = Utils.isPortrait(orientation);
+            final Point imageSize =
                     Utils.findSuitableImageSize(parameters, portrait ? mHeight : mWidth, portrait ? mWidth : mHeight);
-            int imageWidth = imageSize.getX();
-            int imageHeight = imageSize.getY();
+            final int imageWidth = imageSize.getX();
+            final int imageHeight = imageSize.getY();
             parameters.setPreviewSize(imageWidth, imageHeight);
-            Point previewSize =
+            final Point previewSize =
                     Utils.getPreviewSize(portrait ? imageHeight : imageWidth, portrait ? imageWidth : imageHeight,
                             mWidth, mHeight);
-            List<String> focusModes = parameters.getSupportedFocusModes();
-            boolean autoFocusSupported = focusModes != null &&
+            final List<String> focusModes = parameters.getSupportedFocusModes();
+            final boolean autoFocusSupported = focusModes != null &&
                     (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO) ||
                             focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE));
             if (!autoFocusSupported) {
@@ -708,8 +708,9 @@ public class CodeScanner {
             if (autoFocusSupported && mAutoFocusEnabled) {
                 Utils.setAutoFocusMode(parameters, mAutoFocusMode);
             }
-            List<String> flashModes = parameters.getSupportedFlashModes();
-            boolean flashSupported = flashModes != null && flashModes.contains(Camera.Parameters.FLASH_MODE_TORCH);
+            final List<String> flashModes = parameters.getSupportedFlashModes();
+            final boolean flashSupported =
+                    flashModes != null && flashModes.contains(Camera.Parameters.FLASH_MODE_TORCH);
             if (!flashSupported) {
                 mFlashEnabled = false;
             }
@@ -719,7 +720,7 @@ public class CodeScanner {
             camera.setDisplayOrientation(orientation);
             mInitializeLock.lock();
             try {
-                Decoder decoder = new Decoder(mDecoderStateListener, mFormats, mDecodeCallback);
+                final Decoder decoder = new Decoder(mDecoderStateListener, mFormats, mDecodeCallback);
                 mDecoderWrapper = new DecoderWrapper(camera, cameraInfo, decoder, imageSize, previewSize,
                         new Point(mWidth, mHeight), orientation, autoFocusSupported, flashSupported);
                 decoder.start();
@@ -734,7 +735,7 @@ public class CodeScanner {
 
     private final class SafeAutoFocusCallback implements Camera.AutoFocusCallback {
         @Override
-        public void onAutoFocus(boolean success, Camera camera) {
+        public void onAutoFocus(final boolean success, final Camera camera) {
             mSafeAutoFocusing = false;
         }
     }
@@ -759,7 +760,7 @@ public class CodeScanner {
     private final class FinishInitializationTask implements Runnable {
         private final Point mPreviewSize;
 
-        private FinishInitializationTask(@NonNull Point previewSize) {
+        private FinishInitializationTask(@NonNull final Point previewSize) {
             mPreviewSize = previewSize;
         }
 
@@ -814,7 +815,7 @@ public class CodeScanner {
          */
         @NonNull
         @MainThread
-        public Builder camera(int cameraId) {
+        public Builder camera(final int cameraId) {
             mCameraId = cameraId;
             return this;
         }
@@ -830,7 +831,7 @@ public class CodeScanner {
          */
         @NonNull
         @MainThread
-        public Builder formats(@NonNull List<BarcodeFormat> formats) {
+        public Builder formats(@NonNull final List<BarcodeFormat> formats) {
             mFormats = formats;
             return this;
         }
@@ -846,7 +847,7 @@ public class CodeScanner {
          */
         @NonNull
         @MainThread
-        public Builder formats(@NonNull BarcodeFormat... formats) {
+        public Builder formats(@NonNull final BarcodeFormat... formats) {
             mFormats = Arrays.asList(formats);
             return this;
         }
@@ -859,7 +860,7 @@ public class CodeScanner {
          */
         @NonNull
         @MainThread
-        public Builder format(@NonNull BarcodeFormat format) {
+        public Builder format(@NonNull final BarcodeFormat format) {
             mFormats = Collections.singletonList(format);
             return this;
         }
@@ -872,7 +873,7 @@ public class CodeScanner {
          */
         @NonNull
         @MainThread
-        public Builder onDecoded(@Nullable DecodeCallback callback) {
+        public Builder onDecoded(@Nullable final DecodeCallback callback) {
             mDecodeCallback = callback;
             return this;
         }
@@ -887,7 +888,7 @@ public class CodeScanner {
          */
         @NonNull
         @MainThread
-        public Builder onError(@Nullable ErrorCallback callback) {
+        public Builder onError(@Nullable final ErrorCallback callback) {
             mErrorCallback = callback;
             return this;
         }
@@ -899,7 +900,7 @@ public class CodeScanner {
          */
         @NonNull
         @MainThread
-        public Builder scanMode(@NonNull ScanMode mode) {
+        public Builder scanMode(@NonNull final ScanMode mode) {
             mScanMode = mode;
             return this;
         }
@@ -909,7 +910,7 @@ public class CodeScanner {
          */
         @NonNull
         @MainThread
-        public Builder autoFocus(boolean enabled) {
+        public Builder autoFocus(final boolean enabled) {
             mAutoFocusEnabled = enabled;
             return this;
         }
@@ -921,7 +922,7 @@ public class CodeScanner {
          */
         @NonNull
         @MainThread
-        public Builder autoFocusMode(@NonNull AutoFocusMode mode) {
+        public Builder autoFocusMode(@NonNull final AutoFocusMode mode) {
             mAutoFocusMode = mode;
             return this;
         }
@@ -934,7 +935,7 @@ public class CodeScanner {
          */
         @NonNull
         @MainThread
-        public Builder autoFocusInterval(long interval) {
+        public Builder autoFocusInterval(final long interval) {
             mAutoFocusInterval = interval;
             return this;
         }
@@ -944,7 +945,7 @@ public class CodeScanner {
          */
         @NonNull
         @MainThread
-        public Builder flash(boolean enabled) {
+        public Builder flash(final boolean enabled) {
             mFlashEnabled = enabled;
             return this;
         }
@@ -958,8 +959,8 @@ public class CodeScanner {
          */
         @NonNull
         @MainThread
-        public CodeScanner build(@NonNull Context context, @NonNull CodeScannerView view) {
-            CodeScanner scanner = new CodeScanner(context, view);
+        public CodeScanner build(@NonNull final Context context, @NonNull final CodeScannerView view) {
+            final CodeScanner scanner = new CodeScanner(context, view);
             scanner.mCameraId = mCameraId;
             scanner.mFormats = mFormats;
             scanner.mDecodeCallback = mDecodeCallback;

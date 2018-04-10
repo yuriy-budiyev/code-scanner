@@ -44,7 +44,7 @@ final class ViewFinderView extends View {
     private float mFrameRatioHeight = 1f;
     private float mFrameSize = 0.75f;
 
-    public ViewFinderView(@NonNull Context context) {
+    public ViewFinderView(@NonNull final Context context) {
         super(context);
         mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -53,17 +53,17 @@ final class ViewFinderView extends View {
     }
 
     @Override
-    protected void onDraw(@NonNull Canvas canvas) {
-        Rect frameRect = mFrameRect;
+    protected void onDraw(@NonNull final Canvas canvas) {
+        final Rect frameRect = mFrameRect;
         if (frameRect == null) {
             return;
         }
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
-        int top = frameRect.getTop();
-        int left = frameRect.getLeft();
-        int right = frameRect.getRight();
-        int bottom = frameRect.getBottom();
+        final int width = canvas.getWidth();
+        final int height = canvas.getHeight();
+        final int top = frameRect.getTop();
+        final int left = frameRect.getLeft();
+        final int right = frameRect.getRight();
+        final int bottom = frameRect.getBottom();
         canvas.drawRect(0, 0, width, top, mMaskPaint);
         canvas.drawRect(0, top, left, bottom, mMaskPaint);
         canvas.drawRect(right, top, width, bottom, mMaskPaint);
@@ -85,7 +85,7 @@ final class ViewFinderView extends View {
     }
 
     @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+    protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
         invalidateFrameRect(right - left, bottom - top);
     }
 
@@ -94,8 +94,8 @@ final class ViewFinderView extends View {
         return mFrameRect;
     }
 
-    void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) float ratioWidth,
-            @FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
+    void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) final float ratioWidth,
+            @FloatRange(from = 0, fromInclusive = false) final float ratioHeight) {
         mFrameRatioWidth = ratioWidth;
         mFrameRatioHeight = ratioHeight;
         invalidateFrameRect();
@@ -104,7 +104,7 @@ final class ViewFinderView extends View {
         }
     }
 
-    void setFrameRatioWidth(@FloatRange(from = 0, fromInclusive = false) float ratioWidth) {
+    void setFrameRatioWidth(@FloatRange(from = 0, fromInclusive = false) final float ratioWidth) {
         mFrameRatioWidth = ratioWidth;
         invalidateFrameRect();
         if (Utils.isLaidOut(this)) {
@@ -112,7 +112,7 @@ final class ViewFinderView extends View {
         }
     }
 
-    void setFrameRatioHeight(@FloatRange(from = 0, fromInclusive = false) float ratioHeight) {
+    void setFrameRatioHeight(@FloatRange(from = 0, fromInclusive = false) final float ratioHeight) {
         mFrameRatioHeight = ratioHeight;
         invalidateFrameRect();
         if (Utils.isLaidOut(this)) {
@@ -120,35 +120,35 @@ final class ViewFinderView extends View {
         }
     }
 
-    void setMaskColor(@ColorInt int color) {
+    void setMaskColor(@ColorInt final int color) {
         mMaskPaint.setColor(color);
         if (Utils.isLaidOut(this)) {
             invalidate();
         }
     }
 
-    void setFrameColor(@ColorInt int color) {
+    void setFrameColor(@ColorInt final int color) {
         mFramePaint.setColor(color);
         if (Utils.isLaidOut(this)) {
             invalidate();
         }
     }
 
-    void setFrameThickness(@Px int thickness) {
+    void setFrameThickness(@Px final int thickness) {
         mFramePaint.setStrokeWidth(thickness);
         if (Utils.isLaidOut(this)) {
             invalidate();
         }
     }
 
-    void setFrameCornersSize(@Px int size) {
+    void setFrameCornersSize(@Px final int size) {
         mFrameCornerSize = size;
         if (Utils.isLaidOut(this)) {
             invalidate();
         }
     }
 
-    void setFrameSize(@FloatRange(from = 0.1, to = 1.0) float size) {
+    void setFrameSize(@FloatRange(from = 0.1, to = 1.0) final float size) {
         mFrameSize = size;
         invalidateFrameRect();
         if (Utils.isLaidOut(this)) {
@@ -160,12 +160,12 @@ final class ViewFinderView extends View {
         invalidateFrameRect(getWidth(), getHeight());
     }
 
-    private void invalidateFrameRect(int width, int height) {
+    private void invalidateFrameRect(final int width, final int height) {
         if (width > 0 && height > 0) {
-            float viewAR = (float) width / (float) height;
-            float frameAR = mFrameRatioWidth / mFrameRatioHeight;
-            int frameWidth;
-            int frameHeight;
+            final float viewAR = (float) width / (float) height;
+            final float frameAR = mFrameRatioWidth / mFrameRatioHeight;
+            final int frameWidth;
+            final int frameHeight;
             if (viewAR <= frameAR) {
                 frameWidth = Math.round(width * mFrameSize);
                 frameHeight = Math.round(frameWidth / frameAR);
@@ -173,8 +173,8 @@ final class ViewFinderView extends View {
                 frameHeight = Math.round(height * mFrameSize);
                 frameWidth = Math.round(frameHeight * frameAR);
             }
-            int frameLeft = (width - frameWidth) / 2;
-            int frameTop = (height - frameHeight) / 2;
+            final int frameLeft = (width - frameWidth) / 2;
+            final int frameTop = (height - frameHeight) / 2;
             mFrameRect = new Rect(frameLeft, frameTop, frameLeft + frameWidth, frameTop + frameHeight);
         }
     }

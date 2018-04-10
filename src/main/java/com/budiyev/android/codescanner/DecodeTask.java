@@ -42,8 +42,9 @@ final class DecodeTask {
     private final int mOrientation;
     private final boolean mReverseHorizontal;
 
-    public DecodeTask(@NonNull byte[] image, @NonNull Point imageSize, @NonNull Point previewSize,
-            @NonNull Point viewSize, @NonNull Rect viewFrameRect, int orientation, boolean reverseHorizontal) {
+    public DecodeTask(@NonNull final byte[] image, @NonNull final Point imageSize, @NonNull final Point previewSize,
+            @NonNull final Point viewSize, @NonNull final Rect viewFrameRect, final int orientation,
+            final boolean reverseHorizontal) {
         mImage = image;
         mImageSize = imageSize;
         mPreviewSize = previewSize;
@@ -55,19 +56,20 @@ final class DecodeTask {
 
     @Nullable
     @SuppressWarnings("SuspiciousNameCombination")
-    public Result decode(@NonNull MultiFormatReader reader) throws ReaderException {
+    public Result decode(@NonNull final MultiFormatReader reader) throws ReaderException {
         int imageWidth = mImageSize.getX();
         int imageHeight = mImageSize.getY();
-        int orientation = mOrientation;
-        byte[] image = Utils.rotateNV21(mImage, imageWidth, imageHeight, orientation);
+        final int orientation = mOrientation;
+        final byte[] image = Utils.rotateNV21(mImage, imageWidth, imageHeight, orientation);
         if (orientation == 90 || orientation == 270) {
-            int width = imageWidth;
+            final int width = imageWidth;
             imageWidth = imageHeight;
             imageHeight = width;
         }
-        Rect frameRect = Utils.getImageFrameRect(imageWidth, imageHeight, mViewFrameRect, mPreviewSize, mViewSize);
-        int frameWidth = frameRect.getWidth();
-        int frameHeight = frameRect.getHeight();
+        final Rect frameRect =
+                Utils.getImageFrameRect(imageWidth, imageHeight, mViewFrameRect, mPreviewSize, mViewSize);
+        final int frameWidth = frameRect.getWidth();
+        final int frameHeight = frameRect.getHeight();
         if (frameWidth < 1 || frameHeight < 1) {
             return null;
         }

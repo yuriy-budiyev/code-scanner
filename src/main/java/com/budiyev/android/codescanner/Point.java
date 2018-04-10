@@ -27,7 +27,7 @@ final class Point {
     private final int mX;
     private final int mY;
 
-    public Point(int x, int y) {
+    public Point(final int x, final int y) {
         mX = x;
         mY = y;
     }
@@ -46,11 +46,11 @@ final class Point {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this) {
             return true;
         } else if (obj instanceof Point) {
-            Point other = (Point) obj;
+            final Point other = (Point) obj;
             return mX == other.mX && mY == other.mY;
         } else {
             return false;
