@@ -53,15 +53,16 @@ import com.google.zxing.client.android.camera.CameraConfigurationUtils;
  * @see BarcodeFormat
  */
 public class CodeScanner {
-    public static final List<BarcodeFormat> ALL_FORMATS = Arrays.asList(BarcodeFormat.values());
-    public static final List<BarcodeFormat> ONE_DIMENSIONAL_FORMATS =
+    public static final List<BarcodeFormat> ALL_FORMATS =
+            Collections.unmodifiableList(Arrays.asList(BarcodeFormat.values()));
+    public static final List<BarcodeFormat> ONE_DIMENSIONAL_FORMATS = Collections.unmodifiableList(
             Arrays.asList(BarcodeFormat.CODABAR, BarcodeFormat.CODE_39, BarcodeFormat.CODE_93, BarcodeFormat.CODE_128,
                     BarcodeFormat.EAN_8, BarcodeFormat.EAN_13, BarcodeFormat.ITF, BarcodeFormat.RSS_14,
                     BarcodeFormat.RSS_EXPANDED, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E,
-                    BarcodeFormat.UPC_EAN_EXTENSION);
-    public static final List<BarcodeFormat> TWO_DIMENSIONAL_FORMATS =
+                    BarcodeFormat.UPC_EAN_EXTENSION));
+    public static final List<BarcodeFormat> TWO_DIMENSIONAL_FORMATS = Collections.unmodifiableList(
             Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.DATA_MATRIX, BarcodeFormat.MAXICODE, BarcodeFormat.PDF_417,
-                    BarcodeFormat.QR_CODE);
+                    BarcodeFormat.QR_CODE));
     private static final List<BarcodeFormat> DEFAULT_FORMATS = ALL_FORMATS;
     private static final ScanMode DEFAULT_SCAN_MODE = ScanMode.SINGLE;
     private static final AutoFocusMode DEFAULT_AUTO_FOCUS_MODE = AutoFocusMode.SAFE;
