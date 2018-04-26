@@ -217,6 +217,11 @@ public final class CodeScannerView extends ViewGroup {
         }
     }
 
+    /**
+     * Get current mask color
+     *
+     * @see #setMaskColor
+     */
     @ColorInt
     public int getMaskColor() {
         return mViewFinderView.getMaskColor();
@@ -231,6 +236,11 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setMaskColor(color);
     }
 
+    /**
+     * Get current frame color
+     *
+     * @see #setFrameColor
+     */
     @ColorInt
     public int getFrameColor() {
         return mViewFinderView.getFrameColor();
@@ -245,6 +255,11 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setFrameColor(color);
     }
 
+    /**
+     * Get current frame thickness
+     *
+     * @see #setFrameThickness
+     */
     @Px
     public int getFrameThickness() {
         return mViewFinderView.getFrameThickness();
@@ -262,6 +277,11 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setFrameThickness(thickness);
     }
 
+    /**
+     * Get current frame corners size
+     *
+     * @see #setFrameCornersSize
+     */
     @Px
     public int getFrameCornersSize() {
         return mViewFinderView.getFrameCornersSize();
@@ -279,6 +299,11 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setFrameCornersSize(size);
     }
 
+    /**
+     * Get current frame size
+     *
+     * @see #setFrameSize
+     */
     @FloatRange(from = 0.1, to = 1.0)
     public float getFrameSize() {
         return mViewFinderView.getFrameSize();
@@ -296,11 +321,23 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setFrameSize(size);
     }
 
+    /**
+     * Get current frame aspect ratio width
+     *
+     * @see #setFrameAspectRatioWidth
+     * @see #setFrameAspectRatio
+     */
     @FloatRange(from = 0, fromInclusive = false)
     public float getFrameAspectRatioWidth() {
         return mViewFinderView.getFrameAspectRatioWidth();
     }
 
+    /**
+     * Set frame aspect ratio width
+     *
+     * @param ratioWidth Frame aspect ratio width
+     * @see #setFrameAspectRatio
+     */
     public void setFrameAspectRatioWidth(@FloatRange(from = 0, fromInclusive = false) final float ratioWidth) {
         if (ratioWidth <= 0) {
             throw new IllegalArgumentException("Frame aspect ratio values should be greater than zero");
@@ -308,11 +345,23 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setFrameAspectRatioWidth(ratioWidth);
     }
 
+    /**
+     * Get current frame aspect ratio height
+     *
+     * @see #setFrameAspectRatioHeight
+     * @see #setFrameAspectRatio
+     */
     @FloatRange(from = 0, fromInclusive = false)
     public float getFrameAspectRatioHeight() {
         return mViewFinderView.getFrameAspectRatioHeight();
     }
 
+    /**
+     * Set frame aspect ratio height
+     *
+     * @param ratioHeight Frame aspect ratio width
+     * @see #setFrameAspectRatio
+     */
     public void setFrameAspectRatioHeight(@FloatRange(from = 0, fromInclusive = false) final float ratioHeight) {
         if (ratioHeight <= 0) {
             throw new IllegalArgumentException("Frame aspect ratio values should be greater than zero");
@@ -334,6 +383,11 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setFrameAspectRatio(ratioWidth, ratioHeight);
     }
 
+    /**
+     * Whether if auto focus button is currently visible
+     *
+     * @see #setAutoFocusButtonVisible
+     */
     public boolean isAutoFocusButtonVisible() {
         return mAutoFocusButton.getVisibility() == VISIBLE;
     }
@@ -347,6 +401,11 @@ public final class CodeScannerView extends ViewGroup {
         mAutoFocusButton.setVisibility(visible ? VISIBLE : INVISIBLE);
     }
 
+    /**
+     * Whether if flash button is currently visible
+     *
+     * @see #setFlashButtonVisible
+     */
     public boolean isFlashButtonVisible() {
         return mFlashButton.getVisibility() == VISIBLE;
     }
@@ -360,6 +419,11 @@ public final class CodeScannerView extends ViewGroup {
         mFlashButton.setVisibility(visible ? VISIBLE : INVISIBLE);
     }
 
+    /**
+     * Get current auto focus button color
+     *
+     * @see #setAutoFocusButtonColor
+     */
     @ColorInt
     public int getAutoFocusButtonColor() {
         return mAutoFocusButtonColor;
@@ -375,6 +439,11 @@ public final class CodeScannerView extends ViewGroup {
         mAutoFocusButton.setColorFilter(color);
     }
 
+    /**
+     * Get current flash button color
+     *
+     * @see #setFlashButtonColor
+     */
     @ColorInt
     public int getFlashButtonColor() {
         return mFlashButtonColor;
