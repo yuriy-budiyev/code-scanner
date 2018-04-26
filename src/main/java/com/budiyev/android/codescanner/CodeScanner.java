@@ -51,7 +51,7 @@ import com.google.zxing.client.android.camera.CameraConfigurationUtils;
  * @see CodeScannerView
  * @see BarcodeFormat
  */
-public class CodeScanner {
+public final class CodeScanner {
     public static final List<BarcodeFormat> ALL_FORMATS =
             Collections.unmodifiableList(Arrays.asList(BarcodeFormat.values()));
     public static final List<BarcodeFormat> ONE_DIMENSIONAL_FORMATS = Collections.unmodifiableList(
