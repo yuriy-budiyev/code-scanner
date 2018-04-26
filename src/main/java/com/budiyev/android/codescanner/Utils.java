@@ -32,6 +32,7 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
@@ -249,6 +250,15 @@ final class Utils {
             }
         }
         return output;
+    }
+
+    @NonNull
+    public static <T> T requireNonNull(@Nullable final T value) {
+        if (value != null) {
+            return value;
+        } else {
+            throw new NullPointerException();
+        }
     }
 
     public static final class SuppressErrorCallback implements ErrorCallback {
