@@ -70,6 +70,8 @@ public final class CodeScannerView extends ViewGroup {
     private LayoutListener mLayoutListener;
     private CodeScanner mCodeScanner;
     private int mButtonSize;
+    private int mAutoFocusButtonColor;
+    private int mFlashButtonColor;
 
     /**
      * A view to display code scanner preview
@@ -215,6 +217,11 @@ public final class CodeScannerView extends ViewGroup {
         }
     }
 
+    @ColorInt
+    public int getMaskColor() {
+        return mViewFinderView.getMaskColor();
+    }
+
     /**
      * Set color of the space outside of the framing rect
      *
@@ -224,6 +231,11 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setMaskColor(color);
     }
 
+    @ColorInt
+    public int getFrameColor() {
+        return mViewFinderView.getFrameColor();
+    }
+
     /**
      * Set color of the frame
      *
@@ -231,6 +243,11 @@ public final class CodeScannerView extends ViewGroup {
      */
     public void setFrameColor(@ColorInt final int color) {
         mViewFinderView.setFrameColor(color);
+    }
+
+    @Px
+    public int getFrameThickness() {
+        return mViewFinderView.getFrameThickness();
     }
 
     /**
@@ -245,6 +262,11 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setFrameThickness(thickness);
     }
 
+    @Px
+    public int getFrameCornersSize() {
+        return mViewFinderView.getFrameCornersSize();
+    }
+
     /**
      * Set length on the frame corners
      *
@@ -257,6 +279,11 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setFrameCornersSize(size);
     }
 
+    @FloatRange(from = 0.1, to = 1.0)
+    public float getFrameSize() {
+        return mViewFinderView.getFrameSize();
+    }
+
     /**
      * Set relative frame size where 1.0 means full size
      *
@@ -267,6 +294,30 @@ public final class CodeScannerView extends ViewGroup {
             throw new IllegalArgumentException("Max frame size value should be between 0.1 and 1, inclusive");
         }
         mViewFinderView.setFrameSize(size);
+    }
+
+    @FloatRange(from = 0, fromInclusive = false)
+    public float getFrameAspectRatioWidth() {
+        return mViewFinderView.getFrameAspectRatioWidth();
+    }
+
+    public void setFrameAspectRatioWidth(@FloatRange(from = 0, fromInclusive = false) final float ratioWidth) {
+        if (ratioWidth <= 0) {
+            throw new IllegalArgumentException("Frame aspect ratio values should be greater than zero");
+        }
+        mViewFinderView.setFrameAspectRatioWidth(ratioWidth);
+    }
+
+    @FloatRange(from = 0, fromInclusive = false)
+    public float getFrameAspectRatioHeight() {
+        return mViewFinderView.getFrameAspectRatioHeight();
+    }
+
+    public void setFrameAspectRatioHeight(@FloatRange(from = 0, fromInclusive = false) final float ratioHeight) {
+        if (ratioHeight <= 0) {
+            throw new IllegalArgumentException("Frame aspect ratio values should be greater than zero");
+        }
+        mViewFinderView.setFrameAspectRatioHeight(ratioHeight);
     }
 
     /**
@@ -283,6 +334,10 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setFrameAspectRatio(ratioWidth, ratioHeight);
     }
 
+    public boolean isAutoFocusButtonVisible() {
+        return mAutoFocusButton.getVisibility() == VISIBLE;
+    }
+
     /**
      * Set whether auto focus button is visible or not
      *
@@ -290,6 +345,10 @@ public final class CodeScannerView extends ViewGroup {
      */
     public void setAutoFocusButtonVisible(final boolean visible) {
         mAutoFocusButton.setVisibility(visible ? VISIBLE : INVISIBLE);
+    }
+
+    public boolean isFlashButtonVisible() {
+        return mFlashButton.getVisibility() == VISIBLE;
     }
 
     /**
@@ -301,13 +360,24 @@ public final class CodeScannerView extends ViewGroup {
         mFlashButton.setVisibility(visible ? VISIBLE : INVISIBLE);
     }
 
+    @ColorInt
+    public int getAutoFocusButtonColor() {
+        return mAutoFocusButtonColor;
+    }
+
     /**
      * Set auto focus button color
      *
      * @param color Color
      */
     public void setAutoFocusButtonColor(@ColorInt final int color) {
+        mAutoFocusButtonColor = color;
         mAutoFocusButton.setColorFilter(color);
+    }
+
+    @ColorInt
+    public int getFlashButtonColor() {
+        return mFlashButtonColor;
     }
 
     /**
@@ -316,6 +386,7 @@ public final class CodeScannerView extends ViewGroup {
      * @param color Color
      */
     public void setFlashButtonColor(@ColorInt final int color) {
+        mFlashButtonColor = color;
         mFlashButton.setColorFilter(color);
     }
 

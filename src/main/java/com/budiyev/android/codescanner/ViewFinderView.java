@@ -39,7 +39,7 @@ final class ViewFinderView extends View {
     private final Paint mFramePaint;
     private final Path mFramePath;
     private Rect mFrameRect;
-    private int mFrameCornerSize;
+    private int mFrameCornersSize;
     private float mFrameRatioWidth = 1f;
     private float mFrameRatioHeight = 1f;
     private float mFrameSize = 0.75f;
@@ -69,18 +69,18 @@ final class ViewFinderView extends View {
         canvas.drawRect(right, top, width, bottom, mMaskPaint);
         canvas.drawRect(0, bottom, width, height, mMaskPaint);
         mFramePath.reset();
-        mFramePath.moveTo(left, top + mFrameCornerSize);
+        mFramePath.moveTo(left, top + mFrameCornersSize);
         mFramePath.lineTo(left, top);
-        mFramePath.lineTo(left + mFrameCornerSize, top);
-        mFramePath.moveTo(right - mFrameCornerSize, top);
+        mFramePath.lineTo(left + mFrameCornersSize, top);
+        mFramePath.moveTo(right - mFrameCornersSize, top);
         mFramePath.lineTo(right, top);
-        mFramePath.lineTo(right, top + mFrameCornerSize);
-        mFramePath.moveTo(right, bottom - mFrameCornerSize);
+        mFramePath.lineTo(right, top + mFrameCornersSize);
+        mFramePath.moveTo(right, bottom - mFrameCornersSize);
         mFramePath.lineTo(right, bottom);
-        mFramePath.lineTo(right - mFrameCornerSize, bottom);
-        mFramePath.moveTo(left + mFrameCornerSize, bottom);
+        mFramePath.lineTo(right - mFrameCornersSize, bottom);
+        mFramePath.moveTo(left + mFrameCornersSize, bottom);
         mFramePath.lineTo(left, bottom);
-        mFramePath.lineTo(left, bottom - mFrameCornerSize);
+        mFramePath.lineTo(left, bottom - mFrameCornersSize);
         canvas.drawPath(mFramePath, mFramePaint);
     }
 
@@ -104,7 +104,12 @@ final class ViewFinderView extends View {
         }
     }
 
-    void setFrameRatioWidth(@FloatRange(from = 0, fromInclusive = false) final float ratioWidth) {
+    @FloatRange(from = 0, fromInclusive = false)
+    float getFrameAspectRatioWidth() {
+        return mFrameRatioWidth;
+    }
+
+    void setFrameAspectRatioWidth(@FloatRange(from = 0, fromInclusive = false) final float ratioWidth) {
         mFrameRatioWidth = ratioWidth;
         invalidateFrameRect();
         if (Utils.isLaidOut(this)) {
@@ -112,12 +117,22 @@ final class ViewFinderView extends View {
         }
     }
 
-    void setFrameRatioHeight(@FloatRange(from = 0, fromInclusive = false) final float ratioHeight) {
+    @FloatRange(from = 0, fromInclusive = false)
+    float getFrameAspectRatioHeight() {
+        return mFrameRatioHeight;
+    }
+
+    void setFrameAspectRatioHeight(@FloatRange(from = 0, fromInclusive = false) final float ratioHeight) {
         mFrameRatioHeight = ratioHeight;
         invalidateFrameRect();
         if (Utils.isLaidOut(this)) {
             invalidate();
         }
+    }
+
+    @ColorInt
+    int getMaskColor() {
+        return mMaskPaint.getColor();
     }
 
     void setMaskColor(@ColorInt final int color) {
@@ -127,11 +142,21 @@ final class ViewFinderView extends View {
         }
     }
 
+    @ColorInt
+    int getFrameColor() {
+        return mFramePaint.getColor();
+    }
+
     void setFrameColor(@ColorInt final int color) {
         mFramePaint.setColor(color);
         if (Utils.isLaidOut(this)) {
             invalidate();
         }
+    }
+
+    @Px
+    int getFrameThickness() {
+        return (int) mFramePaint.getStrokeWidth();
     }
 
     void setFrameThickness(@Px final int thickness) {
@@ -141,11 +166,21 @@ final class ViewFinderView extends View {
         }
     }
 
+    @Px
+    int getFrameCornersSize() {
+        return mFrameCornersSize;
+    }
+
     void setFrameCornersSize(@Px final int size) {
-        mFrameCornerSize = size;
+        mFrameCornersSize = size;
         if (Utils.isLaidOut(this)) {
             invalidate();
         }
+    }
+
+    @FloatRange(from = 0.1, to = 1.0)
+    public float getFrameSize() {
+        return mFrameSize;
     }
 
     void setFrameSize(@FloatRange(from = 0.1, to = 1.0) final float size) {
