@@ -62,6 +62,7 @@ Define a view in your layout file:
 </FrameLayout>
 ```
 And add following code to your activity:
+
 Kotlin
 ```kotlin
 class MainActivity : AppCompatActivity() {
