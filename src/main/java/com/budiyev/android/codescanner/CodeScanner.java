@@ -133,6 +133,7 @@ public final class CodeScanner {
      * @param view     A view to display the preview
      * @param cameraId Camera id (between {@code 0} and
      *                 {@link Camera#getNumberOfCameras()} - {@code 1})
+     *                 or {@link #CAMERA_BACK} or {@link #CAMERA_FRONT}
      * @see CodeScannerView
      */
     @MainThread
