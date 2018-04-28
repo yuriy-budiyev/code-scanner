@@ -41,7 +41,7 @@ import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
 final class Utils {
     private static final float MIN_DISTORTION = 0.3f;
-    private static final float MAX_DISTORTION = 1f;
+    private static final float MAX_DISTORTION = 10f;
     private static final float DISTORTION_STEP = 0.1f;
     private static final int MIN_PREVIEW_PIXELS = 589824;
 
