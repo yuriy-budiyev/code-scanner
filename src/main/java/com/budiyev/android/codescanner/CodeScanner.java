@@ -62,7 +62,8 @@ public final class CodeScanner {
     public static final List<BarcodeFormat> TWO_DIMENSIONAL_FORMATS = Collections.unmodifiableList(
             Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.DATA_MATRIX, BarcodeFormat.MAXICODE, BarcodeFormat.PDF_417,
                     BarcodeFormat.QR_CODE));
-    public static final int DEFAULT_CAMERA = -1;
+    public static final int CAMERA_BACK = -1;
+    public static final int CAMERA_FRONT = -2;
     private static final List<BarcodeFormat> DEFAULT_FORMATS = ALL_FORMATS;
     private static final ScanMode DEFAULT_SCAN_MODE = ScanMode.SINGLE;
     private static final AutoFocusMode DEFAULT_AUTO_FOCUS_MODE = AutoFocusMode.SAFE;
@@ -93,7 +94,7 @@ public final class CodeScanner {
     private volatile boolean mAutoFocusEnabled = DEFAULT_AUTO_FOCUS_ENABLED;
     private volatile boolean mFlashEnabled = DEFAULT_FLASH_ENABLED;
     private volatile long mSafeAutoFocusInterval = DEFAULT_SAFE_AUTO_FOCUS_INTERVAL;
-    private volatile int mCameraId = DEFAULT_CAMERA;
+    private volatile int mCameraId = CAMERA_BACK;
     private boolean mPreviewActive;
     private boolean mSafeAutoFocusing;
     private boolean mSafeAutoFocusTaskScheduled;
@@ -141,7 +142,7 @@ public final class CodeScanner {
     }
 
     /**
-     * Get current camera id, or {@link #DEFAULT_CAMERA}
+     * Get current camera id, or {@link #CAMERA_BACK} or {@link #CAMERA_FRONT}
      *
      * @see #setCamera
      */
@@ -154,7 +155,7 @@ public final class CodeScanner {
      *
      * @param cameraId Camera id (between {@code 0} and
      *                 {@link Camera#getNumberOfCameras()} - {@code 1})
-     *                 or {@link #DEFAULT_CAMERA}
+     *                 or {@link #CAMERA_BACK} or {@link #CAMERA_FRONT}
      */
     @MainThread
     public void setCamera(final int cameraId) {
@@ -724,11 +725,13 @@ public final class CodeScanner {
             Camera camera = null;
             final Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
             final int cameraId = mCameraId;
-            if (cameraId == DEFAULT_CAMERA) {
+            if (cameraId == CAMERA_BACK || cameraId == CAMERA_FRONT) {
                 final int numberOfCameras = Camera.getNumberOfCameras();
+                final int facing = cameraId == CAMERA_BACK ? Camera.CameraInfo.CAMERA_FACING_BACK :
+                        Camera.CameraInfo.CAMERA_FACING_FRONT;
                 for (int i = 0; i < numberOfCameras; i++) {
                     Camera.getCameraInfo(i, cameraInfo);
-                    if (cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_BACK) {
+                    if (cameraInfo.facing == facing) {
                         camera = Camera.open(i);
                         mCameraId = i;
                         break;

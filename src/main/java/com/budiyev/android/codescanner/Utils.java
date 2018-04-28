@@ -273,7 +273,7 @@ final class Utils {
         public int compare(@NonNull final Camera.Size a, @NonNull final Camera.Size b) {
             final int aPixels = a.height * a.width;
             final int bPixels = b.height * b.width;
-            return aPixels < bPixels ? -1 : aPixels == bPixels ? 0 : 1;
+            return aPixels < bPixels ? 1 : aPixels == bPixels ? 0 : -1;
         }
     }
 }
