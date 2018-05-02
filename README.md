@@ -157,7 +157,47 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 ```
+
 or fragment:
+
+Kotlin
+
+```kotlin
+class MainFragment : Fragment() {
+    private lateinit var codeScanner: CodeScanner
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return inflater.inflate(R.layout.fragment_main, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val scannerView = view.findViewById<CodeScannerView>(R.id.scanner_view)
+        val activity = requireActivity()
+        codeScanner = CodeScanner(activity, scannerView)
+        codeScanner.decodeCallback = DecodeCallback {
+            activity.runOnUiThread {
+                Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
+            }
+        }
+        scannerView.setOnClickListener {
+            codeScanner.startPreview()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        codeScanner.startPreview()
+    }
+
+    override fun onPause() {
+        codeScanner.releaseResources()
+        super.onPause()
+    }
+}
+```
+
+Java
+
 ```java
 public class MainFragment extends Fragment {
     private CodeScanner mCodeScanner;
