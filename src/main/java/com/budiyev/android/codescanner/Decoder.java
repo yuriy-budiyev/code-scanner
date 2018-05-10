@@ -121,7 +121,7 @@ final class Decoder {
                             synchronized (mTaskLock) {
                                 mTaskLock.wait();
                             }
-                        } catch (InterruptedException e) {
+                        } catch (final InterruptedException e) {
                             setState(Decoder.State.STOPPED);
                             return;
                         }
