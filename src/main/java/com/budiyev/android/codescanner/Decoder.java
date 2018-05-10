@@ -26,8 +26,6 @@ package com.budiyev.android.codescanner;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.SynchronousQueue;
 
 import android.os.Process;
 import android.support.annotation.NonNull;
@@ -40,12 +38,13 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 
 final class Decoder {
-    private final BlockingQueue<DecodeTask> mDecodeQueue = new SynchronousQueue<>();
     private final MultiFormatReader mReader;
     private final DecoderThread mDecoderThread;
     private final StateListener mStateListener;
     private final Map<DecodeHintType, Object> mHints;
+    private final Object mTaskLock = new Object();
     private volatile DecodeCallback mCallback;
+    private volatile DecodeTask mTask;
     private volatile State mState;
 
     public Decoder(@NonNull final StateListener stateListener, @NonNull final List<BarcodeFormat> formats,
@@ -70,7 +69,10 @@ final class Decoder {
     }
 
     public void decode(@NonNull final DecodeTask task) {
-        mDecodeQueue.offer(task);
+        synchronized (mTaskLock) {
+            mTask = task;
+            mTaskLock.notifyAll();
+        }
     }
 
     public void start() {
@@ -82,7 +84,7 @@ final class Decoder {
 
     public void shutdown() {
         mDecoderThread.interrupt();
-        mDecodeQueue.clear();
+        mTask = null;
     }
 
     @NonNull
@@ -104,28 +106,39 @@ final class Decoder {
         public void run() {
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             for (; ; ) {
+                setState(Decoder.State.IDLE);
+                Result result = null;
                 try {
-                    setState(Decoder.State.IDLE);
-                    Result result = null;
-                    try {
-                        final DecodeTask task = mDecodeQueue.take();
-                        setState(Decoder.State.DECODING);
-                        result = task.decode(mReader);
-                    } catch (final ReaderException ignored) {
-                    } finally {
-                        if (result != null) {
-                            mDecodeQueue.clear();
-                            if (setState(Decoder.State.DECODED)) {
-                                final DecodeCallback callback = mCallback;
-                                if (callback != null) {
-                                    callback.onDecoded(result);
-                                }
+                    final DecodeTask task;
+                    for (; ; ) {
+                        final DecodeTask t = mTask;
+                        if (t != null) {
+                            mTask = null;
+                            task = t;
+                            break;
+                        }
+                        try {
+                            synchronized (mTaskLock) {
+                                mTaskLock.wait();
+                            }
+                        } catch (InterruptedException e) {
+                            setState(Decoder.State.STOPPED);
+                            return;
+                        }
+                    }
+                    setState(Decoder.State.DECODING);
+                    result = task.decode(mReader);
+                } catch (final ReaderException ignored) {
+                } finally {
+                    if (result != null) {
+                        mTask = null;
+                        if (setState(Decoder.State.DECODED)) {
+                            final DecodeCallback callback = mCallback;
+                            if (callback != null) {
+                                callback.onDecoded(result);
                             }
                         }
                     }
-                } catch (final InterruptedException e) {
-                    setState(Decoder.State.STOPPED);
-                    break;
                 }
             }
         }

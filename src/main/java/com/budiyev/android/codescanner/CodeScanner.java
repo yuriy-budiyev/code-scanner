@@ -26,8 +26,6 @@ package com.budiyev.android.codescanner;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import android.Manifest;
 import android.app.Activity;
@@ -52,18 +50,39 @@ import com.google.zxing.client.android.camera.CameraConfigurationUtils;
  * @see BarcodeFormat
  */
 public final class CodeScanner {
+
+    /**
+     * All supported barcode formats
+     */
     public static final List<BarcodeFormat> ALL_FORMATS =
             Collections.unmodifiableList(Arrays.asList(BarcodeFormat.values()));
+
+    /**
+     * One dimensional barcode formats
+     */
     public static final List<BarcodeFormat> ONE_DIMENSIONAL_FORMATS = Collections.unmodifiableList(
             Arrays.asList(BarcodeFormat.CODABAR, BarcodeFormat.CODE_39, BarcodeFormat.CODE_93, BarcodeFormat.CODE_128,
                     BarcodeFormat.EAN_8, BarcodeFormat.EAN_13, BarcodeFormat.ITF, BarcodeFormat.RSS_14,
                     BarcodeFormat.RSS_EXPANDED, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E,
                     BarcodeFormat.UPC_EAN_EXTENSION));
+
+    /**
+     * Two dimensional barcode formats
+     */
     public static final List<BarcodeFormat> TWO_DIMENSIONAL_FORMATS = Collections.unmodifiableList(
             Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.DATA_MATRIX, BarcodeFormat.MAXICODE, BarcodeFormat.PDF_417,
                     BarcodeFormat.QR_CODE));
+
+    /**
+     * First back-facing camera
+     */
     public static final int CAMERA_BACK = -1;
+
+    /**
+     * First front-facing camera
+     */
     public static final int CAMERA_FRONT = -2;
+
     private static final List<BarcodeFormat> DEFAULT_FORMATS = ALL_FORMATS;
     private static final ScanMode DEFAULT_SCAN_MODE = ScanMode.SINGLE;
     private static final AutoFocusMode DEFAULT_AUTO_FOCUS_MODE = AutoFocusMode.SAFE;
@@ -71,7 +90,7 @@ public final class CodeScanner {
     private static final boolean DEFAULT_FLASH_ENABLED = false;
     private static final long DEFAULT_SAFE_AUTO_FOCUS_INTERVAL = 2000L;
     private static final int SAFE_AUTO_FOCUS_ATTEMPTS_THRESHOLD = 2;
-    private final Lock mInitializeLock = new ReentrantLock();
+    private final Object mInitializeLock = new Object();
     private final Context mContext;
     private final Handler mMainThreadHandler;
     private final CodeScannerView mScannerView;
@@ -160,8 +179,7 @@ public final class CodeScanner {
      */
     @MainThread
     public void setCamera(final int cameraId) {
-        mInitializeLock.lock();
-        try {
+        synchronized (mInitializeLock) {
             if (mCameraId != cameraId) {
                 mCameraId = cameraId;
                 if (mInitialized) {
@@ -172,8 +190,6 @@ public final class CodeScanner {
                     }
                 }
             }
-        } finally {
-            mInitializeLock.unlock();
         }
     }
 
@@ -198,8 +214,7 @@ public final class CodeScanner {
      */
     @MainThread
     public void setFormats(@NonNull final List<BarcodeFormat> formats) {
-        mInitializeLock.lock();
-        try {
+        synchronized (mInitializeLock) {
             mFormats = Utils.requireNonNull(formats);
             if (mInitialized) {
                 final DecoderWrapper decoderWrapper = mDecoderWrapper;
@@ -207,8 +222,6 @@ public final class CodeScanner {
                     decoderWrapper.getDecoder().setFormats(formats);
                 }
             }
-        } finally {
-            mInitializeLock.unlock();
         }
     }
 
@@ -229,8 +242,7 @@ public final class CodeScanner {
      * @see DecodeCallback
      */
     public void setDecodeCallback(@Nullable final DecodeCallback decodeCallback) {
-        mInitializeLock.lock();
-        try {
+        synchronized (mInitializeLock) {
             mDecodeCallback = decodeCallback;
             if (mInitialized) {
                 final DecoderWrapper decoderWrapper = mDecoderWrapper;
@@ -238,8 +250,6 @@ public final class CodeScanner {
                     decoderWrapper.getDecoder().setCallback(decodeCallback);
                 }
             }
-        } finally {
-            mInitializeLock.unlock();
         }
     }
 
@@ -298,8 +308,7 @@ public final class CodeScanner {
      */
     @MainThread
     public void setAutoFocusEnabled(final boolean autoFocusEnabled) {
-        mInitializeLock.lock();
-        try {
+        synchronized (mInitializeLock) {
             final boolean changed = mAutoFocusEnabled != autoFocusEnabled;
             mAutoFocusEnabled = autoFocusEnabled;
             mScannerView.setAutoFocusEnabled(autoFocusEnabled);
@@ -308,8 +317,6 @@ public final class CodeScanner {
                     decoderWrapper.isAutoFocusSupported()) {
                 setAutoFocusEnabledInternal(autoFocusEnabled);
             }
-        } finally {
-            mInitializeLock.unlock();
         }
     }
 
@@ -330,14 +337,11 @@ public final class CodeScanner {
      */
     @MainThread
     public void setAutoFocusMode(@NonNull final AutoFocusMode autoFocusMode) {
-        mInitializeLock.lock();
-        try {
+        synchronized (mInitializeLock) {
             mAutoFocusMode = Utils.requireNonNull(autoFocusMode);
             if (mInitialized && mAutoFocusEnabled) {
                 setAutoFocusEnabledInternal(true);
             }
-        } finally {
-            mInitializeLock.unlock();
         }
     }
 
@@ -362,8 +366,7 @@ public final class CodeScanner {
      */
     @MainThread
     public void setFlashEnabled(final boolean flashEnabled) {
-        mInitializeLock.lock();
-        try {
+        synchronized (mInitializeLock) {
             final boolean changed = mFlashEnabled != flashEnabled;
             mFlashEnabled = flashEnabled;
             mScannerView.setFlashEnabled(flashEnabled);
@@ -372,8 +375,6 @@ public final class CodeScanner {
                     decoderWrapper.isFlashSupported()) {
                 setFlashEnabledInternal(flashEnabled);
             }
-        } finally {
-            mInitializeLock.unlock();
         }
     }
 
@@ -391,14 +392,11 @@ public final class CodeScanner {
      */
     @MainThread
     public void startPreview() {
-        mInitializeLock.lock();
-        try {
+        synchronized (mInitializeLock) {
             if (!mInitialized && !mInitialization) {
                 initialize();
                 return;
             }
-        } finally {
-            mInitializeLock.unlock();
         }
         if (!mPreviewActive) {
             mSurfaceHolder.addCallback(mSurfaceCallback);
@@ -617,8 +615,7 @@ public final class CodeScanner {
     private final class ScannerLayoutListener implements CodeScannerView.LayoutListener {
         @Override
         public void onLayout(final int width, final int height) {
-            mInitializeLock.lock();
-            try {
+            synchronized (mInitializeLock) {
                 if (width != mViewWidth || height != mViewHeight) {
                     final boolean previewActive = mPreviewActive;
                     if (mInitialized) {
@@ -628,8 +625,6 @@ public final class CodeScanner {
                         initialize(width, height);
                     }
                 }
-            } finally {
-                mInitializeLock.unlock();
             }
         }
     }
@@ -779,16 +774,13 @@ public final class CodeScanner {
             CameraConfigurationUtils.setBestExposure(parameters, mFlashEnabled);
             camera.setParameters(parameters);
             camera.setDisplayOrientation(orientation);
-            mInitializeLock.lock();
-            try {
+            synchronized (mInitializeLock) {
                 final Decoder decoder = new Decoder(mDecoderStateListener, mFormats, mDecodeCallback);
                 mDecoderWrapper = new DecoderWrapper(camera, cameraInfo, decoder, imageSize, previewSize,
                         new Point(mWidth, mHeight), orientation, autoFocusSupported, flashSupported);
                 decoder.start();
                 mInitialization = false;
                 mInitialized = true;
-            } finally {
-                mInitializeLock.unlock();
             }
             mMainThreadHandler.post(new FinishInitializationTask(previewSize));
         }
