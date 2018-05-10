@@ -105,6 +105,7 @@ final class Decoder {
         @Override
         public void run() {
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+            mainLoop:
             for (; ; ) {
                 setState(Decoder.State.IDLE);
                 Result result = null;
@@ -123,7 +124,7 @@ final class Decoder {
                             }
                         } catch (final InterruptedException e) {
                             setState(Decoder.State.STOPPED);
-                            return;
+                            break mainLoop;
                         }
                     }
                     setState(Decoder.State.DECODING);
