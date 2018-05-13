@@ -112,19 +112,19 @@ final class Decoder {
                 try {
                     final DecodeTask task;
                     for (; ; ) {
-                        final DecodeTask t = mTask;
-                        if (t != null) {
-                            mTask = null;
-                            task = t;
-                            break;
-                        }
-                        try {
-                            synchronized (mTaskLock) {
-                                mTaskLock.wait();
+                        synchronized (mTaskLock) {
+                            final DecodeTask t = mTask;
+                            if (t != null) {
+                                mTask = null;
+                                task = t;
+                                break;
                             }
-                        } catch (final InterruptedException e) {
-                            setState(Decoder.State.STOPPED);
-                            break mainLoop;
+                            try {
+                                mTaskLock.wait();
+                            } catch (final InterruptedException e) {
+                                setState(Decoder.State.STOPPED);
+                                break mainLoop;
+                            }
                         }
                     }
                     setState(Decoder.State.DECODING);
