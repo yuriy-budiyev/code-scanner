@@ -71,7 +71,7 @@ final class Decoder {
     public void decode(@NonNull final DecodeTask task) {
         synchronized (mTaskLock) {
             mTask = task;
-            mTaskLock.notifyAll();
+            mTaskLock.notify();
         }
     }
 
