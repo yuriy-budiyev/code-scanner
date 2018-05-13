@@ -70,8 +70,10 @@ final class Decoder {
 
     public void decode(@NonNull final DecodeTask task) {
         synchronized (mTaskLock) {
-            mTask = task;
-            mTaskLock.notify();
+            if (mState != State.STOPPED) {
+                mTask = task;
+                mTaskLock.notify();
+            }
         }
     }
 
