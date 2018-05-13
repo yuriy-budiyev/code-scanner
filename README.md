@@ -11,7 +11,7 @@ Code scanner library for [Android](https://developer.android.com), based on [ZXi
 * Portrait and landscape screen orientations
 * Back and front facing cameras
 * Customizable viewfinder
-* Kotlin-friendly interface
+* Kotlin-friendly
 
 ### Supported formats
 | 1D product | 1D industrial | 2D
