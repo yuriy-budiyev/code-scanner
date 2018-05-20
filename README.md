@@ -1,5 +1,4 @@
-<p align="center"><img src="src/main/res/codescanner1024.png" alt="Code Scanner" height="200px"></p>
-
+![Code Scanner](https://raw.githubusercontent.com/yuriy-budiyev/code-scanner/master/images/logo256.png)
 
 # Code Scanner
 [![Download](https://api.bintray.com/packages/yuriy-budiyev/maven/code-scanner/images/download.svg)](https://bintray.com/yuriy-budiyev/maven/code-scanner/_latestVersion)
