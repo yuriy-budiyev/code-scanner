@@ -1,3 +1,6 @@
+<p align="center"><img src="src/main/res/codescanner1024.png" alt="Code Scanner" height="200px"></p>
+
+
 # Code Scanner
 [![Download](https://api.bintray.com/packages/yuriy-budiyev/maven/code-scanner/images/download.svg)](https://bintray.com/yuriy-budiyev/maven/code-scanner/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Code%20Scanner-blue.svg?style=flat)](https://android-arsenal.com/details/1/6095)
