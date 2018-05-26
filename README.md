@@ -1,4 +1,4 @@
-![Code Scanner](https://raw.githubusercontent.com/yuriy-budiyev/code-scanner/master/images/logo_wide_512.png)
+# ![Code Scanner](https://raw.githubusercontent.com/yuriy-budiyev/code-scanner/master/images/logo_wide_512.png)
 
 [![Download](https://api.bintray.com/packages/yuriy-budiyev/maven/code-scanner/images/download.svg)](https://bintray.com/yuriy-budiyev/maven/code-scanner/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Code%20Scanner-blue.svg?style=flat)](https://android-arsenal.com/details/1/6095)
