@@ -49,8 +49,9 @@ android {
         versionName libraryVersion
     }
 
-    dexOptions {
-        javaMaxHeapSize "2048m"
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
 
     buildTypes {
