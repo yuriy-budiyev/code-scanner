@@ -26,8 +26,8 @@ package com.budiyev.android.codescanner;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -38,11 +38,14 @@ import android.support.annotation.Nullable;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatReader;
+import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
+import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 
@@ -61,12 +64,13 @@ public final class BarcodeUtils {
     }
 
     @Nullable
-    public Result decodeBitmap(@NonNull final Bitmap bitmap, @Nullable final List<BarcodeFormat> formats) {
+    public Result decodeBitmap(@NonNull final Bitmap bitmap, @Nullable final Map<DecodeHintType, ?> hints) {
+        Objects.requireNonNull(bitmap);
         final int width = bitmap.getWidth();
         final int height = bitmap.getHeight();
         final int[] pixels = new int[width * height];
         bitmap.getPixels(pixels, 0, width, 0, 0, width, height);
-        return decodeRgb(pixels, width, height, formats);
+        return decodeRgb(pixels, width, height, hints);
     }
 
     @Nullable
@@ -76,8 +80,9 @@ public final class BarcodeUtils {
 
     @Nullable
     public Result decodeRgb(@NonNull final int[] pixels, final int width, final int height,
-            @Nullable final List<BarcodeFormat> formats) {
-        final MultiFormatReader reader = createReader(formats);
+            @Nullable final Map<DecodeHintType, ?> hints) {
+        Objects.requireNonNull(pixels);
+        final MultiFormatReader reader = createReader(hints);
         try {
             return reader.decodeWithState(
                     new BinaryBitmap(new HybridBinarizer(new RGBLuminanceSource(width, height, pixels))));
@@ -95,8 +100,9 @@ public final class BarcodeUtils {
     @SuppressWarnings("SuspiciousNameCombination")
     public Result decodeYuv(@NonNull final byte[] pixels, final int width, final int height,
             @Rotation final int rotation, final boolean reverseHorizontal,
-            @Nullable final List<BarcodeFormat> formats) {
-        final MultiFormatReader reader = createReader(formats);
+            @Nullable final Map<DecodeHintType, ?> hints) {
+        Objects.requireNonNull(pixels);
+        final MultiFormatReader reader = createReader(hints);
         final byte[] rotatedPixels = Utils.rotateYuv(pixels, width, height, rotation);
         final int rotatedWidth;
         final int rotatedHeight;
@@ -116,8 +122,37 @@ public final class BarcodeUtils {
         }
     }
 
+    @Nullable
+    public BitMatrix encodeBitMatrix(@NonNull String contents, @NonNull BarcodeFormat format, int width, int height,
+            @Nullable Map<EncodeHintType, ?> hints) {
+        Objects.requireNonNull(contents);
+        Objects.requireNonNull(format);
+        MultiFormatWriter writer = new MultiFormatWriter();
+        try {
+            if (hints != null) {
+                return writer.encode(contents, format, width, height, hints);
+            } else {
+                return writer.encode(contents, format, width, height);
+            }
+        } catch (WriterException e) {
+            return null;
+        }
+    }
+
+    @Nullable
+    public Bitmap encodeBitmap(@NonNull String contents, @NonNull BarcodeFormat format, int width, int height,
+            @Nullable Map<EncodeHintType, ?> hints) {
+        BitMatrix matrix = encodeBitMatrix(contents, format, width, height, hints);
+        if (matrix != null) {
+            return createBitmap(matrix);
+        } else {
+            return null;
+        }
+    }
+
     @NonNull
     public Bitmap createBitmap(@NonNull final BitMatrix matrix) {
+        Objects.requireNonNull(matrix);
         final int width = matrix.getWidth();
         final int height = matrix.getHeight();
         final int length = width * height;
@@ -129,11 +164,15 @@ public final class BarcodeUtils {
     }
 
     @NonNull
-    private MultiFormatReader createReader(@Nullable final List<BarcodeFormat> formats) {
+    private MultiFormatReader createReader(@Nullable final Map<DecodeHintType, ?> hints) {
         final MultiFormatReader reader = new MultiFormatReader();
-        final Map<DecodeHintType, Object> hints = new EnumMap<>(DecodeHintType.class);
-        hints.put(DecodeHintType.POSSIBLE_FORMATS, formats != null ? formats : CodeScanner.ALL_FORMATS);
-        reader.setHints(hints);
+        if (hints != null) {
+            reader.setHints(hints);
+        } else {
+            final Map<DecodeHintType, Object> allFormats = new EnumMap<>(DecodeHintType.class);
+            allFormats.put(DecodeHintType.POSSIBLE_FORMATS, CodeScanner.ALL_FORMATS);
+            reader.setHints(allFormats);
+        }
         return reader;
     }
 
