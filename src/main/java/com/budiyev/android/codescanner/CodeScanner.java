@@ -26,6 +26,7 @@ package com.budiyev.android.codescanner;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import android.Manifest;
 import android.app.Activity;
@@ -215,7 +216,7 @@ public final class CodeScanner {
     @MainThread
     public void setFormats(@NonNull final List<BarcodeFormat> formats) {
         synchronized (mInitializeLock) {
-            mFormats = Utils.requireNonNull(formats);
+            mFormats = Objects.requireNonNull(formats);
             if (mInitialized) {
                 final DecoderWrapper decoderWrapper = mDecoderWrapper;
                 if (decoderWrapper != null) {
@@ -291,7 +292,7 @@ public final class CodeScanner {
      * @see ScanMode
      */
     public void setScanMode(@NonNull final ScanMode scanMode) {
-        mScanMode = Utils.requireNonNull(scanMode);
+        mScanMode = Objects.requireNonNull(scanMode);
     }
 
     /**
@@ -338,7 +339,7 @@ public final class CodeScanner {
     @MainThread
     public void setAutoFocusMode(@NonNull final AutoFocusMode autoFocusMode) {
         synchronized (mInitializeLock) {
-            mAutoFocusMode = Utils.requireNonNull(autoFocusMode);
+            mAutoFocusMode = Objects.requireNonNull(autoFocusMode);
             if (mInitialized && mAutoFocusEnabled) {
                 setAutoFocusEnabledInternal(true);
             }
