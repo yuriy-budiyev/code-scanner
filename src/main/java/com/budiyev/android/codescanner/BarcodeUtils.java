@@ -117,16 +117,7 @@ public final class BarcodeUtils {
     }
 
     @NonNull
-    private MultiFormatReader createReader(@Nullable final List<BarcodeFormat> formats) {
-        final MultiFormatReader reader = new MultiFormatReader();
-        final Map<DecodeHintType, Object> hints = new EnumMap<>(DecodeHintType.class);
-        hints.put(DecodeHintType.POSSIBLE_FORMATS, formats != null ? formats : CodeScanner.ALL_FORMATS);
-        reader.setHints(hints);
-        return reader;
-    }
-
-    @NonNull
-    private Bitmap createBitmap(@NonNull final BitMatrix matrix) {
+    public Bitmap createBitmap(@NonNull final BitMatrix matrix) {
         final int width = matrix.getWidth();
         final int height = matrix.getHeight();
         final int length = width * height;
@@ -135,6 +126,15 @@ public final class BarcodeUtils {
             pixels[i] = matrix.get(i % width, i / height) ? Color.BLACK : Color.WHITE;
         }
         return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
+    }
+
+    @NonNull
+    private MultiFormatReader createReader(@Nullable final List<BarcodeFormat> formats) {
+        final MultiFormatReader reader = new MultiFormatReader();
+        final Map<DecodeHintType, Object> hints = new EnumMap<>(DecodeHintType.class);
+        hints.put(DecodeHintType.POSSIBLE_FORMATS, formats != null ? formats : CodeScanner.ALL_FORMATS);
+        reader.setHints(hints);
+        return reader;
     }
 
     @Retention(RetentionPolicy.SOURCE)
