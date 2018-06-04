@@ -98,7 +98,7 @@ public final class BarcodeUtils {
         final byte[] rotatedPixels = Utils.rotateNV21(pixels, width, height, rotation);
         final int rotatedWidth;
         final int rotatedHeight;
-        if (rotation == 90 || rotation == 270) {
+        if (rotation == ROTATION_90 || rotation == ROTATION_270) {
             rotatedWidth = height;
             rotatedHeight = width;
         } else {
