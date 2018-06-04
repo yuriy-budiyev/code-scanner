@@ -124,6 +124,12 @@ public final class BarcodeUtils {
 
     @Nullable
     public BitMatrix encodeBitMatrix(@NonNull final String content, @NonNull final BarcodeFormat format,
+            final int width, final int height) {
+        return encodeBitMatrix(content, format, width, height, null);
+    }
+
+    @Nullable
+    public BitMatrix encodeBitMatrix(@NonNull final String content, @NonNull final BarcodeFormat format,
             final int width, final int height, @Nullable final Map<EncodeHintType, ?> hints) {
         Objects.requireNonNull(content);
         Objects.requireNonNull(format);
@@ -137,6 +143,12 @@ public final class BarcodeUtils {
         } catch (final WriterException e) {
             return null;
         }
+    }
+
+    @Nullable
+    public Bitmap encodeBitmap(@NonNull final String content, @NonNull final BarcodeFormat format, final int width,
+            final int height) {
+        return encodeBitmap(content, format, width, height, null);
     }
 
     @Nullable
