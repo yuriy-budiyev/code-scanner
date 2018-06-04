@@ -95,7 +95,7 @@ public final class BarcodeUtils {
             @Rotation final int rotation, final boolean reverseHorizontal,
             @Nullable final List<BarcodeFormat> formats) {
         final MultiFormatReader reader = createReader(formats);
-        final byte[] rotatedPixels = Utils.rotateNV21(pixels, width, height, rotation);
+        final byte[] rotatedPixels = Utils.rotateYuv(pixels, width, height, rotation);
         final int rotatedWidth;
         final int rotatedHeight;
         if (rotation == ROTATION_90 || rotation == ROTATION_270) {

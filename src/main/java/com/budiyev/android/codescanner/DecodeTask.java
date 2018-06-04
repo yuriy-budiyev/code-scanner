@@ -60,7 +60,7 @@ final class DecodeTask {
         int imageWidth = mImageSize.getX();
         int imageHeight = mImageSize.getY();
         final int orientation = mOrientation;
-        final byte[] image = Utils.rotateNV21(mImage, imageWidth, imageHeight, orientation);
+        final byte[] image = Utils.rotateYuv(mImage, imageWidth, imageHeight, orientation);
         if (orientation == 90 || orientation == 270) {
             final int width = imageWidth;
             imageWidth = imageHeight;
