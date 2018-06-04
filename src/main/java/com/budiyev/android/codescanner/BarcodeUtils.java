@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -42,6 +43,7 @@ import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.RGBLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
+import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 
 public final class BarcodeUtils {
@@ -121,6 +123,18 @@ public final class BarcodeUtils {
         hints.put(DecodeHintType.POSSIBLE_FORMATS, formats != null ? formats : CodeScanner.ALL_FORMATS);
         reader.setHints(hints);
         return reader;
+    }
+
+    @NonNull
+    private Bitmap createBitmap(@NonNull final BitMatrix matrix) {
+        final int width = matrix.getWidth();
+        final int height = matrix.getHeight();
+        final int length = width * height;
+        final int[] pixels = new int[length];
+        for (int i = 0; i < length; i++) {
+            pixels[i] = matrix.get(i / height, i % width) ? Color.BLACK : Color.WHITE;
+        }
+        return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
     }
 
     @Retention(RetentionPolicy.SOURCE)
