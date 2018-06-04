@@ -218,7 +218,9 @@ final class Utils {
                 Math.min(Math.round((viewFrameRect.getBottom() + hD) * hR), imageHeight));
     }
 
-    public static byte[] rotateYuv(final byte[] source, final int width, final int height, final int rotation) {
+    @NonNull
+    public static byte[] rotateYuv(@NonNull final byte[] source, final int width, final int height,
+            final int rotation) {
         if (rotation == 0 || rotation == 360) {
             return source;
         }
