@@ -102,7 +102,6 @@ public final class BarcodeUtils {
             @Rotation final int rotation, final boolean reverseHorizontal,
             @Nullable final Map<DecodeHintType, ?> hints) {
         Objects.requireNonNull(pixels);
-        final MultiFormatReader reader = createReader(hints);
         final byte[] rotatedPixels = Utils.rotateYuv(pixels, width, height, rotation);
         final int rotatedWidth;
         final int rotatedHeight;
@@ -113,6 +112,7 @@ public final class BarcodeUtils {
             rotatedWidth = width;
             rotatedHeight = height;
         }
+        final MultiFormatReader reader = createReader(hints);
         try {
             return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(
                     new PlanarYUVLuminanceSource(rotatedPixels, rotatedWidth, rotatedHeight, 0, 0, rotatedWidth,
