@@ -132,7 +132,7 @@ public final class BarcodeUtils {
         final int length = width * height;
         final int[] pixels = new int[length];
         for (int i = 0; i < length; i++) {
-            pixels[i] = matrix.get(i / height, i % width) ? Color.BLACK : Color.WHITE;
+            pixels[i] = matrix.get(i % width, i / height) ? Color.BLACK : Color.WHITE;
         }
         return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
     }
