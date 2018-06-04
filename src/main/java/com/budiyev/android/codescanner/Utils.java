@@ -223,7 +223,7 @@ final class Utils {
             return source;
         }
         if (rotation % 90 != 0 || rotation < 0 || rotation > 270) {
-            throw new IllegalArgumentException("Invalid rotation (0 <= rotation < 360, rotation % 90 == 0)");
+            throw new IllegalArgumentException("Invalid rotation (valid: 0, 90, 180, 270)");
         }
         final byte[] output = new byte[source.length];
         final int frameSize = width * height;
