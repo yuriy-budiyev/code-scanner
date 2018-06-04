@@ -123,26 +123,26 @@ public final class BarcodeUtils {
     }
 
     @Nullable
-    public BitMatrix encodeBitMatrix(@NonNull String contents, @NonNull BarcodeFormat format, int width, int height,
-            @Nullable Map<EncodeHintType, ?> hints) {
-        Objects.requireNonNull(contents);
+    public BitMatrix encodeBitMatrix(@NonNull final String content, @NonNull final BarcodeFormat format,
+            final int width, final int height, @Nullable final Map<EncodeHintType, ?> hints) {
+        Objects.requireNonNull(content);
         Objects.requireNonNull(format);
-        MultiFormatWriter writer = new MultiFormatWriter();
+        final MultiFormatWriter writer = new MultiFormatWriter();
         try {
             if (hints != null) {
-                return writer.encode(contents, format, width, height, hints);
+                return writer.encode(content, format, width, height, hints);
             } else {
-                return writer.encode(contents, format, width, height);
+                return writer.encode(content, format, width, height);
             }
-        } catch (WriterException e) {
+        } catch (final WriterException e) {
             return null;
         }
     }
 
     @Nullable
-    public Bitmap encodeBitmap(@NonNull String contents, @NonNull BarcodeFormat format, int width, int height,
-            @Nullable Map<EncodeHintType, ?> hints) {
-        BitMatrix matrix = encodeBitMatrix(contents, format, width, height, hints);
+    public Bitmap encodeBitmap(@NonNull final String content, @NonNull final BarcodeFormat format, final int width,
+            final int height, @Nullable final Map<EncodeHintType, ?> hints) {
+        final BitMatrix matrix = encodeBitMatrix(content, format, width, height, hints);
         if (matrix != null) {
             return createBitmap(matrix);
         } else {
