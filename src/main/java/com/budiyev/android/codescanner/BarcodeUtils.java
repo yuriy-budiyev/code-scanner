@@ -25,7 +25,7 @@ package com.budiyev.android.codescanner;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.util.EnumMap;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
@@ -169,9 +169,7 @@ public final class BarcodeUtils {
         if (hints != null) {
             reader.setHints(hints);
         } else {
-            final Map<DecodeHintType, Object> allFormats = new EnumMap<>(DecodeHintType.class);
-            allFormats.put(DecodeHintType.POSSIBLE_FORMATS, CodeScanner.ALL_FORMATS);
-            reader.setHints(allFormats);
+            reader.setHints(Collections.singletonMap(DecodeHintType.POSSIBLE_FORMATS, CodeScanner.ALL_FORMATS));
         }
         return reader;
     }
