@@ -49,6 +49,9 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 
+/**
+ * Utils for decoding and encoding bar codes
+ */
 public final class BarcodeUtils {
     public static final int ROTATION_0 = 0;
     public static final int ROTATION_90 = 90;
@@ -58,11 +61,25 @@ public final class BarcodeUtils {
     private BarcodeUtils() {
     }
 
+    /**
+     * Decode barcode from bitmap
+     *
+     * @param bitmap Bitmap
+     * @return Decode result if barcode was decoded successfully, {@code null} otherwise
+     */
     @Nullable
     public static Result decodeBitmap(@NonNull final Bitmap bitmap) {
         return decodeBitmap(bitmap, null);
     }
 
+    /**
+     * Decode barcode from bitmap
+     *
+     * @param bitmap Bitmap
+     * @param hints  Decoder hints
+     * @return Decode result if barcode was decoded successfully, {@code null} otherwise
+     * @see DecodeHintType
+     */
     @Nullable
     public static Result decodeBitmap(@NonNull final Bitmap bitmap, @Nullable final Map<DecodeHintType, ?> hints) {
         Objects.requireNonNull(bitmap);
@@ -73,11 +90,31 @@ public final class BarcodeUtils {
         return decodeRgb(pixels, width, height, hints);
     }
 
+    /**
+     * Decode barcode from RGB pixels array
+     *
+     * @param pixels Colors in standard Android ARGB format
+     * @param width  Image width
+     * @param height Image height
+     * @return Decode result if barcode was decoded successfully, {@code null} otherwise
+     * @see Color
+     */
     @Nullable
     public static Result decodeRgb(@NonNull final int[] pixels, final int width, final int height) {
         return decodeRgb(pixels, width, height, null);
     }
 
+    /**
+     * Decode barcode from RGB pixels array
+     *
+     * @param pixels Colors in standard Android ARGB format
+     * @param width  Image width
+     * @param height Image height
+     * @param hints  Decoder hints
+     * @return Decode result if barcode was decoded successfully, {@code null} otherwise
+     * @see DecodeHintType
+     * @see Color
+     */
     @Nullable
     public static Result decodeRgb(@NonNull final int[] pixels, final int width, final int height,
             @Nullable final Map<DecodeHintType, ?> hints) {
@@ -91,11 +128,29 @@ public final class BarcodeUtils {
         }
     }
 
+    /**
+     * Decode barcode from YUV pixels array
+     *
+     * @param pixels YUV image data
+     * @param width  Image width
+     * @param height Image height
+     * @return Decode result if barcode was decoded successfully, {@code null} otherwise
+     */
     @Nullable
     public static Result decodeYuv(@NonNull final byte[] pixels, final int width, final int height) {
         return decodeYuv(pixels, width, height, ROTATION_0, false, null);
     }
 
+    /**
+     * Decode barcode from YUV pixels array
+     *
+     * @param pixels YUV image data
+     * @param width  Image width
+     * @param height Image height
+     * @param hints  Decoder hints
+     * @return Decode result if barcode was decoded successfully, {@code null} otherwise
+     * @see DecodeHintType
+     */
     @Nullable
     @SuppressWarnings("SuspiciousNameCombination")
     public static Result decodeYuv(@NonNull final byte[] pixels, final int width, final int height,
