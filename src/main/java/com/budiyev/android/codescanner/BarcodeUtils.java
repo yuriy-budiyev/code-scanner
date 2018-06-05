@@ -65,7 +65,7 @@ public final class BarcodeUtils {
      * Decode barcode from bitmap
      *
      * @param bitmap Bitmap
-     * @return Decode result if barcode was decoded successfully, {@code null} otherwise
+     * @return Decode result, if barcode was decoded successfully, {@code null} otherwise
      */
     @Nullable
     public static Result decodeBitmap(@NonNull final Bitmap bitmap) {
@@ -77,7 +77,7 @@ public final class BarcodeUtils {
      *
      * @param bitmap Bitmap
      * @param hints  Decoder hints
-     * @return Decode result if barcode was decoded successfully, {@code null} otherwise
+     * @return Decode result, if barcode was decoded successfully, {@code null} otherwise
      * @see DecodeHintType
      */
     @Nullable
@@ -96,7 +96,7 @@ public final class BarcodeUtils {
      * @param pixels Colors in standard Android ARGB format
      * @param width  Image width
      * @param height Image height
-     * @return Decode result if barcode was decoded successfully, {@code null} otherwise
+     * @return Decode result, if barcode was decoded successfully, {@code null} otherwise
      * @see Color
      */
     @Nullable
@@ -111,7 +111,7 @@ public final class BarcodeUtils {
      * @param width  Image width
      * @param height Image height
      * @param hints  Decoder hints
-     * @return Decode result if barcode was decoded successfully, {@code null} otherwise
+     * @return Decode result, if barcode was decoded successfully, {@code null} otherwise
      * @see DecodeHintType
      * @see Color
      */
@@ -134,7 +134,7 @@ public final class BarcodeUtils {
      * @param pixels YUV image data
      * @param width  Image width
      * @param height Image height
-     * @return Decode result if barcode was decoded successfully, {@code null} otherwise
+     * @return Decode result, if barcode was decoded successfully, {@code null} otherwise
      */
     @Nullable
     public static Result decodeYuv(@NonNull final byte[] pixels, final int width, final int height) {
@@ -148,7 +148,7 @@ public final class BarcodeUtils {
      * @param width  Image width
      * @param height Image height
      * @param hints  Decoder hints
-     * @return Decode result if barcode was decoded successfully, {@code null} otherwise
+     * @return Decode result, if barcode was decoded successfully, {@code null} otherwise
      * @see DecodeHintType
      */
     @Nullable
@@ -177,12 +177,34 @@ public final class BarcodeUtils {
         }
     }
 
+    /**
+     * Encode text content
+     *
+     * @param content Text to be encoded
+     * @param format  Result barcode format
+     * @param width   Result image width
+     * @param height  Result image height
+     * @return Barcode bit matrix, if it was encoded successfully, {@code null} otherwise
+     * @see BitMatrix
+     */
     @Nullable
     public static BitMatrix encodeBitMatrix(@NonNull final String content, @NonNull final BarcodeFormat format,
             final int width, final int height) {
         return encodeBitMatrix(content, format, width, height, null);
     }
 
+    /**
+     * Encode text content
+     *
+     * @param content Text to be encoded
+     * @param format  Result barcode format
+     * @param width   Result image width
+     * @param height  Result image height
+     * @param hints   Encoder hints
+     * @return Barcode bit matrix, if it was encoded successfully, {@code null} otherwise
+     * @see EncodeHintType
+     * @see BitMatrix
+     */
     @Nullable
     public static BitMatrix encodeBitMatrix(@NonNull final String content, @NonNull final BarcodeFormat format,
             final int width, final int height, @Nullable final Map<EncodeHintType, ?> hints) {
@@ -200,12 +222,32 @@ public final class BarcodeUtils {
         }
     }
 
+    /**
+     * Encode text content
+     *
+     * @param content Text to be encoded
+     * @param format  Result barcode format
+     * @param width   Result image width
+     * @param height  Result image height
+     * @return Barcode bitmap, if it was encoded successfully, {@code null} otherwise
+     */
     @Nullable
     public static Bitmap encodeBitmap(@NonNull final String content, @NonNull final BarcodeFormat format,
             final int width, final int height) {
         return encodeBitmap(content, format, width, height, null);
     }
 
+    /**
+     * Encode text content
+     *
+     * @param content Text to be encoded
+     * @param format  Result barcode format
+     * @param width   Result image width
+     * @param height  Result image height
+     * @param hints   Encoder hints
+     * @return Barcode bitmap, if it was encoded successfully, {@code null} otherwise
+     * @see EncodeHintType
+     */
     @Nullable
     public static Bitmap encodeBitmap(@NonNull final String content, @NonNull final BarcodeFormat format,
             final int width, final int height, @Nullable final Map<EncodeHintType, ?> hints) {
@@ -217,6 +259,14 @@ public final class BarcodeUtils {
         }
     }
 
+    /**
+     * Create bitmap from bit matrix
+     *
+     * @param matrix Bit matrix
+     * @return Bitmap
+     * @see BitMatrix
+     * @see Bitmap
+     */
     @NonNull
     public static Bitmap createBitmap(@NonNull final BitMatrix matrix) {
         Objects.requireNonNull(matrix);
