@@ -59,12 +59,12 @@ public final class BarcodeUtils {
     }
 
     @Nullable
-    public Result decodeBitmap(@NonNull final Bitmap bitmap) {
+    public static Result decodeBitmap(@NonNull final Bitmap bitmap) {
         return decodeBitmap(bitmap, null);
     }
 
     @Nullable
-    public Result decodeBitmap(@NonNull final Bitmap bitmap, @Nullable final Map<DecodeHintType, ?> hints) {
+    public static Result decodeBitmap(@NonNull final Bitmap bitmap, @Nullable final Map<DecodeHintType, ?> hints) {
         Objects.requireNonNull(bitmap);
         final int width = bitmap.getWidth();
         final int height = bitmap.getHeight();
@@ -74,12 +74,12 @@ public final class BarcodeUtils {
     }
 
     @Nullable
-    public Result decodeRgb(@NonNull final int[] pixels, final int width, final int height) {
+    public static Result decodeRgb(@NonNull final int[] pixels, final int width, final int height) {
         return decodeRgb(pixels, width, height, null);
     }
 
     @Nullable
-    public Result decodeRgb(@NonNull final int[] pixels, final int width, final int height,
+    public static Result decodeRgb(@NonNull final int[] pixels, final int width, final int height,
             @Nullable final Map<DecodeHintType, ?> hints) {
         Objects.requireNonNull(pixels);
         final MultiFormatReader reader = createReader(hints);
@@ -92,13 +92,13 @@ public final class BarcodeUtils {
     }
 
     @Nullable
-    public Result decodeYuv(@NonNull final byte[] pixels, final int width, final int height) {
+    public static Result decodeYuv(@NonNull final byte[] pixels, final int width, final int height) {
         return decodeYuv(pixels, width, height, ROTATION_0, false, null);
     }
 
     @Nullable
     @SuppressWarnings("SuspiciousNameCombination")
-    public Result decodeYuv(@NonNull final byte[] pixels, final int width, final int height,
+    public static Result decodeYuv(@NonNull final byte[] pixels, final int width, final int height,
             @Rotation final int rotation, final boolean reverseHorizontal,
             @Nullable final Map<DecodeHintType, ?> hints) {
         Objects.requireNonNull(pixels);
@@ -123,13 +123,13 @@ public final class BarcodeUtils {
     }
 
     @Nullable
-    public BitMatrix encodeBitMatrix(@NonNull final String content, @NonNull final BarcodeFormat format,
+    public static BitMatrix encodeBitMatrix(@NonNull final String content, @NonNull final BarcodeFormat format,
             final int width, final int height) {
         return encodeBitMatrix(content, format, width, height, null);
     }
 
     @Nullable
-    public BitMatrix encodeBitMatrix(@NonNull final String content, @NonNull final BarcodeFormat format,
+    public static BitMatrix encodeBitMatrix(@NonNull final String content, @NonNull final BarcodeFormat format,
             final int width, final int height, @Nullable final Map<EncodeHintType, ?> hints) {
         Objects.requireNonNull(content);
         Objects.requireNonNull(format);
@@ -146,14 +146,14 @@ public final class BarcodeUtils {
     }
 
     @Nullable
-    public Bitmap encodeBitmap(@NonNull final String content, @NonNull final BarcodeFormat format, final int width,
-            final int height) {
+    public static Bitmap encodeBitmap(@NonNull final String content, @NonNull final BarcodeFormat format,
+            final int width, final int height) {
         return encodeBitmap(content, format, width, height, null);
     }
 
     @Nullable
-    public Bitmap encodeBitmap(@NonNull final String content, @NonNull final BarcodeFormat format, final int width,
-            final int height, @Nullable final Map<EncodeHintType, ?> hints) {
+    public static Bitmap encodeBitmap(@NonNull final String content, @NonNull final BarcodeFormat format,
+            final int width, final int height, @Nullable final Map<EncodeHintType, ?> hints) {
         final BitMatrix matrix = encodeBitMatrix(content, format, width, height, hints);
         if (matrix != null) {
             return createBitmap(matrix);
@@ -163,7 +163,7 @@ public final class BarcodeUtils {
     }
 
     @NonNull
-    public Bitmap createBitmap(@NonNull final BitMatrix matrix) {
+    public static Bitmap createBitmap(@NonNull final BitMatrix matrix) {
         Objects.requireNonNull(matrix);
         final int width = matrix.getWidth();
         final int height = matrix.getHeight();
@@ -176,7 +176,7 @@ public final class BarcodeUtils {
     }
 
     @NonNull
-    private MultiFormatReader createReader(@Nullable final Map<DecodeHintType, ?> hints) {
+    private static MultiFormatReader createReader(@Nullable final Map<DecodeHintType, ?> hints) {
         final MultiFormatReader reader = new MultiFormatReader();
         if (hints != null) {
             reader.setHints(hints);
