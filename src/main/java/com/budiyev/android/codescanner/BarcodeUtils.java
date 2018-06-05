@@ -144,10 +144,12 @@ public final class BarcodeUtils {
     /**
      * Decode barcode from YUV pixels array
      *
-     * @param pixels YUV image data
-     * @param width  Image width
-     * @param height Image height
-     * @param hints  Decoder hints
+     * @param pixels            YUV image data
+     * @param width             Image width
+     * @param height            Image height
+     * @param rotation          Degrees to rotate image before decoding (only 0, 90, 180 or 270 are allowed)
+     * @param reverseHorizontal Reverse image horizontally before decoding
+     * @param hints             Decoder hints
      * @return Decode result, if barcode was decoded successfully, {@code null} otherwise
      * @see DecodeHintType
      */
