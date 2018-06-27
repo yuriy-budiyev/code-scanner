@@ -43,8 +43,8 @@ final class Utils {
     private static final float MAX_DISTORTION = 3f;
     private static final float DISTORTION_STEP = 0.1f;
     private static final int MIN_PREVIEW_PIXELS = 589824;
-    private static final int MIN_FPS_RANGE = 10000;
-    private static final int MAX_FPS_RANGE = 30000;
+    private static final int MIN_FPS = 10000;
+    private static final int MAX_FPS = 30000;
 
     private Utils() {
     }
@@ -54,8 +54,8 @@ final class Utils {
         if (supportedFpsRanges != null && !supportedFpsRanges.isEmpty()) {
             int[] suitableFpsRange = null;
             for (final int[] fpsRange : supportedFpsRanges) {
-                if (fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS_RANGE &&
-                        fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS_RANGE) {
+                if (fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS &&
+                        fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
                     suitableFpsRange = fpsRange;
                     break;
                 }
