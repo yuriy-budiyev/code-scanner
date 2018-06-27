@@ -43,23 +43,25 @@ final class Utils {
     private static final float MAX_DISTORTION = 3f;
     private static final float DISTORTION_STEP = 0.1f;
     private static final int MIN_PREVIEW_PIXELS = 589824;
+    private static final int MIN_FPS_RANGE = 10000;
+    private static final int MAX_FPS_RANGE = 30000;
 
     private Utils() {
     }
 
     public static void optimizeParameters(@NonNull final Camera.Parameters parameters) {
-        List<int[]> supportedFpsRanges = parameters.getSupportedPreviewFpsRange();
+        final List<int[]> supportedFpsRanges = parameters.getSupportedPreviewFpsRange();
         if (supportedFpsRanges != null && !supportedFpsRanges.isEmpty()) {
             int[] suitableFpsRange = null;
-            for (int[] fpsRange : supportedFpsRanges) {
-                if (fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] >= 10000 &&
-                        fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX] <= 30000) {
+            for (final int[] fpsRange : supportedFpsRanges) {
+                if (fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS_RANGE &&
+                        fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS_RANGE) {
                     suitableFpsRange = fpsRange;
                     break;
                 }
             }
             if (suitableFpsRange != null) {
-                int[] currentFpsRange = new int[2];
+                final int[] currentFpsRange = new int[2];
                 parameters.getPreviewFpsRange(currentFpsRange);
                 if (!Arrays.equals(currentFpsRange, suitableFpsRange)) {
                     parameters.setPreviewFpsRange(suitableFpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX],
@@ -68,7 +70,7 @@ final class Utils {
             }
         }
         if (!Camera.Parameters.SCENE_MODE_BARCODE.equals(parameters.getSceneMode())) {
-            List<String> supportedSceneModes = parameters.getSupportedSceneModes();
+            final List<String> supportedSceneModes = parameters.getSupportedSceneModes();
             if (supportedSceneModes != null && supportedSceneModes.contains(Camera.Parameters.SCENE_MODE_BARCODE)) {
                 parameters.setSceneMode(Camera.Parameters.SCENE_MODE_BARCODE);
             }
@@ -80,11 +82,11 @@ final class Utils {
     }
 
     @Nullable
-    private static String validateValue(@Nullable String value, @Nullable List<String> supported) {
+    private static String validateValue(@Nullable final String value, @Nullable final List<String> supported) {
         if (value == null || supported == null || supported.isEmpty()) {
             return null;
         }
-        for (String v : supported) {
+        for (final String v : supported) {
             if (value.equals(v)) {
                 return value;
             }
