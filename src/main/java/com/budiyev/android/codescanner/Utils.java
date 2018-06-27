@@ -23,6 +23,7 @@
  */
 package com.budiyev.android.codescanner;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -32,11 +33,10 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
-
-import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
 final class Utils {
     private static final float MIN_DISTORTION = 0.3f;
@@ -48,10 +48,48 @@ final class Utils {
     }
 
     public static void optimizeParameters(@NonNull final Camera.Parameters parameters) {
-        CameraConfigurationUtils.setBestPreviewFPS(parameters);
-        CameraConfigurationUtils.setBarcodeSceneMode(parameters);
-        CameraConfigurationUtils.setVideoStabilization(parameters);
+        List<int[]> supportedFpsRanges = parameters.getSupportedPreviewFpsRange();
+        if (supportedFpsRanges != null && !supportedFpsRanges.isEmpty()) {
+            int[] suitableFpsRange = null;
+            for (int[] fpsRange : supportedFpsRanges) {
+                if (fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] >= 10000 &&
+                        fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX] <= 30000) {
+                    suitableFpsRange = fpsRange;
+                    break;
+                }
+            }
+            if (suitableFpsRange != null) {
+                int[] currentFpsRange = new int[2];
+                parameters.getPreviewFpsRange(currentFpsRange);
+                if (!Arrays.equals(currentFpsRange, suitableFpsRange)) {
+                    parameters.setPreviewFpsRange(suitableFpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX],
+                            suitableFpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
+                }
+            }
+        }
+        if (!Camera.Parameters.SCENE_MODE_BARCODE.equals(parameters.getSceneMode())) {
+            List<String> supportedSceneModes = parameters.getSupportedSceneModes();
+            if (supportedSceneModes != null && supportedSceneModes.contains(Camera.Parameters.SCENE_MODE_BARCODE)) {
+                parameters.setSceneMode(Camera.Parameters.SCENE_MODE_BARCODE);
+            }
+        }
+        if (parameters.isVideoStabilizationSupported() && !parameters.getVideoStabilization()) {
+            parameters.setVideoStabilization(true);
+        }
         parameters.setPreviewFormat(ImageFormat.NV21);
+    }
+
+    @Nullable
+    private static String validateValue(@Nullable String value, @Nullable List<String> supported) {
+        if (value == null || supported == null || supported.isEmpty()) {
+            return null;
+        }
+        for (String v : supported) {
+            if (value.equals(v)) {
+                return value;
+            }
+        }
+        return null;
     }
 
     @NonNull
@@ -263,9 +301,7 @@ final class Utils {
     private static final class CameraSizeComparator implements Comparator<Camera.Size> {
         @Override
         public int compare(@NonNull final Camera.Size a, @NonNull final Camera.Size b) {
-            final int aPixels = a.height * a.width;
-            final int bPixels = b.height * b.width;
-            return aPixels < bPixels ? 1 : aPixels == bPixels ? 0 : -1;
+            return Integer.compare(b.height * b.width, a.height * a.width);
         }
     }
 }

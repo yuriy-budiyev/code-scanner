@@ -40,7 +40,6 @@ import android.support.annotation.Nullable;
 import android.view.SurfaceHolder;
 
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.client.android.camera.CameraConfigurationUtils;
 
 /**
  * Code scanner.
@@ -531,7 +530,6 @@ public final class CodeScanner {
                     changed = Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_OFF);
                 }
                 if (changed) {
-                    CameraConfigurationUtils.setBestExposure(parameters, flashEnabled);
                     camera.setParameters(parameters);
                 }
             }
@@ -772,7 +770,6 @@ public final class CodeScanner {
                 mFlashEnabled = false;
             }
             Utils.optimizeParameters(parameters);
-            CameraConfigurationUtils.setBestExposure(parameters, mFlashEnabled);
             camera.setParameters(parameters);
             camera.setDisplayOrientation(orientation);
             synchronized (mInitializeLock) {

@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.1.3'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
     }
@@ -64,7 +64,6 @@ android {
 
 dependencies {
     api 'com.google.zxing:core:3.3.3'
-    api 'com.google.zxing:android-core:3.3.0'
     api 'com.android.support:support-annotations:27.1.1'
 }
 
