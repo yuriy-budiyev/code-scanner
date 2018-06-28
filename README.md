@@ -88,12 +88,12 @@ class MainActivity : AppCompatActivity() {
         // Callbacks
         codeScanner.decodeCallback = DecodeCallback {
             runOnUiThread {
-                Toast.makeText(this, "Scan result: " + it.text, Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Scan result: ${it.text}", Toast.LENGTH_LONG).show()
             }
         }
         codeScanner.errorCallback = ErrorCallback { // or ErrorCallback.SUPPRESS
             runOnUiThread {
-                Toast.makeText(this, "Camera initialization error: " + it.message,
+                Toast.makeText(this, "Camera initialization error: ${it.message}",
                         Toast.LENGTH_LONG).show()
             }
         }
