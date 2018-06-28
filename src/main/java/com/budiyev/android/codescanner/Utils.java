@@ -23,7 +23,6 @@
  */
 package com.budiyev.android.codescanner;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -71,23 +70,22 @@ final class Utils {
     }
 
     public static void configureFpsRange(@NonNull final Camera.Parameters parameters) {
+        final int[] currentFpsRange = new int[2];
+        parameters.getPreviewFpsRange(currentFpsRange);
+        if (currentFpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS &&
+                currentFpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
+            return;
+        }
         final List<int[]> supportedFpsRanges = parameters.getSupportedPreviewFpsRange();
-        if (supportedFpsRanges != null && !supportedFpsRanges.isEmpty()) {
-            int[] suitableFpsRange = null;
-            for (final int[] fpsRange : supportedFpsRanges) {
-                if (fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS &&
-                        fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
-                    suitableFpsRange = fpsRange;
-                    break;
-                }
-            }
-            if (suitableFpsRange != null) {
-                final int[] currentFpsRange = new int[2];
-                parameters.getPreviewFpsRange(currentFpsRange);
-                if (!Arrays.equals(currentFpsRange, suitableFpsRange)) {
-                    parameters.setPreviewFpsRange(suitableFpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX],
-                            suitableFpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
-                }
+        if (supportedFpsRanges == null || supportedFpsRanges.isEmpty()) {
+            return;
+        }
+        for (final int[] fpsRange : supportedFpsRanges) {
+            if (fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS &&
+                    fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
+                parameters.setPreviewFpsRange(fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX],
+                        fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
+                return;
             }
         }
     }
