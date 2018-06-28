@@ -99,7 +99,7 @@ final class ViewFinderView extends View {
         mFrameRatioWidth = ratioWidth;
         mFrameRatioHeight = ratioHeight;
         invalidateFrameRect();
-        if (Utils.isLaidOut(this)) {
+        if (isLaidOut()) {
             invalidate();
         }
     }
@@ -112,7 +112,7 @@ final class ViewFinderView extends View {
     void setFrameAspectRatioWidth(@FloatRange(from = 0, fromInclusive = false) final float ratioWidth) {
         mFrameRatioWidth = ratioWidth;
         invalidateFrameRect();
-        if (Utils.isLaidOut(this)) {
+        if (isLaidOut()) {
             invalidate();
         }
     }
@@ -125,7 +125,7 @@ final class ViewFinderView extends View {
     void setFrameAspectRatioHeight(@FloatRange(from = 0, fromInclusive = false) final float ratioHeight) {
         mFrameRatioHeight = ratioHeight;
         invalidateFrameRect();
-        if (Utils.isLaidOut(this)) {
+        if (isLaidOut()) {
             invalidate();
         }
     }
@@ -137,7 +137,7 @@ final class ViewFinderView extends View {
 
     void setMaskColor(@ColorInt final int color) {
         mMaskPaint.setColor(color);
-        if (Utils.isLaidOut(this)) {
+        if (isLaidOut()) {
             invalidate();
         }
     }
@@ -149,7 +149,7 @@ final class ViewFinderView extends View {
 
     void setFrameColor(@ColorInt final int color) {
         mFramePaint.setColor(color);
-        if (Utils.isLaidOut(this)) {
+        if (isLaidOut()) {
             invalidate();
         }
     }
@@ -161,7 +161,7 @@ final class ViewFinderView extends View {
 
     void setFrameThickness(@Px final int thickness) {
         mFramePaint.setStrokeWidth(thickness);
-        if (Utils.isLaidOut(this)) {
+        if (isLaidOut()) {
             invalidate();
         }
     }
@@ -173,7 +173,7 @@ final class ViewFinderView extends View {
 
     void setFrameCornersSize(@Px final int size) {
         mFrameCornersSize = size;
-        if (Utils.isLaidOut(this)) {
+        if (isLaidOut()) {
             invalidate();
         }
     }
@@ -186,7 +186,7 @@ final class ViewFinderView extends View {
     void setFrameSize(@FloatRange(from = 0.1, to = 1.0) final float size) {
         mFrameSize = size;
         invalidateFrameRect();
-        if (Utils.isLaidOut(this)) {
+        if (isLaidOut()) {
             invalidate();
         }
     }

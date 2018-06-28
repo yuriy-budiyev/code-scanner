@@ -31,6 +31,7 @@ import java.util.Objects;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Process;
@@ -750,6 +751,7 @@ public final class CodeScanner {
             final int imageWidth = imageSize.getX();
             final int imageHeight = imageSize.getY();
             parameters.setPreviewSize(imageWidth, imageHeight);
+            parameters.setPreviewFormat(ImageFormat.NV21);
             final Point previewSize =
                     Utils.getPreviewSize(portrait ? imageHeight : imageWidth, portrait ? imageWidth : imageHeight,
                             mWidth, mHeight);
@@ -769,7 +771,9 @@ public final class CodeScanner {
             if (!flashSupported) {
                 mFlashEnabled = false;
             }
-            Utils.optimizeParameters(parameters);
+            Utils.configureFpsRange(parameters);
+            Utils.configureSceneMode(parameters);
+            Utils.configureVideoStabilization(parameters);
             camera.setParameters(parameters);
             camera.setDisplayOrientation(orientation);
             synchronized (mInitializeLock) {

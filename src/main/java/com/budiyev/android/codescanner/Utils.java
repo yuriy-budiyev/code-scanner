@@ -29,13 +29,9 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.ImageFormat;
 import android.hardware.Camera;
-import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.view.Surface;
-import android.view.View;
 import android.view.WindowManager;
 
 final class Utils {
@@ -47,51 +43,6 @@ final class Utils {
     private static final int MAX_FPS = 30000;
 
     private Utils() {
-    }
-
-    public static void optimizeParameters(@NonNull final Camera.Parameters parameters) {
-        final List<int[]> supportedFpsRanges = parameters.getSupportedPreviewFpsRange();
-        if (supportedFpsRanges != null && !supportedFpsRanges.isEmpty()) {
-            int[] suitableFpsRange = null;
-            for (final int[] fpsRange : supportedFpsRanges) {
-                if (fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS &&
-                        fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
-                    suitableFpsRange = fpsRange;
-                    break;
-                }
-            }
-            if (suitableFpsRange != null) {
-                final int[] currentFpsRange = new int[2];
-                parameters.getPreviewFpsRange(currentFpsRange);
-                if (!Arrays.equals(currentFpsRange, suitableFpsRange)) {
-                    parameters.setPreviewFpsRange(suitableFpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX],
-                            suitableFpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
-                }
-            }
-        }
-        if (!Camera.Parameters.SCENE_MODE_BARCODE.equals(parameters.getSceneMode())) {
-            final List<String> supportedSceneModes = parameters.getSupportedSceneModes();
-            if (supportedSceneModes != null && supportedSceneModes.contains(Camera.Parameters.SCENE_MODE_BARCODE)) {
-                parameters.setSceneMode(Camera.Parameters.SCENE_MODE_BARCODE);
-            }
-        }
-        if (parameters.isVideoStabilizationSupported() && !parameters.getVideoStabilization()) {
-            parameters.setVideoStabilization(true);
-        }
-        parameters.setPreviewFormat(ImageFormat.NV21);
-    }
-
-    @Nullable
-    private static String validateValue(@Nullable final String value, @Nullable final List<String> supported) {
-        if (value == null || supported == null || supported.isEmpty()) {
-            return null;
-        }
-        for (final String v : supported) {
-            if (value.equals(v)) {
-                return value;
-            }
-        }
-        return null;
     }
 
     @NonNull
@@ -117,6 +68,43 @@ final class Utils {
             throw new CodeScannerException("Unable to configure camera preview size");
         }
         return new Point(defaultSize.width, defaultSize.height);
+    }
+
+    public static void configureFpsRange(@NonNull final Camera.Parameters parameters) {
+        final List<int[]> supportedFpsRanges = parameters.getSupportedPreviewFpsRange();
+        if (supportedFpsRanges != null && !supportedFpsRanges.isEmpty()) {
+            int[] suitableFpsRange = null;
+            for (final int[] fpsRange : supportedFpsRanges) {
+                if (fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS &&
+                        fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
+                    suitableFpsRange = fpsRange;
+                    break;
+                }
+            }
+            if (suitableFpsRange != null) {
+                final int[] currentFpsRange = new int[2];
+                parameters.getPreviewFpsRange(currentFpsRange);
+                if (!Arrays.equals(currentFpsRange, suitableFpsRange)) {
+                    parameters.setPreviewFpsRange(suitableFpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX],
+                            suitableFpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
+                }
+            }
+        }
+    }
+
+    public static void configureSceneMode(@NonNull final Camera.Parameters parameters) {
+        if (!Camera.Parameters.SCENE_MODE_BARCODE.equals(parameters.getSceneMode())) {
+            final List<String> supportedSceneModes = parameters.getSupportedSceneModes();
+            if (supportedSceneModes != null && supportedSceneModes.contains(Camera.Parameters.SCENE_MODE_BARCODE)) {
+                parameters.setSceneMode(Camera.Parameters.SCENE_MODE_BARCODE);
+            }
+        }
+    }
+
+    public static void configureVideoStabilization(@NonNull final Camera.Parameters parameters) {
+        if (parameters.isVideoStabilizationSupported() && !parameters.getVideoStabilization()) {
+            parameters.setVideoStabilization(true);
+        }
     }
 
     public static boolean disableAutoFocus(@NonNull final Camera.Parameters parameters) {
@@ -216,14 +204,6 @@ final class Utils {
 
     public static boolean isPortrait(final int orientation) {
         return orientation == 90 || orientation == 270;
-    }
-
-    public static boolean isLaidOut(@NonNull final View view) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            return view.isLaidOut();
-        } else {
-            return view.getWidth() > 0 && view.getHeight() > 0;
-        }
     }
 
     @NonNull
