@@ -130,6 +130,19 @@ final class Utils {
         return false;
     }
 
+    public static void setZoom(@NonNull final Camera.Parameters parameters, final int zoom) {
+        if (parameters.isZoomSupported()) {
+            if (parameters.getZoom() != zoom) {
+                final int maxZoom = parameters.getMaxZoom();
+                if (zoom <= maxZoom) {
+                    parameters.setZoom(zoom);
+                } else {
+                    parameters.setZoom(maxZoom);
+                }
+            }
+        }
+    }
+
     public static boolean setAutoFocusMode(@NonNull final Camera.Parameters parameters,
             final AutoFocusMode autoFocusMode) {
         final List<String> focusModes = parameters.getSupportedFocusModes();

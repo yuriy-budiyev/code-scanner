@@ -115,6 +115,7 @@ public final class CodeScanner {
     private volatile boolean mFlashEnabled = DEFAULT_FLASH_ENABLED;
     private volatile long mSafeAutoFocusInterval = DEFAULT_SAFE_AUTO_FOCUS_INTERVAL;
     private volatile int mCameraId = CAMERA_BACK;
+    private volatile int mZoom = 0;
     private boolean mPreviewActive;
     private boolean mSafeAutoFocusing;
     private boolean mSafeAutoFocusTaskScheduled;
@@ -293,6 +294,38 @@ public final class CodeScanner {
      */
     public void setScanMode(@NonNull final ScanMode scanMode) {
         mScanMode = Objects.requireNonNull(scanMode);
+    }
+
+    /**
+     * Get current zoom value
+     */
+    public int getZoom() {
+        return mZoom;
+    }
+
+    /**
+     * Set current zoom value (between {@code 0} and {@link Camera.Parameters#getMaxZoom()}, if larger,
+     * max zoom value will be set
+     */
+    public void setZoom(final int zoom) {
+        if (zoom < 0) {
+            throw new IllegalArgumentException("Zoom value must be greater than or equal to zero");
+        }
+        synchronized (mInitializeLock) {
+            if (zoom != mZoom) {
+                mZoom = zoom;
+                if (mInitialized) {
+                    final DecoderWrapper decoderWrapper = mDecoderWrapper;
+                    if (decoderWrapper != null) {
+                        final Camera camera = decoderWrapper.getCamera();
+                        final Camera.Parameters parameters = camera.getParameters();
+                        Utils.setZoom(parameters, zoom);
+                        camera.setParameters(parameters);
+                    }
+                }
+            }
+        }
+        mZoom = zoom;
     }
 
     /**
@@ -770,6 +803,10 @@ public final class CodeScanner {
                     flashModes != null && flashModes.contains(Camera.Parameters.FLASH_MODE_TORCH);
             if (!flashSupported) {
                 mFlashEnabled = false;
+            }
+            final int zoom = mZoom;
+            if (zoom != 0) {
+                Utils.setZoom(parameters, zoom);
             }
             Utils.configureFpsRange(parameters);
             Utils.configureSceneMode(parameters);
