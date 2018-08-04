@@ -27,7 +27,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.zxing.BinaryBitmap;
+import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
@@ -43,8 +45,8 @@ final class DecodeTask {
     private final boolean mReverseHorizontal;
 
     public DecodeTask(@NonNull final byte[] image, @NonNull final Point imageSize, @NonNull final Point previewSize,
-            @NonNull final Point viewSize, @NonNull final Rect viewFrameRect, final int orientation,
-            final boolean reverseHorizontal) {
+                      @NonNull final Point viewSize, @NonNull final Rect viewFrameRect, final int orientation,
+                      final boolean reverseHorizontal) {
         mImage = image;
         mImageSize = imageSize;
         mPreviewSize = previewSize;
@@ -74,15 +76,13 @@ final class DecodeTask {
             return null;
         }
         PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.getLeft(), frameRect.getTop(),
-                        frameWidth, frameHeight, mReverseHorizontal)
+                frameWidth, frameHeight, mReverseHorizontal);
         BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
         Result rawResult = null;
         try {
             rawResult = reader.decodeWithState(bitmap);
-        } catch (ReaderException re) {
+        } catch (ReaderException | NullPointerException | ArrayIndexOutOfBoundsException re) {
             // continue
-        } catch (NullPointerException npe) {
-        } catch (ArrayIndexOutOfBoundsException aoe) {
         } finally {
             reader.reset();
         }
