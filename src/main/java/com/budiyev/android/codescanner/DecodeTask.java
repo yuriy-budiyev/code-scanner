@@ -73,8 +73,30 @@ final class DecodeTask {
         if (frameWidth < 1 || frameHeight < 1) {
             return null;
         }
-        return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(
-                new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.getLeft(), frameRect.getTop(),
-                        frameWidth, frameHeight, mReverseHorizontal))));
+        PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.getLeft(), frameRect.getTop(),
+                        frameWidth, frameHeight, mReverseHorizontal)
+        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
+        Result rawResult = null;
+        try {
+            rawResult = reader.decodeWithState(bitmap);
+        } catch (ReaderException re) {
+            // continue
+        } catch (NullPointerException npe) {
+        } catch (ArrayIndexOutOfBoundsException aoe) {
+        } finally {
+            reader.reset();
+        }
+        if (rawResult == null) {
+            LuminanceSource invertedSource = source.invert();
+            bitmap = new BinaryBitmap(new HybridBinarizer(invertedSource));
+            try {
+                rawResult = reader.decodeWithState(bitmap);
+            } catch (NotFoundException e) {
+                // continue
+            } finally {
+                reader.reset();
+            }
+        }
+        return rawResult;
     }
 }
