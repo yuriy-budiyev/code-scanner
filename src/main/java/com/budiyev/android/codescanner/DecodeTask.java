@@ -26,13 +26,10 @@ package com.budiyev.android.codescanner;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
-import com.google.zxing.common.HybridBinarizer;
 
 final class DecodeTask {
     private final byte[] mImage;
@@ -74,18 +71,8 @@ final class DecodeTask {
         if (frameWidth < 1 || frameHeight < 1) {
             return null;
         }
-        final LuminanceSource luminanceSource =
+        return Utils.decodeLuminanceSource(reader,
                 new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.getLeft(), frameRect.getTop(),
-                        frameWidth, frameHeight, mReverseHorizontal);
-        try {
-            final Result result = reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource)));
-            if (result != null) {
-                return result;
-            } else {
-                return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource.invert())));
-            }
-        } finally {
-            reader.reset();
-        }
+                        frameWidth, frameHeight, mReverseHorizontal));
     }
 }

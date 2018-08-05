@@ -30,8 +30,16 @@ import java.util.List;
 import android.content.Context;
 import android.hardware.Camera;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.Surface;
 import android.view.WindowManager;
+
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.LuminanceSource;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.ReaderException;
+import com.google.zxing.Result;
+import com.google.zxing.common.HybridBinarizer;
 
 final class Utils {
     private static final float MIN_DISTORTION = 0.3f;
@@ -282,6 +290,21 @@ final class Utils {
             }
         }
         return output;
+    }
+
+    @Nullable
+    public static Result decodeLuminanceSource(@NonNull final MultiFormatReader reader,
+            @NonNull final LuminanceSource luminanceSource) throws ReaderException {
+        try {
+            final Result result = reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource)));
+            if (result != null) {
+                return result;
+            } else {
+                return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource.invert())));
+            }
+        } finally {
+            reader.reset();
+        }
     }
 
     public static final class SuppressErrorCallback implements ErrorCallback {

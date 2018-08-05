@@ -36,7 +36,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.BinaryBitmap;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatReader;
@@ -47,7 +46,6 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-import com.google.zxing.common.HybridBinarizer;
 
 /**
  * Utils for decoding and encoding bar codes
@@ -121,8 +119,7 @@ public final class BarcodeUtils {
         Objects.requireNonNull(pixels);
         final MultiFormatReader reader = createReader(hints);
         try {
-            return reader.decodeWithState(
-                    new BinaryBitmap(new HybridBinarizer(new RGBLuminanceSource(width, height, pixels))));
+            return Utils.decodeLuminanceSource(reader, new RGBLuminanceSource(width, height, pixels));
         } catch (final ReaderException e) {
             return null;
         }
@@ -171,9 +168,9 @@ public final class BarcodeUtils {
         }
         final MultiFormatReader reader = createReader(hints);
         try {
-            return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(
+            return Utils.decodeLuminanceSource(reader,
                     new PlanarYUVLuminanceSource(rotatedPixels, rotatedWidth, rotatedHeight, 0, 0, rotatedWidth,
-                            rotatedHeight, reverseHorizontal))));
+                            rotatedHeight, reverseHorizontal));
         } catch (final ReaderException e) {
             return null;
         }
