@@ -29,7 +29,6 @@ import android.support.annotation.Nullable;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.LuminanceSource;
 import com.google.zxing.MultiFormatReader;
-import com.google.zxing.NotFoundException;
 import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
@@ -45,8 +44,8 @@ final class DecodeTask {
     private final boolean mReverseHorizontal;
 
     public DecodeTask(@NonNull final byte[] image, @NonNull final Point imageSize, @NonNull final Point previewSize,
-                      @NonNull final Point viewSize, @NonNull final Rect viewFrameRect, final int orientation,
-                      final boolean reverseHorizontal) {
+            @NonNull final Point viewSize, @NonNull final Rect viewFrameRect, final int orientation,
+            final boolean reverseHorizontal) {
         mImage = image;
         mImageSize = imageSize;
         mPreviewSize = previewSize;
@@ -75,28 +74,18 @@ final class DecodeTask {
         if (frameWidth < 1 || frameHeight < 1) {
             return null;
         }
-        PlanarYUVLuminanceSource source = new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.getLeft(), frameRect.getTop(),
-                frameWidth, frameHeight, mReverseHorizontal);
-        BinaryBitmap bitmap = new BinaryBitmap(new HybridBinarizer(source));
-        Result rawResult = null;
+        final LuminanceSource luminanceSource =
+                new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.getLeft(), frameRect.getTop(),
+                        frameWidth, frameHeight, mReverseHorizontal);
         try {
-            rawResult = reader.decodeWithState(bitmap);
-        } catch (ReaderException | NullPointerException | ArrayIndexOutOfBoundsException re) {
-            // continue
+            final Result result = reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource)));
+            if (result != null) {
+                return result;
+            } else {
+                return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource.invert())));
+            }
         } finally {
             reader.reset();
         }
-        if (rawResult == null) {
-            LuminanceSource invertedSource = source.invert();
-            bitmap = new BinaryBitmap(new HybridBinarizer(invertedSource));
-            try {
-                rawResult = reader.decodeWithState(bitmap);
-            } catch (NotFoundException e) {
-                // continue
-            } finally {
-                reader.reset();
-            }
-        }
-        return rawResult;
     }
 }
