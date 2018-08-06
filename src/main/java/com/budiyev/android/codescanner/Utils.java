@@ -296,17 +296,14 @@ final class Utils {
     public static Result decodeLuminanceSource(@NonNull final MultiFormatReader reader,
             @NonNull final LuminanceSource luminanceSource) throws ReaderException {
         try {
-            final Result result = reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource)));
-            if (result != null) {
-                return result;
-            } else {
-                return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource.invert())));
-            }
+            return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource)));
+        } catch (NotFoundException e) {
+            return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource.invert())));
         } finally {
             reader.reset();
         }
     }
-
+    
     public static final class SuppressErrorCallback implements ErrorCallback {
         @Override
         public void onError(@NonNull final Exception error) {
