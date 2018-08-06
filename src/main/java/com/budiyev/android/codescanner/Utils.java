@@ -298,7 +298,7 @@ final class Utils {
             @NonNull final LuminanceSource luminanceSource) throws ReaderException {
         try {
             return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource)));
-        } catch (NotFoundException e) {
+        } catch (final NotFoundException e) {
             return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource.invert())));
         } finally {
             reader.reset();
