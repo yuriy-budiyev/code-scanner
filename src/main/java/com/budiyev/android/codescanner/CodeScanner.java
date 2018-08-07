@@ -162,7 +162,92 @@ public final class CodeScanner {
         this(context, view);
         mCameraId = cameraId;
     }
+private boolean mtouchAndFocus;
+    private long mLastClickTime = 0;
 
+    /**
+     * Whether to enable or disable manual focus if it's supported, {@code false} by default
+     * If enebled will disable autoFocus
+     *
+     * @param boolean touchFocusEnabled
+     * @see CodeScannerView
+     */
+    public void setTouchFocusEnabled(boolean touchFocusEnabled) {
+        if (touchFocusEnabled == mtouchAndFocus)
+            return;
+        mtouchAndFocus = touchFocusEnabled;
+        enableTouchAndFocus(touchFocusEnabled);
+    }
+
+    //Ensure that the focusArea is inside mScannerView
+    private int clamp(int touchCoordinateInCameraReper, int focusAreaSize) {
+        int result;
+        if (Math.abs(touchCoordinateInCameraReper) + focusAreaSize / 2 > 1000) {
+            if (touchCoordinateInCameraReper > 0) {
+                result = 1000 - focusAreaSize / 2;
+            } else {
+                result = -1000 + focusAreaSize / 2;
+            }
+        } else {
+            result = touchCoordinateInCameraReper - focusAreaSize / 2;
+        }
+        return result;
+    }
+
+    //Calculate the Area to Focus
+    private android.graphics.Rect calculateFocusArea(float x, float y) {
+        int FOCUS_AREA_SIZE = 300;
+        int left = clamp(Float.valueOf((x / mScannerView.getWidth()) * 2000 - 1000).intValue(), FOCUS_AREA_SIZE);
+        int top = clamp(Float.valueOf((y / mScannerView.getHeight()) * 2000 - 1000).intValue(), FOCUS_AREA_SIZE);
+
+        return new android.graphics.Rect(left, top, left + FOCUS_AREA_SIZE, top + FOCUS_AREA_SIZE);
+    }
+
+    //Function that actual try to perform focus
+    @SuppressLint("ClickableViewAccessibility")
+    private void enableTouchAndFocus(boolean enabled) {
+
+        //if i'm going to enable TouchAndFocus i must disable autoFocus
+        if (enabled) {
+            setAutoFocusEnabled(false);
+            mScannerView.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    if (mAutoFocusEnabled)
+                        return false;
+                    // mis-clicking prevention, using threshold of 1000 ms
+                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                        return false;
+                    }
+                    mLastClickTime = SystemClock.elapsedRealtime();
+
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        final Camera mCamera = mDecoderWrapper.getCamera();
+                        Camera.Parameters parameters = mCamera.getParameters();
+                        // return the area to focus
+                        android.graphics.Rect rect = calculateFocusArea(event.getX(), event.getY());
+                        List<Camera.Area> meteringAreas = new ArrayList<>();
+                        meteringAreas.add(new Camera.Area(rect, 1000));
+                        //true if Metering is supported
+                        if (parameters.getMaxNumMeteringAreas() > 0)
+                            parameters.setMeteringAreas(meteringAreas);
+                        //true if Focus is supported
+                        if (parameters.getMaxNumFocusAreas() > 0)
+                            parameters.setFocusAreas(meteringAreas);
+                        try {
+                            mCamera.setParameters(parameters);
+                        } catch (RuntimeException ex) {
+                            ex.printStackTrace();
+                            Log.e("CodeScanner", "onTouch: " + "setParameters failed");
+                        }
+                        //without line below focus won't work
+                        mCamera.autoFocus(mSafeAutoFocusCallback);
+                    }
+                    return true;
+                }
+            });
+        } else mScannerView.setOnTouchListener(null);
+    }
     /**
      * Get current camera id, or {@link #CAMERA_BACK} or {@link #CAMERA_FRONT}
      *
