@@ -123,7 +123,8 @@ public final class CodeScanner {
     private int mSafeAutoFocusAttemptsCount;
     private int mViewWidth;
     private int mViewHeight;
-
+    private boolean mtouchAndFocus;
+    private long mLastClickTime = 0;
     /**
      * CodeScanner, associated with the first back-facing camera on the device
      *
@@ -162,9 +163,7 @@ public final class CodeScanner {
         this(context, view);
         mCameraId = cameraId;
     }
-private boolean mtouchAndFocus;
-    private long mLastClickTime = 0;
-
+    
     /**
      * Whether to enable or disable manual focus if it's supported, {@code false} by default
      * If enebled will disable autoFocus
