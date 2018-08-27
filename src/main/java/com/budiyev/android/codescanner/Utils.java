@@ -30,8 +30,17 @@ import java.util.List;
 import android.content.Context;
 import android.hardware.Camera;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.Surface;
 import android.view.WindowManager;
+
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.LuminanceSource;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
+import com.google.zxing.ReaderException;
+import com.google.zxing.Result;
+import com.google.zxing.common.HybridBinarizer;
 
 final class Utils {
     private static final float MIN_DISTORTION = 0.3f;
@@ -104,6 +113,44 @@ final class Utils {
             parameters.setVideoStabilization(true);
         }
     }
+
+/*    private int clamp(final int touchCoordinateInCameraReper, final int focusAreaSize) {
+        final int result;
+        if (Math.abs(touchCoordinateInCameraReper) + focusAreaSize / 2 > 1000) {
+            if (touchCoordinateInCameraReper > 0) {
+                result = 1000 - focusAreaSize / 2;
+            } else {
+                result = -1000 + focusAreaSize / 2;
+            }
+        } else {
+            result = touchCoordinateInCameraReper - focusAreaSize / 2;
+        }
+        return result;
+    }
+
+
+    private android.graphics.Rect calculateFocusArea(final float x, final float y) {
+        final int FOCUS_AREA_SIZE = 300;
+        final int left = clamp(Float.valueOf((x / mScannerView.getWidth()) * 2000 - 1000).intValue(), FOCUS_AREA_SIZE);
+        final int top = clamp(Float.valueOf((y / mScannerView.getHeight()) * 2000 - 1000).intValue(), FOCUS_AREA_SIZE);
+
+        return new android.graphics.Rect(left, top, left + FOCUS_AREA_SIZE, top + FOCUS_AREA_SIZE);
+    }
+
+    public static void configureFocusAreas(@NonNull final Camera.Parameters parameters) {
+        // return the area to focus
+        final android.graphics.Rect rect = calculateFocusArea(event.getX(), event.getY());
+        final List<Camera.Area> meteringAreas = new ArrayList<>();
+        meteringAreas.add(new Camera.Area(rect, 1000));
+        //true if Metering is supported
+        if (parameters.getMaxNumMeteringAreas() > 0) {
+            parameters.setMeteringAreas(meteringAreas);
+        }
+        //true if Focus is supported
+        if (parameters.getMaxNumFocusAreas() > 0) {
+            parameters.setFocusAreas(meteringAreas);
+        }
+    }*/
 
     public static boolean disableAutoFocus(@NonNull final Camera.Parameters parameters) {
         final List<String> focusModes = parameters.getSupportedFocusModes();
@@ -282,6 +329,18 @@ final class Utils {
             }
         }
         return output;
+    }
+
+    @Nullable
+    public static Result decodeLuminanceSource(@NonNull final MultiFormatReader reader,
+            @NonNull final LuminanceSource luminanceSource) throws ReaderException {
+        try {
+            return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource)));
+        } catch (final NotFoundException e) {
+            return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource.invert())));
+        } finally {
+            reader.reset();
+        }
     }
 
     public static final class SuppressErrorCallback implements ErrorCallback {

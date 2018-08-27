@@ -23,22 +23,28 @@
  */
 package com.budiyev.android.codescanner;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.os.Handler;
 import android.os.Process;
+import android.os.SystemClock;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
+import android.view.View;
 
 import com.google.zxing.BarcodeFormat;
 
@@ -125,50 +131,12 @@ public final class CodeScanner {
     private int mViewHeight;
     private boolean mtouchAndFocus;
     private long mLastClickTime = 0;
-    /**
-     * CodeScanner, associated with the first back-facing camera on the device
-     *
-     * @param context Context
-     * @param view    A view to display the preview
-     * @see CodeScannerView
-     */
-    @MainThread
-    public CodeScanner(@NonNull final Context context, @NonNull final CodeScannerView view) {
-        mContext = context;
-        mScannerView = view;
-        mSurfaceHolder = view.getPreviewView().getHolder();
-        mMainThreadHandler = new Handler();
-        mSurfaceCallback = new SurfaceCallback();
-        mPreviewCallback = new PreviewCallback();
-        mSafeAutoFocusCallback = new SafeAutoFocusCallback();
-        mSafeAutoFocusTask = new SafeAutoFocusTask();
-        mStopPreviewTask = new StopPreviewTask();
-        mDecoderStateListener = new DecoderStateListener();
-        mScannerView.setCodeScanner(this);
-        mScannerView.setLayoutListener(new ScannerLayoutListener());
-    }
 
-    /**
-     * CodeScanner, associated with particular hardware camera
-     *
-     * @param context  Context
-     * @param view     A view to display the preview
-     * @param cameraId Camera id (between {@code 0} and
-     *                 {@link Camera#getNumberOfCameras()} - {@code 1})
-     *                 or {@link #CAMERA_BACK} or {@link #CAMERA_FRONT}
-     * @see CodeScannerView
-     */
-    @MainThread
-    public CodeScanner(@NonNull final Context context, @NonNull final CodeScannerView view, final int cameraId) {
-        this(context, view);
-        mCameraId = cameraId;
-    }
-    
     /**
      * Whether to enable or disable manual focus if it's supported, {@code false} by default
      * If enebled will disable autoFocus
      *
-     * @param boolean touchFocusEnabled
+     * @param touchFocusEnabled
      * @see CodeScannerView
      */
     public void setTouchFocusEnabled(boolean touchFocusEnabled) {
@@ -247,6 +215,46 @@ public final class CodeScanner {
             });
         } else mScannerView.setOnTouchListener(null);
     }
+
+    /**
+     * CodeScanner, associated with the first back-facing camera on the device
+     *
+     * @param context Context
+     * @param view    A view to display the preview
+     * @see CodeScannerView
+     */
+    @MainThread
+    public CodeScanner(@NonNull final Context context, @NonNull final CodeScannerView view) {
+        mContext = context;
+        mScannerView = view;
+        mSurfaceHolder = view.getPreviewView().getHolder();
+        mMainThreadHandler = new Handler();
+        mSurfaceCallback = new SurfaceCallback();
+        mPreviewCallback = new PreviewCallback();
+        mSafeAutoFocusCallback = new SafeAutoFocusCallback();
+        mSafeAutoFocusTask = new SafeAutoFocusTask();
+        mStopPreviewTask = new StopPreviewTask();
+        mDecoderStateListener = new DecoderStateListener();
+        mScannerView.setCodeScanner(this);
+        mScannerView.setLayoutListener(new ScannerLayoutListener());
+    }
+
+    /**
+     * CodeScanner, associated with particular hardware camera
+     *
+     * @param context  Context
+     * @param view     A view to display the preview
+     * @param cameraId Camera id (between {@code 0} and
+     *                 {@link Camera#getNumberOfCameras()} - {@code 1})
+     *                 or {@link #CAMERA_BACK} or {@link #CAMERA_FRONT}
+     * @see CodeScannerView
+     */
+    @MainThread
+    public CodeScanner(@NonNull final Context context, @NonNull final CodeScannerView view, final int cameraId) {
+        this(context, view);
+        mCameraId = cameraId;
+    }
+
     /**
      * Get current camera id, or {@link #CAMERA_BACK} or {@link #CAMERA_FRONT}
      *
