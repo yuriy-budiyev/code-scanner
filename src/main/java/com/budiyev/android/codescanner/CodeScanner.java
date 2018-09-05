@@ -88,6 +88,7 @@ public final class CodeScanner {
     private static final ScanMode DEFAULT_SCAN_MODE = ScanMode.SINGLE;
     private static final AutoFocusMode DEFAULT_AUTO_FOCUS_MODE = AutoFocusMode.SAFE;
     private static final boolean DEFAULT_AUTO_FOCUS_ENABLED = true;
+    private static final boolean DEFAULT_TOUCH_FOCUS_ENABLED = true;
     private static final boolean DEFAULT_FLASH_ENABLED = false;
     private static final long DEFAULT_SAFE_AUTO_FOCUS_INTERVAL = 2000L;
     private static final int SAFE_AUTO_FOCUS_ATTEMPTS_THRESHOLD = 2;
@@ -112,6 +113,7 @@ public final class CodeScanner {
     private volatile boolean mInitialized;
     private volatile boolean mStoppingPreview;
     private volatile boolean mAutoFocusEnabled = DEFAULT_AUTO_FOCUS_ENABLED;
+    private volatile boolean mTouchFocusEnabled = DEFAULT_TOUCH_FOCUS_ENABLED;
     private volatile boolean mFlashEnabled = DEFAULT_FLASH_ENABLED;
     private volatile long mSafeAutoFocusInterval = DEFAULT_SAFE_AUTO_FOCUS_INTERVAL;
     private volatile int mCameraId = CAMERA_BACK;
@@ -162,79 +164,6 @@ public final class CodeScanner {
         this(context, view);
         mCameraId = cameraId;
     }
-
-/*    private boolean mtouchAndFocus;
-    private long mLastClickTime = 0;
-
-    *//**
-     * Whether to enable or disable manual focus if it's supported, {@code false} by default
-     * If enebled will disable autoFocus
-     *
-     * @param boolean touchFocusEnabled
-     * @see CodeScannerView
-     *//*
-    public void setTouchFocusEnabled(final boolean touchFocusEnabled) {
-        if (touchFocusEnabled == mtouchAndFocus) {
-            return;
-        }
-        mtouchAndFocus = touchFocusEnabled;
-        enableTouchAndFocus(touchFocusEnabled);
-    }
-
-    //Ensure that the focusArea is inside mScannerView
-
-    //Calculate the Area to Focus
-
-
-    //Function that actual try to perform focus
-    private void enableTouchAndFocus(final boolean enabled) {
-
-        //if i'm going to enable TouchAndFocus i must disable autoFocus
-        if (enabled) {
-            setAutoFocusEnabled(false);
-            mScannerView.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(final View v, final MotionEvent event) {
-                    if (mAutoFocusEnabled) {
-                        return false;
-                    }
-                    // mis-clicking prevention, using threshold of 1000 ms
-                    if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
-                        return false;
-                    }
-                    mLastClickTime = SystemClock.elapsedRealtime();
-
-                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                        final Camera mCamera = mDecoderWrapper.getCamera();
-                        final Camera.Parameters parameters = mCamera.getParameters();
-                        // return the area to focus
-                        final android.graphics.Rect rect = calculateFocusArea(event.getX(), event.getY());
-                        final List<Camera.Area> meteringAreas = new ArrayList<>();
-                        meteringAreas.add(new Camera.Area(rect, 1000));
-                        //true if Metering is supported
-                        if (parameters.getMaxNumMeteringAreas() > 0) {
-                            parameters.setMeteringAreas(meteringAreas);
-                        }
-                        //true if Focus is supported
-                        if (parameters.getMaxNumFocusAreas() > 0) {
-                            parameters.setFocusAreas(meteringAreas);
-                        }
-                        try {
-                            mCamera.setParameters(parameters);
-                        } catch (final RuntimeException ex) {
-                            ex.printStackTrace();
-                            Log.e("CodeScanner", "onTouch: " + "setParameters failed");
-                        }
-                        //without line below focus won't work
-                        mCamera.autoFocus(mSafeAutoFocusCallback);
-                    }
-                    return true;
-                }
-            });
-        } else {
-            mScannerView.setOnTouchListener(null);
-        }
-    }*/
 
     /**
      * Get current camera id, or {@link #CAMERA_BACK} or {@link #CAMERA_FRONT}
@@ -402,7 +331,7 @@ public final class CodeScanner {
     }
 
     /**
-     * Whether if auto focus is currently enabled
+     * Auto focus is currently enabled or not
      *
      * @see #setAutoFocusEnabled
      */
@@ -411,7 +340,7 @@ public final class CodeScanner {
     }
 
     /**
-     * Whether to enable or disable auto focus if it's supported, {@code true} by default
+     * Enable or disable auto focus if it's supported, {@code true} by default
      */
     @MainThread
     public void setAutoFocusEnabled(final boolean autoFocusEnabled) {
@@ -462,14 +391,28 @@ public final class CodeScanner {
     }
 
     /**
-     * Whether if flash light is currently enabled
+     * Touch focus is currently enabled or not
+     */
+    public boolean isTouchFocusEnabled() {
+        return mTouchFocusEnabled;
+    }
+
+    /**
+     * Enable or disable touch focus
+     */
+    public void setTouchFocusEnabled(final boolean touchFocusEnabled) {
+        mTouchFocusEnabled = touchFocusEnabled;
+    }
+
+    /**
+     * Flash light is currently enabled or not
      */
     public boolean isFlashEnabled() {
         return mFlashEnabled;
     }
 
     /**
-     * Whether to enable or disable flash light if it's supported, {@code false} by default
+     * Enable or disable flash light if it's supported, {@code false} by default
      */
     @MainThread
     public void setFlashEnabled(final boolean flashEnabled) {
@@ -486,7 +429,7 @@ public final class CodeScanner {
     }
 
     /**
-     * Whether if preview is active
+     * Preview is active or not
      */
     public boolean isPreviewActive() {
         return mPreviewActive;
