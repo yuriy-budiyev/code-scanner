@@ -23,6 +23,7 @@
  */
 package com.budiyev.android.codescanner;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
@@ -37,6 +38,7 @@ import android.support.annotation.RequiresApi;
 import android.support.annotation.StyleRes;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,6 +64,7 @@ public final class CodeScannerView extends ViewGroup {
     private static final float DEFAULT_FRAME_CORNER_SIZE_DP = 50f;
     private static final float DEFAULT_FRAME_SIZE = 0.75f;
     private static final float BUTTON_SIZE_DP = 56f;
+    private static final float FOCUS_AREA_SIZE_DP = 20f;
     private SurfaceView mPreviewView;
     private ViewFinderView mViewFinderView;
     private ImageView mAutoFocusButton;
@@ -72,6 +75,7 @@ public final class CodeScannerView extends ViewGroup {
     private int mButtonSize;
     private int mAutoFocusButtonColor;
     private int mFlashButtonColor;
+    private int mFocusAreaSize;
 
     /**
      * A view to display code scanner preview
@@ -124,6 +128,7 @@ public final class CodeScannerView extends ViewGroup {
         mViewFinderView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         final DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         mButtonSize = Math.round(displayMetrics.density * BUTTON_SIZE_DP);
+        mFocusAreaSize = Math.round(displayMetrics.density * FOCUS_AREA_SIZE_DP);
         mAutoFocusButton = new ImageView(context);
         mAutoFocusButton.setLayoutParams(new LayoutParams(mButtonSize, mButtonSize));
         mAutoFocusButton.setScaleType(ImageView.ScaleType.CENTER);
@@ -215,6 +220,22 @@ public final class CodeScannerView extends ViewGroup {
         if (listener != null) {
             listener.onLayout(width, height);
         }
+    }
+
+    @Override
+    @SuppressLint("ClickableViewAccessibility")
+    public boolean onTouchEvent(@NonNull MotionEvent event) {
+        final CodeScanner codeScanner = mCodeScanner;
+        final Rect frameRect = getFrameRect();
+        final int x = (int) event.getX();
+        final int y = (int) event.getY();
+        if (codeScanner != null && frameRect != null && codeScanner.isTouchFocusEnabled() &&
+                event.getAction() == MotionEvent.ACTION_UP && frameRect.isPointInside(x, y)) {
+            final int areaSize = mFocusAreaSize;
+            codeScanner.performTouchFocus(new Rect(x - areaSize, y - areaSize, x + areaSize, y + areaSize));
+            return true;
+        }
+        return super.onTouchEvent(event);
     }
 
     /**

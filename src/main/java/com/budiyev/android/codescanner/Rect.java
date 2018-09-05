@@ -60,6 +60,10 @@ final class Rect {
         return mBottom - mTop;
     }
 
+    public boolean isPointInside(final int x, final int y) {
+        return mLeft < x && mTop < y && mRight > x && mBottom > y;
+    }
+
     @Override
     public int hashCode() {
         return 31 * (31 * (31 * mLeft + mTop) + mRight) + mBottom;

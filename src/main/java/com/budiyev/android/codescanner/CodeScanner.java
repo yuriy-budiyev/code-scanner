@@ -113,11 +113,11 @@ public final class CodeScanner {
     private volatile boolean mInitialized;
     private volatile boolean mStoppingPreview;
     private volatile boolean mAutoFocusEnabled = DEFAULT_AUTO_FOCUS_ENABLED;
-    private volatile boolean mTouchFocusEnabled = DEFAULT_TOUCH_FOCUS_ENABLED;
     private volatile boolean mFlashEnabled = DEFAULT_FLASH_ENABLED;
     private volatile long mSafeAutoFocusInterval = DEFAULT_SAFE_AUTO_FOCUS_INTERVAL;
     private volatile int mCameraId = CAMERA_BACK;
     private volatile int mZoom = 0;
+    private boolean mTouchFocusEnabled = DEFAULT_TOUCH_FOCUS_ENABLED;
     private boolean mPreviewActive;
     private boolean mSafeAutoFocusing;
     private boolean mSafeAutoFocusTaskScheduled;
@@ -478,6 +478,24 @@ public final class CodeScanner {
         }
     }
 
+    void performTouchFocus(final Rect viewFocusArea) {
+        try {
+            final DecoderWrapper decoderWrapper = mDecoderWrapper;
+            if (mPreviewActive && decoderWrapper != null && decoderWrapper.isAutoFocusSupported()) {
+                final Point imageSize = decoderWrapper.getImageSize();
+                final Rect imageArea = Utils.getImageFrameRect(imageSize.getX(), imageSize.getY(), viewFocusArea,
+                        decoderWrapper.getPreviewSize(), decoderWrapper.getViewSize());
+                final Camera camera = decoderWrapper.getCamera();
+                camera.cancelAutoFocus();
+                final Camera.Parameters parameters = camera.getParameters();
+                Utils.configureFocusArea(imageArea, parameters);
+                camera.setParameters(parameters);
+                safeAutoFocusCamera();
+            }
+        } catch (final Exception ignored) {
+        }
+    }
+
     private void initialize() {
         initialize(mScannerView.getWidth(), mScannerView.getHeight());
     }
@@ -528,12 +546,13 @@ public final class CodeScanner {
             final DecoderWrapper decoderWrapper = mDecoderWrapper;
             if (decoderWrapper != null) {
                 final Camera camera = decoderWrapper.getCamera();
+                final Camera.Parameters parameters = camera.getParameters();
                 if (!internal && decoderWrapper.isFlashSupported() && mFlashEnabled) {
-                    final Camera.Parameters parameters = camera.getParameters();
-                    if (parameters != null && Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_OFF)) {
-                        camera.setParameters(parameters);
-                    }
+                    Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_OFF);
                 }
+                camera.cancelAutoFocus();
+                Utils.clearFocusArea(parameters);
+                camera.setParameters(parameters);
                 camera.setPreviewCallback(null);
                 camera.stopPreview();
             }

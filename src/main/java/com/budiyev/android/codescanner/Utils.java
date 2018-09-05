@@ -23,6 +23,7 @@
  */
 package com.budiyev.android.codescanner;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -112,6 +113,19 @@ final class Utils {
         if (parameters.isVideoStabilizationSupported() && !parameters.getVideoStabilization()) {
             parameters.setVideoStabilization(true);
         }
+    }
+
+    public static void configureFocusArea(@NonNull final Rect area, @NonNull final Camera.Parameters parameters) {
+        final List<Camera.Area> areas = new ArrayList<>(1);
+        areas.add(new Camera.Area(
+                new android.graphics.Rect(area.getLeft(), area.getTop(), area.getRight(), area.getBottom()), 1000));
+        parameters.setFocusAreas(areas);
+        parameters.setMeteringAreas(areas);
+    }
+
+    public static void clearFocusArea(@NonNull final Camera.Parameters parameters) {
+        parameters.setFocusAreas(null);
+        parameters.setMeteringAreas(null);
     }
 
 /*    private int clamp(final int touchCoordinateInCameraReper, final int focusAreaSize) {
