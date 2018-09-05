@@ -119,52 +119,18 @@ final class Utils {
         final List<Camera.Area> areas = new ArrayList<>(1);
         areas.add(new Camera.Area(
                 new android.graphics.Rect(area.getLeft(), area.getTop(), area.getRight(), area.getBottom()), 1000));
-        parameters.setFocusAreas(areas);
-        parameters.setMeteringAreas(areas);
+        if (parameters.getMaxNumFocusAreas() > 0) {
+            parameters.setFocusAreas(areas);
+        }
+        if (parameters.getMaxNumMeteringAreas() > 0) {
+            parameters.setMeteringAreas(areas);
+        }
     }
 
     public static void clearFocusArea(@NonNull final Camera.Parameters parameters) {
         parameters.setFocusAreas(null);
         parameters.setMeteringAreas(null);
     }
-
-/*    private int clamp(final int touchCoordinateInCameraReper, final int focusAreaSize) {
-        final int result;
-        if (Math.abs(touchCoordinateInCameraReper) + focusAreaSize / 2 > 1000) {
-            if (touchCoordinateInCameraReper > 0) {
-                result = 1000 - focusAreaSize / 2;
-            } else {
-                result = -1000 + focusAreaSize / 2;
-            }
-        } else {
-            result = touchCoordinateInCameraReper - focusAreaSize / 2;
-        }
-        return result;
-    }
-
-
-    private android.graphics.Rect calculateFocusArea(final float x, final float y) {
-        final int FOCUS_AREA_SIZE = 300;
-        final int left = clamp(Float.valueOf((x / mScannerView.getWidth()) * 2000 - 1000).intValue(), FOCUS_AREA_SIZE);
-        final int top = clamp(Float.valueOf((y / mScannerView.getHeight()) * 2000 - 1000).intValue(), FOCUS_AREA_SIZE);
-
-        return new android.graphics.Rect(left, top, left + FOCUS_AREA_SIZE, top + FOCUS_AREA_SIZE);
-    }
-
-    public static void configureFocusAreas(@NonNull final Camera.Parameters parameters) {
-        // return the area to focus
-        final android.graphics.Rect rect = calculateFocusArea(event.getX(), event.getY());
-        final List<Camera.Area> meteringAreas = new ArrayList<>();
-        meteringAreas.add(new Camera.Area(rect, 1000));
-        //true if Metering is supported
-        if (parameters.getMaxNumMeteringAreas() > 0) {
-            parameters.setMeteringAreas(meteringAreas);
-        }
-        //true if Focus is supported
-        if (parameters.getMaxNumFocusAreas() > 0) {
-            parameters.setFocusAreas(meteringAreas);
-        }
-    }*/
 
     public static boolean disableAutoFocus(@NonNull final Camera.Parameters parameters) {
         final List<String> focusModes = parameters.getSupportedFocusModes();
