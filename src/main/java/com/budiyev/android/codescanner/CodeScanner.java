@@ -99,6 +99,7 @@ public final class CodeScanner {
     private final SurfaceHolder mSurfaceHolder;
     private final SurfaceHolder.Callback mSurfaceCallback;
     private final Camera.PreviewCallback mPreviewCallback;
+    private final Camera.AutoFocusCallback mTouchFocusCallback;
     private final Camera.AutoFocusCallback mSafeAutoFocusCallback;
     private final Runnable mSafeAutoFocusTask;
     private final Runnable mStopPreviewTask;
@@ -120,6 +121,7 @@ public final class CodeScanner {
     private boolean mTouchFocusEnabled = DEFAULT_TOUCH_FOCUS_ENABLED;
     private boolean mPreviewActive;
     private boolean mSafeAutoFocusing;
+    private boolean mTouchFocusing;
     private boolean mSafeAutoFocusTaskScheduled;
     private boolean mInitializationRequested;
     private int mSafeAutoFocusAttemptsCount;
@@ -141,6 +143,7 @@ public final class CodeScanner {
         mMainThreadHandler = new Handler();
         mSurfaceCallback = new SurfaceCallback();
         mPreviewCallback = new PreviewCallback();
+        mTouchFocusCallback = new TouchFocusCallback();
         mSafeAutoFocusCallback = new SafeAutoFocusCallback();
         mSafeAutoFocusTask = new SafeAutoFocusTask();
         mStopPreviewTask = new StopPreviewTask();
@@ -479,20 +482,24 @@ public final class CodeScanner {
     }
 
     void performTouchFocus(final Rect viewFocusArea) {
-        try {
-            final DecoderWrapper decoderWrapper = mDecoderWrapper;
-            if (mPreviewActive && decoderWrapper != null && decoderWrapper.isAutoFocusSupported()) {
-                final Point imageSize = decoderWrapper.getImageSize();
-                final Rect imageArea = Utils.getImageFrameRect(imageSize.getX(), imageSize.getY(), viewFocusArea,
-                        decoderWrapper.getPreviewSize(), decoderWrapper.getViewSize());
-                final Camera camera = decoderWrapper.getCamera();
-                camera.cancelAutoFocus();
-                final Camera.Parameters parameters = camera.getParameters();
-                Utils.configureFocusArea(imageArea, parameters);
-                camera.setParameters(parameters);
-                safeAutoFocusCamera();
+        if (mInitialized && mPreviewActive) {
+            try {
+                setAutoFocusEnabled(false);
+                final DecoderWrapper decoderWrapper = mDecoderWrapper;
+                if (mPreviewActive && decoderWrapper != null && decoderWrapper.isAutoFocusSupported()) {
+                    final Point imageSize = decoderWrapper.getImageSize();
+                    final Rect imageArea = Utils.getImageFrameRect(imageSize.getX(), imageSize.getY(), viewFocusArea,
+                            decoderWrapper.getPreviewSize(), decoderWrapper.getViewSize());
+                    final Camera camera = decoderWrapper.getCamera();
+                    final Camera.Parameters parameters = camera.getParameters();
+                    Utils.configureTouchFocus(imageArea, parameters);
+                    camera.cancelAutoFocus();
+                    camera.setParameters(parameters);
+                    camera.autoFocus(mTouchFocusCallback);
+                    mTouchFocusing = true;
+                }
+            } catch (final Exception ignored) {
             }
-        } catch (final Exception ignored) {
         }
     }
 
@@ -860,9 +867,16 @@ public final class CodeScanner {
         }
     }
 
+    private final class TouchFocusCallback implements Camera.AutoFocusCallback {
+        @Override
+        public void onAutoFocus(final boolean success, @NonNull final Camera camera) {
+            mTouchFocusing = false;
+        }
+    }
+
     private final class SafeAutoFocusCallback implements Camera.AutoFocusCallback {
         @Override
-        public void onAutoFocus(final boolean success, final Camera camera) {
+        public void onAutoFocus(final boolean success, @NonNull final Camera camera) {
             mSafeAutoFocusing = false;
         }
     }

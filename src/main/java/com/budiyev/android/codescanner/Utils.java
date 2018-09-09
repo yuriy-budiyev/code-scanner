@@ -115,7 +115,7 @@ final class Utils {
         }
     }
 
-    public static void configureFocusArea(@NonNull final Rect area, @NonNull final Camera.Parameters parameters) {
+    public static void configureTouchFocus(@NonNull final Rect area, @NonNull final Camera.Parameters parameters) {
         final List<Camera.Area> areas = new ArrayList<>(1);
         areas.add(new Camera.Area(
                 new android.graphics.Rect(area.getLeft(), area.getTop(), area.getRight(), area.getBottom()), 1000));
@@ -124,6 +124,10 @@ final class Utils {
         }
         if (parameters.getMaxNumMeteringAreas() > 0) {
             parameters.setMeteringAreas(areas);
+        }
+        final List<String> focusModes = parameters.getSupportedFocusModes();
+        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
         }
     }
 

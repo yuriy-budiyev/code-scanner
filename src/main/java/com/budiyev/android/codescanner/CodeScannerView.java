@@ -224,13 +224,14 @@ public final class CodeScannerView extends ViewGroup {
 
     @Override
     @SuppressLint("ClickableViewAccessibility")
-    public boolean onTouchEvent(@NonNull MotionEvent event) {
+    public boolean onTouchEvent(@NonNull final MotionEvent event) {
         final CodeScanner codeScanner = mCodeScanner;
         final Rect frameRect = getFrameRect();
         final int x = (int) event.getX();
         final int y = (int) event.getY();
-        if (codeScanner != null && frameRect != null && codeScanner.isTouchFocusEnabled() &&
-                event.getAction() == MotionEvent.ACTION_UP && frameRect.isPointInside(x, y)) {
+        if (codeScanner != null && frameRect != null && codeScanner.isAutoFocusSupportedOrUnknown() &&
+                codeScanner.isTouchFocusEnabled() && event.getAction() == MotionEvent.ACTION_UP &&
+                frameRect.isPointInside(x, y)) {
             final int areaSize = mFocusAreaSize;
             codeScanner.performTouchFocus(new Rect(x - areaSize, y - areaSize, x + areaSize, y + areaSize));
             return true;
