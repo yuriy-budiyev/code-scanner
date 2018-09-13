@@ -115,15 +115,14 @@ final class Utils {
         }
     }
 
-    public static void configureTouchFocus(@NonNull final Rect area, @NonNull final Camera.Parameters parameters) {
+    public static void configureTouchFocus(@NonNull final Rect area, int width, int height,
+            @NonNull final Camera.Parameters parameters) {
         final List<Camera.Area> areas = new ArrayList<>(1);
         areas.add(new Camera.Area(
-                new android.graphics.Rect(area.getLeft(), area.getTop(), area.getRight(), area.getBottom()), 1000));
+                new android.graphics.Rect(mapCoordinate(area.getLeft(), width), mapCoordinate(area.getTop(), height),
+                        mapCoordinate(area.getRight(), width), mapCoordinate(area.getBottom(), height)), 1000));
         if (parameters.getMaxNumFocusAreas() > 0) {
             parameters.setFocusAreas(areas);
-        }
-        if (parameters.getMaxNumMeteringAreas() > 0) {
-            parameters.setMeteringAreas(areas);
         }
         final List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
@@ -332,6 +331,10 @@ final class Utils {
         public void onError(@NonNull final Exception error) {
             // Do nothing
         }
+    }
+
+    private static int mapCoordinate(int value, int size) {
+        return 1000 - 2000 * value / size;
     }
 
     private static final class CameraSizeComparator implements Comparator<Camera.Size> {
