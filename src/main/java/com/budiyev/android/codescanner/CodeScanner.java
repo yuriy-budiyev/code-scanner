@@ -482,23 +482,26 @@ public final class CodeScanner {
     }
 
     void performTouchFocus(final Rect viewFocusArea) {
-        if (mInitialized && mPreviewActive) {
-            try {
-                setAutoFocusEnabled(false);
-                final DecoderWrapper decoderWrapper = mDecoderWrapper;
-                if (mPreviewActive && decoderWrapper != null && decoderWrapper.isAutoFocusSupported()) {
-                    final Point imageSize = decoderWrapper.getImageSize();
-                    final Rect imageArea = Utils.getImageFrameRect(imageSize.getX(), imageSize.getY(), viewFocusArea,
-                            decoderWrapper.getPreviewSize(), decoderWrapper.getViewSize());
-                    final Camera camera = decoderWrapper.getCamera();
-                    final Camera.Parameters parameters = camera.getParameters();
-                    Utils.configureTouchFocus(imageArea, parameters);
-                    camera.cancelAutoFocus();
-                    camera.setParameters(parameters);
-                    camera.autoFocus(mTouchFocusCallback);
-                    mTouchFocusing = true;
+        synchronized (mInitializeLock) {
+            if (mInitialized && mPreviewActive) {
+                try {
+                    setAutoFocusEnabled(false);
+                    final DecoderWrapper decoderWrapper = mDecoderWrapper;
+                    if (mPreviewActive && decoderWrapper != null && decoderWrapper.isAutoFocusSupported()) {
+                        final Point imageSize = decoderWrapper.getImageSize();
+                        final Rect imageArea =
+                                Utils.getImageFrameRect(imageSize.getX(), imageSize.getY(), viewFocusArea,
+                                        decoderWrapper.getPreviewSize(), decoderWrapper.getViewSize());
+                        final Camera camera = decoderWrapper.getCamera();
+                        final Camera.Parameters parameters = camera.getParameters();
+                        Utils.configureTouchFocus(imageArea, parameters);
+                        camera.cancelAutoFocus();
+                        camera.setParameters(parameters);
+                        camera.autoFocus(mTouchFocusCallback);
+                        mTouchFocusing = true;
+                    }
+                } catch (final Exception ignored) {
                 }
-            } catch (final Exception ignored) {
             }
         }
     }
