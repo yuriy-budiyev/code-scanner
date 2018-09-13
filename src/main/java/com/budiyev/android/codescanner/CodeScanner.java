@@ -481,6 +481,7 @@ public final class CodeScanner {
         }
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     void performTouchFocus(final Rect viewFocusArea) {
         synchronized (mInitializeLock) {
             if (mInitialized && mPreviewActive) {
@@ -489,9 +490,16 @@ public final class CodeScanner {
                     final DecoderWrapper decoderWrapper = mDecoderWrapper;
                     if (mPreviewActive && decoderWrapper != null && decoderWrapper.isAutoFocusSupported()) {
                         final Point imageSize = decoderWrapper.getImageSize();
-                        final Rect imageArea =
-                                Utils.getImageFrameRect(imageSize.getX(), imageSize.getY(), viewFocusArea,
-                                        decoderWrapper.getPreviewSize(), decoderWrapper.getViewSize());
+                        int imageWidth = imageSize.getX();
+                        int imageHeight = imageSize.getY();
+                        int orientation = decoderWrapper.getDisplayOrientation();
+                        if (orientation == 90 || orientation == 270) {
+                            final int width = imageWidth;
+                            imageWidth = imageHeight;
+                            imageHeight = width;
+                        }
+                        final Rect imageArea = Utils.getImageFrameRect(imageWidth, imageHeight, viewFocusArea,
+                                decoderWrapper.getPreviewSize(), decoderWrapper.getViewSize());
                         final Camera camera = decoderWrapper.getCamera();
                         final Camera.Parameters parameters = camera.getParameters();
                         Utils.configureTouchFocus(imageArea, parameters);
