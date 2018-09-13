@@ -24,7 +24,8 @@
 package com.budiyev.android.codescanner;
 
 import android.hardware.Camera;
-import android.support.annotation.NonNull;
+
+import androidx.annotation.NonNull;
 
 final class DecoderWrapper {
     private final Camera mCamera;

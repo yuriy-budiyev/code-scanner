@@ -26,9 +26,9 @@ package com.budiyev.android.codescanner;
 import android.app.Activity;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.annotation.NonNull;
-import android.support.annotation.WorkerThread;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.WorkerThread;
 import com.google.zxing.Result;
 
 /**
