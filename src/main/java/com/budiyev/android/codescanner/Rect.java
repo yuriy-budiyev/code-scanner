@@ -23,6 +23,10 @@
  */
 package com.budiyev.android.codescanner;
 
+import android.graphics.Matrix;
+
+import androidx.annotation.NonNull;
+
 final class Rect {
     private final int mLeft;
     private final int mTop;
@@ -62,6 +66,29 @@ final class Rect {
 
     public boolean isPointInside(final int x, final int y) {
         return mLeft < x && mTop < y && mRight > x && mBottom > y;
+    }
+
+    @NonNull
+    public Rect rotate(final float angle, float x, float y) {
+        Matrix matrix = new Matrix();
+        float[] rect = new float[] {mLeft, mTop, mRight, mBottom};
+        matrix.postRotate(angle, x, y);
+        matrix.mapPoints(rect);
+        int left = (int) rect[0];
+        int top = (int) rect[1];
+        int right = (int) rect[2];
+        int bottom = (int) rect[3];
+        if (left > right) {
+            int temp = left;
+            left = right;
+            right = temp;
+        }
+        if (top > bottom) {
+            int temp = top;
+            top = bottom;
+            bottom = temp;
+        }
+        return new Rect(left, top, right, bottom);
     }
 
     @Override

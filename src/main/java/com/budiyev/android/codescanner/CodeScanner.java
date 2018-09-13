@@ -492,7 +492,7 @@ public final class CodeScanner {
                         final Point imageSize = decoderWrapper.getImageSize();
                         int imageWidth = imageSize.getX();
                         int imageHeight = imageSize.getY();
-                        int orientation = decoderWrapper.getDisplayOrientation();
+                        final int orientation = decoderWrapper.getDisplayOrientation();
                         if (orientation == 90 || orientation == 270) {
                             final int width = imageWidth;
                             imageWidth = imageHeight;
@@ -502,7 +502,7 @@ public final class CodeScanner {
                                 decoderWrapper.getPreviewSize(), decoderWrapper.getViewSize());
                         final Camera camera = decoderWrapper.getCamera();
                         final Camera.Parameters parameters = camera.getParameters();
-                        Utils.configureTouchFocus(imageArea, parameters);
+                        Utils.configureTouchFocus(imageArea, imageWidth, imageHeight, orientation, parameters);
                         camera.cancelAutoFocus();
                         camera.setParameters(parameters);
                         camera.autoFocus(mTouchFocusCallback);
