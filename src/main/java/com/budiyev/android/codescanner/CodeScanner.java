@@ -121,7 +121,6 @@ public final class CodeScanner {
     private boolean mTouchFocusEnabled = DEFAULT_TOUCH_FOCUS_ENABLED;
     private boolean mPreviewActive;
     private boolean mSafeAutoFocusing;
-    private boolean mTouchFocusing;
     private boolean mSafeAutoFocusTaskScheduled;
     private boolean mInitializationRequested;
     private int mSafeAutoFocusAttemptsCount;
@@ -506,7 +505,6 @@ public final class CodeScanner {
                         camera.cancelAutoFocus();
                         camera.setParameters(parameters);
                         camera.autoFocus(mTouchFocusCallback);
-                        mTouchFocusing = true;
                     }
                 } catch (final Exception ignored) {
                 }
@@ -881,7 +879,6 @@ public final class CodeScanner {
     private final class TouchFocusCallback implements Camera.AutoFocusCallback {
         @Override
         public void onAutoFocus(final boolean success, @NonNull final Camera camera) {
-            mTouchFocusing = false;
         }
     }
 
