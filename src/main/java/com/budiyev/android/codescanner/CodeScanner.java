@@ -23,7 +23,6 @@
  */
 package com.budiyev.android.codescanner;
 
-import java.util.Arrays;
 import java.util.List;
 
 import android.Manifest;
@@ -81,6 +80,7 @@ import static com.google.zxing.BarcodeFormat.UPC_A;
 import static com.google.zxing.BarcodeFormat.UPC_E;
 import static com.google.zxing.BarcodeFormat.UPC_EAN_EXTENSION;
 import static com.google.zxing.BarcodeFormat.values;
+import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
@@ -97,20 +97,20 @@ public final class CodeScanner {
     /**
      * All supported barcode formats
      */
-    public static final List<BarcodeFormat> ALL_FORMATS = unmodifiableList(Arrays.asList(values()));
+    public static final List<BarcodeFormat> ALL_FORMATS = unmodifiableList(asList(values()));
 
     /**
      * One dimensional barcode formats
      */
     public static final List<BarcodeFormat> ONE_DIMENSIONAL_FORMATS = unmodifiableList(
-            Arrays.asList(CODABAR, CODE_39, CODE_93, CODE_128, EAN_8, EAN_13, ITF, RSS_14, RSS_EXPANDED, UPC_A, UPC_E,
+            asList(CODABAR, CODE_39, CODE_93, CODE_128, EAN_8, EAN_13, ITF, RSS_14, RSS_EXPANDED, UPC_A, UPC_E,
                     UPC_EAN_EXTENSION));
 
     /**
      * Two dimensional barcode formats
      */
     public static final List<BarcodeFormat> TWO_DIMENSIONAL_FORMATS =
-            unmodifiableList(Arrays.asList(AZTEC, DATA_MATRIX, MAXICODE, PDF_417, QR_CODE));
+            unmodifiableList(asList(AZTEC, DATA_MATRIX, MAXICODE, PDF_417, QR_CODE));
 
     /**
      * First back-facing camera
