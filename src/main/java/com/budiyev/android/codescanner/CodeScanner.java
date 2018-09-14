@@ -377,7 +377,8 @@ public final class CodeScanner {
     }
 
     /**
-     * Enable or disable touch focus
+     * Enable or disable touch focus. If enabled, touches inside viewfinder frame will cause focusing into
+     * specified area, auto focus will be switched off.
      */
     public void setTouchFocusEnabled(final boolean touchFocusEnabled) {
         mTouchFocusEnabled = touchFocusEnabled;
