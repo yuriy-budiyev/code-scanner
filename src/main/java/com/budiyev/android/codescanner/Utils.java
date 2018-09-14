@@ -131,9 +131,8 @@ final class Utils {
         }
     }
 
-    public static void clearFocusArea(@NonNull final Camera.Parameters parameters) {
+    public static void clearFocusAreas(@NonNull final Camera.Parameters parameters) {
         parameters.setFocusAreas(null);
-        parameters.setMeteringAreas(null);
     }
 
     public static boolean disableAutoFocus(@NonNull final Camera.Parameters parameters) {

@@ -567,7 +567,7 @@ public final class CodeScanner {
                     Utils.setFlashMode(parameters, Camera.Parameters.FLASH_MODE_OFF);
                 }
                 camera.cancelAutoFocus();
-                Utils.clearFocusArea(parameters);
+                Utils.clearFocusAreas(parameters);
                 camera.setParameters(parameters);
                 camera.setPreviewCallback(null);
                 camera.stopPreview();
@@ -631,6 +631,7 @@ public final class CodeScanner {
                 if (parameters == null) {
                     return;
                 }
+                Utils.clearFocusAreas(parameters);
                 final boolean changed;
                 final AutoFocusMode autoFocusMode = mAutoFocusMode;
                 if (autoFocusEnabled) {
