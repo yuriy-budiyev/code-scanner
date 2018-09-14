@@ -24,8 +24,6 @@
 package com.budiyev.android.codescanner;
 
 import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.util.Collections;
 import java.util.Map;
 
 import android.graphics.Bitmap;
@@ -46,10 +44,15 @@ import com.google.zxing.Result;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 
+import static android.graphics.Bitmap.Config.ARGB_8888;
+import static android.graphics.Color.BLACK;
+import static android.graphics.Color.WHITE;
 import static com.budiyev.android.codescanner.CodeScanner.ALL_FORMATS;
 import static com.budiyev.android.codescanner.Utils.decodeLuminanceSource;
 import static com.budiyev.android.codescanner.Utils.rotateYuv;
 import static com.google.zxing.DecodeHintType.POSSIBLE_FORMATS;
+import static java.lang.annotation.RetentionPolicy.SOURCE;
+import static java.util.Collections.singletonMap;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -279,9 +282,9 @@ public final class BarcodeUtils {
         final int length = width * height;
         final int[] pixels = new int[length];
         for (int i = 0; i < length; i++) {
-            pixels[i] = matrix.get(i % width, i / height) ? Color.BLACK : Color.WHITE;
+            pixels[i] = matrix.get(i % width, i / height) ? BLACK : WHITE;
         }
-        return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
+        return Bitmap.createBitmap(pixels, width, height, ARGB_8888);
     }
 
     @NonNull
@@ -290,12 +293,12 @@ public final class BarcodeUtils {
         if (hints != null) {
             reader.setHints(hints);
         } else {
-            reader.setHints(Collections.singletonMap(POSSIBLE_FORMATS, ALL_FORMATS));
+            reader.setHints(singletonMap(POSSIBLE_FORMATS, ALL_FORMATS));
         }
         return reader;
     }
 
-    @Retention(RetentionPolicy.SOURCE)
+    @Retention(SOURCE)
     @IntDef({ROTATION_0, ROTATION_90, ROTATION_180, ROTATION_270})
     public @interface Rotation {
     }
