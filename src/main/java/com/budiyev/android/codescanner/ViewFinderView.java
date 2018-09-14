@@ -59,8 +59,8 @@ final class ViewFinderView extends View {
         if (frameRect == null) {
             return;
         }
-        final int width = canvas.getWidth();
-        final int height = canvas.getHeight();
+        final int width = getWidth();
+        final int height = getHeight();
         final int top = frameRect.getTop();
         final int left = frameRect.getLeft();
         final int right = frameRect.getRight();
