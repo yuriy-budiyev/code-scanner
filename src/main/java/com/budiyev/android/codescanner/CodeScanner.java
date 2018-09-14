@@ -333,6 +333,20 @@ public final class CodeScanner {
     }
 
     /**
+     * Touch focus is currently enabled or not
+     */
+    public boolean isTouchFocusEnabled() {
+        return mTouchFocusEnabled;
+    }
+
+    /**
+     * Enable or disable touch focus
+     */
+    public void setTouchFocusEnabled(final boolean touchFocusEnabled) {
+        mTouchFocusEnabled = touchFocusEnabled;
+    }
+
+    /**
      * Auto focus is currently enabled or not
      *
      * @see #setAutoFocusEnabled
@@ -390,20 +404,6 @@ public final class CodeScanner {
      */
     public void setAutoFocusInterval(final long autoFocusInterval) {
         mSafeAutoFocusInterval = autoFocusInterval;
-    }
-
-    /**
-     * Touch focus is currently enabled or not
-     */
-    public boolean isTouchFocusEnabled() {
-        return mTouchFocusEnabled;
-    }
-
-    /**
-     * Enable or disable touch focus
-     */
-    public void setTouchFocusEnabled(final boolean touchFocusEnabled) {
-        mTouchFocusEnabled = touchFocusEnabled;
     }
 
     /**
