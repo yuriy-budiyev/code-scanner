@@ -79,7 +79,6 @@ import static com.google.zxing.BarcodeFormat.RSS_EXPANDED;
 import static com.google.zxing.BarcodeFormat.UPC_A;
 import static com.google.zxing.BarcodeFormat.UPC_E;
 import static com.google.zxing.BarcodeFormat.UPC_EAN_EXTENSION;
-import static com.google.zxing.BarcodeFormat.values;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
@@ -97,7 +96,7 @@ public final class CodeScanner {
     /**
      * All supported barcode formats
      */
-    public static final List<BarcodeFormat> ALL_FORMATS = unmodifiableList(asList(values()));
+    public static final List<BarcodeFormat> ALL_FORMATS = unmodifiableList(asList(BarcodeFormat.values()));
 
     /**
      * One dimensional barcode formats
