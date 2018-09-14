@@ -115,8 +115,8 @@ final class Utils {
         }
     }
 
-    public static void configureTouchFocus(@NonNull final Rect area, final int width, final int height, int orientation,
-            @NonNull final Camera.Parameters parameters) {
+    public static void configureTouchFocus(@NonNull final Rect area, final int width, final int height,
+            final int orientation, @NonNull final Camera.Parameters parameters) {
         final List<Camera.Area> areas = new ArrayList<>(1);
         final Rect rotatedArea = area.rotate(-orientation, width / 2f, height / 2f);
         areas.add(new Camera.Area(new android.graphics.Rect(mapCoordinate(rotatedArea.getLeft(), width),
@@ -334,7 +334,7 @@ final class Utils {
         }
     }
 
-    private static int mapCoordinate(int value, int size) {
+    private static int mapCoordinate(final int value, final int size) {
         return 1000 - 2000 * value / size;
     }
 

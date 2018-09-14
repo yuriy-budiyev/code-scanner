@@ -126,7 +126,7 @@ public final class CodeScannerView extends ViewGroup {
         mPreviewView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         mViewFinderView = new ViewFinderView(context);
         mViewFinderView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        float density = context.getResources().getDisplayMetrics().density;
+        final float density = context.getResources().getDisplayMetrics().density;
         mButtonSize = Math.round(density * BUTTON_SIZE_DP);
         mFocusAreaSize = Math.round(density * FOCUS_AREA_SIZE_DP);
         mAutoFocusButton = new ImageView(context);

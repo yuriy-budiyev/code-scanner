@@ -69,9 +69,9 @@ final class Rect {
     }
 
     @NonNull
-    public Rect rotate(final float angle, float x, float y) {
-        Matrix matrix = new Matrix();
-        float[] rect = new float[] {mLeft, mTop, mRight, mBottom};
+    public Rect rotate(final float angle, final float x, final float y) {
+        final Matrix matrix = new Matrix();
+        final float[] rect = new float[] {mLeft, mTop, mRight, mBottom};
         matrix.postRotate(angle, x, y);
         matrix.mapPoints(rect);
         int left = (int) rect[0];
@@ -79,12 +79,12 @@ final class Rect {
         int right = (int) rect[2];
         int bottom = (int) rect[3];
         if (left > right) {
-            int temp = left;
+            final int temp = left;
             left = right;
             right = temp;
         }
         if (top > bottom) {
-            int temp = top;
+            final int temp = top;
             top = bottom;
             bottom = temp;
         }
