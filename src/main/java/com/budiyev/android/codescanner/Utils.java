@@ -29,8 +29,10 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
-import android.hardware.Camera;
-import android.view.Surface;
+import android.hardware.Camera.Area;
+import android.hardware.Camera.CameraInfo;
+import android.hardware.Camera.Parameters;
+import android.hardware.Camera.Size;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
@@ -42,6 +44,24 @@ import com.google.zxing.NotFoundException;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
+
+import static android.content.Context.WINDOW_SERVICE;
+import static android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT;
+import static android.hardware.Camera.Parameters.FOCUS_MODE_AUTO;
+import static android.hardware.Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
+import static android.hardware.Camera.Parameters.FOCUS_MODE_FIXED;
+import static android.hardware.Camera.Parameters.PREVIEW_FPS_MAX_INDEX;
+import static android.hardware.Camera.Parameters.PREVIEW_FPS_MIN_INDEX;
+import static android.hardware.Camera.Parameters.SCENE_MODE_BARCODE;
+import static android.view.Surface.ROTATION_0;
+import static android.view.Surface.ROTATION_180;
+import static android.view.Surface.ROTATION_270;
+import static android.view.Surface.ROTATION_90;
+import static com.budiyev.android.codescanner.AutoFocusMode.CONTINUOUS;
+import static java.lang.Math.abs;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
+import static java.lang.Math.round;
 
 final class Utils {
     private static final float MIN_DISTORTION = 0.3f;
@@ -55,35 +75,34 @@ final class Utils {
     }
 
     @NonNull
-    public static Point findSuitableImageSize(@NonNull final Camera.Parameters parameters, final int frameWidth,
+    public static Point findSuitableImageSize(@NonNull final Parameters parameters, final int frameWidth,
             final int frameHeight) {
-        final List<Camera.Size> sizes = parameters.getSupportedPreviewSizes();
+        final List<Size> sizes = parameters.getSupportedPreviewSizes();
         if (sizes != null && !sizes.isEmpty()) {
             Collections.sort(sizes, new CameraSizeComparator());
             final float frameRatio = (float) frameWidth / (float) frameHeight;
             for (float distortion = MIN_DISTORTION; distortion <= MAX_DISTORTION; distortion += DISTORTION_STEP) {
-                for (final Camera.Size size : sizes) {
+                for (final Size size : sizes) {
                     final int width = size.width;
                     final int height = size.height;
                     if (width * height >= MIN_PREVIEW_PIXELS &&
-                            Math.abs(frameRatio - (float) width / (float) height) <= distortion) {
+                            abs(frameRatio - (float) width / (float) height) <= distortion) {
                         return new Point(width, height);
                     }
                 }
             }
         }
-        final Camera.Size defaultSize = parameters.getPreviewSize();
+        final Size defaultSize = parameters.getPreviewSize();
         if (defaultSize == null) {
             throw new CodeScannerException("Unable to configure camera preview size");
         }
         return new Point(defaultSize.width, defaultSize.height);
     }
 
-    public static void configureFpsRange(@NonNull final Camera.Parameters parameters) {
+    public static void configureFpsRange(@NonNull final Parameters parameters) {
         final int[] currentFpsRange = new int[2];
         parameters.getPreviewFpsRange(currentFpsRange);
-        if (currentFpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS &&
-                currentFpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
+        if (currentFpsRange[PREVIEW_FPS_MIN_INDEX] >= MIN_FPS && currentFpsRange[PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
             return;
         }
         final List<int[]> supportedFpsRanges = parameters.getSupportedPreviewFpsRange();
@@ -91,76 +110,74 @@ final class Utils {
             return;
         }
         for (final int[] fpsRange : supportedFpsRanges) {
-            if (fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS &&
-                    fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
-                parameters.setPreviewFpsRange(fpsRange[Camera.Parameters.PREVIEW_FPS_MIN_INDEX],
-                        fpsRange[Camera.Parameters.PREVIEW_FPS_MAX_INDEX]);
+            if (fpsRange[PREVIEW_FPS_MIN_INDEX] >= MIN_FPS && fpsRange[PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
+                parameters.setPreviewFpsRange(fpsRange[PREVIEW_FPS_MIN_INDEX], fpsRange[PREVIEW_FPS_MAX_INDEX]);
                 return;
             }
         }
     }
 
-    public static void configureSceneMode(@NonNull final Camera.Parameters parameters) {
-        if (!Camera.Parameters.SCENE_MODE_BARCODE.equals(parameters.getSceneMode())) {
+    public static void configureSceneMode(@NonNull final Parameters parameters) {
+        if (!SCENE_MODE_BARCODE.equals(parameters.getSceneMode())) {
             final List<String> supportedSceneModes = parameters.getSupportedSceneModes();
-            if (supportedSceneModes != null && supportedSceneModes.contains(Camera.Parameters.SCENE_MODE_BARCODE)) {
-                parameters.setSceneMode(Camera.Parameters.SCENE_MODE_BARCODE);
+            if (supportedSceneModes != null && supportedSceneModes.contains(SCENE_MODE_BARCODE)) {
+                parameters.setSceneMode(SCENE_MODE_BARCODE);
             }
         }
     }
 
-    public static void configureVideoStabilization(@NonNull final Camera.Parameters parameters) {
+    public static void configureVideoStabilization(@NonNull final Parameters parameters) {
         if (parameters.isVideoStabilizationSupported() && !parameters.getVideoStabilization()) {
             parameters.setVideoStabilization(true);
         }
     }
 
     public static void configureTouchFocus(@NonNull final Rect area, final int width, final int height,
-            final int orientation, @NonNull final Camera.Parameters parameters) {
-        final List<Camera.Area> areas = new ArrayList<>(1);
+            final int orientation, @NonNull final Parameters parameters) {
+        final List<Area> areas = new ArrayList<>(1);
         final Rect rotatedArea = area.rotate(-orientation, width / 2f, height / 2f);
-        areas.add(new Camera.Area(new android.graphics.Rect(mapCoordinate(rotatedArea.getLeft(), width),
+        areas.add(new Area(new android.graphics.Rect(mapCoordinate(rotatedArea.getLeft(), width),
                 mapCoordinate(rotatedArea.getTop(), height), mapCoordinate(rotatedArea.getRight(), width),
                 mapCoordinate(rotatedArea.getBottom(), height)), 1000));
         if (parameters.getMaxNumFocusAreas() > 0) {
             parameters.setFocusAreas(areas);
         }
         final List<String> focusModes = parameters.getSupportedFocusModes();
-        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        if (focusModes.contains(FOCUS_MODE_AUTO)) {
+            parameters.setFocusMode(FOCUS_MODE_AUTO);
         }
     }
 
-    public static void clearFocusAreas(@NonNull final Camera.Parameters parameters) {
+    public static void clearFocusAreas(@NonNull final Parameters parameters) {
         parameters.setFocusAreas(null);
     }
 
-    public static boolean disableAutoFocus(@NonNull final Camera.Parameters parameters) {
+    public static boolean disableAutoFocus(@NonNull final Parameters parameters) {
         final List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes == null || focusModes.isEmpty()) {
             return false;
         }
         final String focusMode = parameters.getFocusMode();
-        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_FIXED)) {
-            if (Camera.Parameters.FOCUS_MODE_FIXED.equals(focusMode)) {
+        if (focusModes.contains(FOCUS_MODE_FIXED)) {
+            if (FOCUS_MODE_FIXED.equals(focusMode)) {
                 return false;
             } else {
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_FIXED);
+                parameters.setFocusMode(FOCUS_MODE_FIXED);
                 return true;
             }
         }
-        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-            if (Camera.Parameters.FOCUS_MODE_AUTO.equals(focusMode)) {
+        if (focusModes.contains(FOCUS_MODE_AUTO)) {
+            if (FOCUS_MODE_AUTO.equals(focusMode)) {
                 return false;
             } else {
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                parameters.setFocusMode(FOCUS_MODE_AUTO);
                 return true;
             }
         }
         return false;
     }
 
-    public static void setZoom(@NonNull final Camera.Parameters parameters, final int zoom) {
+    public static void setZoom(@NonNull final Parameters parameters, final int zoom) {
         if (parameters.isZoomSupported()) {
             if (parameters.getZoom() != zoom) {
                 final int maxZoom = parameters.getMaxZoom();
@@ -173,33 +190,32 @@ final class Utils {
         }
     }
 
-    public static boolean setAutoFocusMode(@NonNull final Camera.Parameters parameters,
-            final AutoFocusMode autoFocusMode) {
+    public static boolean setAutoFocusMode(@NonNull final Parameters parameters, final AutoFocusMode autoFocusMode) {
         final List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes == null || focusModes.isEmpty()) {
             return false;
         }
-        if (autoFocusMode == AutoFocusMode.CONTINUOUS) {
-            if (Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE.equals(parameters.getFocusMode())) {
+        if (autoFocusMode == CONTINUOUS) {
+            if (FOCUS_MODE_CONTINUOUS_PICTURE.equals(parameters.getFocusMode())) {
                 return false;
             }
-            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            if (focusModes.contains(FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                parameters.setFocusMode(FOCUS_MODE_CONTINUOUS_PICTURE);
                 return true;
             }
         }
-        if (Camera.Parameters.FOCUS_MODE_AUTO.equals(parameters.getFocusMode())) {
+        if (FOCUS_MODE_AUTO.equals(parameters.getFocusMode())) {
             return false;
         }
-        if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+        if (focusModes.contains(FOCUS_MODE_AUTO)) {
+            parameters.setFocusMode(FOCUS_MODE_AUTO);
             return true;
         } else {
             return false;
         }
     }
 
-    public static boolean setFlashMode(@NonNull final Camera.Parameters parameters, @NonNull final String flashMode) {
+    public static boolean setFlashMode(@NonNull final Parameters parameters, @NonNull final String flashMode) {
         if (flashMode.equals(parameters.getFlashMode())) {
             return false;
         }
@@ -211,25 +227,24 @@ final class Utils {
         return false;
     }
 
-    public static int getDisplayOrientation(@NonNull final Context context,
-            @NonNull final Camera.CameraInfo cameraInfo) {
-        final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    public static int getDisplayOrientation(@NonNull final Context context, @NonNull final CameraInfo cameraInfo) {
+        final WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
         if (windowManager == null) {
             throw new CodeScannerException("Unable to access window manager");
         }
         final int degrees;
         final int rotation = windowManager.getDefaultDisplay().getRotation();
         switch (rotation) {
-            case Surface.ROTATION_0:
+            case ROTATION_0:
                 degrees = 0;
                 break;
-            case Surface.ROTATION_90:
+            case ROTATION_90:
                 degrees = 90;
                 break;
-            case Surface.ROTATION_180:
+            case ROTATION_180:
                 degrees = 180;
                 break;
-            case Surface.ROTATION_270:
+            case ROTATION_270:
                 degrees = 270;
                 break;
             default:
@@ -239,8 +254,7 @@ final class Utils {
                     throw new CodeScannerException("Invalid display rotation");
                 }
         }
-        return ((cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT ? 180 : 360) + cameraInfo.orientation -
-                degrees) % 360;
+        return ((cameraInfo.facing == CAMERA_FACING_FRONT ? 180 : 360) + cameraInfo.orientation - degrees) % 360;
     }
 
     public static boolean isPortrait(final int orientation) {
@@ -272,10 +286,10 @@ final class Utils {
         final int hD = (previewHeight - viewHeight) / 2;
         final float wR = (float) imageWidth / (float) previewWidth;
         final float hR = (float) imageHeight / (float) previewHeight;
-        return new Rect(Math.max(Math.round((viewFrameRect.getLeft() + wD) * wR), 0),
-                Math.max(Math.round((viewFrameRect.getTop() + hD) * hR), 0),
-                Math.min(Math.round((viewFrameRect.getRight() + wD) * wR), imageWidth),
-                Math.min(Math.round((viewFrameRect.getBottom() + hD) * hR), imageHeight));
+        return new Rect(max(round((viewFrameRect.getLeft() + wD) * wR), 0),
+                max(round((viewFrameRect.getTop() + hD) * hR), 0),
+                min(round((viewFrameRect.getRight() + wD) * wR), imageWidth),
+                min(round((viewFrameRect.getBottom() + hD) * hR), imageHeight));
     }
 
     @NonNull
@@ -337,9 +351,9 @@ final class Utils {
         return 1000 - 2000 * value / size;
     }
 
-    private static final class CameraSizeComparator implements Comparator<Camera.Size> {
+    private static final class CameraSizeComparator implements Comparator<Size> {
         @Override
-        public int compare(@NonNull final Camera.Size a, @NonNull final Camera.Size b) {
+        public int compare(@NonNull final Size a, @NonNull final Size b) {
             return Integer.compare(b.height * b.width, a.height * a.width);
         }
     }

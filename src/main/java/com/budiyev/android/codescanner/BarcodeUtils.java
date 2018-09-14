@@ -27,7 +27,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Objects;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -46,6 +45,12 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+
+import static com.budiyev.android.codescanner.CodeScanner.ALL_FORMATS;
+import static com.budiyev.android.codescanner.Utils.decodeLuminanceSource;
+import static com.budiyev.android.codescanner.Utils.rotateYuv;
+import static com.google.zxing.DecodeHintType.POSSIBLE_FORMATS;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Utils for decoding and encoding bar codes
@@ -80,7 +85,7 @@ public final class BarcodeUtils {
      */
     @Nullable
     public static Result decodeBitmap(@NonNull final Bitmap bitmap, @Nullable final Map<DecodeHintType, ?> hints) {
-        Objects.requireNonNull(bitmap);
+        requireNonNull(bitmap);
         final int width = bitmap.getWidth();
         final int height = bitmap.getHeight();
         final int[] pixels = new int[width * height];
@@ -116,10 +121,10 @@ public final class BarcodeUtils {
     @Nullable
     public static Result decodeRgb(@NonNull final int[] pixels, final int width, final int height,
             @Nullable final Map<DecodeHintType, ?> hints) {
-        Objects.requireNonNull(pixels);
+        requireNonNull(pixels);
         final MultiFormatReader reader = createReader(hints);
         try {
-            return Utils.decodeLuminanceSource(reader, new RGBLuminanceSource(width, height, pixels));
+            return decodeLuminanceSource(reader, new RGBLuminanceSource(width, height, pixels));
         } catch (final ReaderException e) {
             return null;
         }
@@ -155,8 +160,8 @@ public final class BarcodeUtils {
     public static Result decodeYuv(@NonNull final byte[] pixels, final int width, final int height,
             @Rotation final int rotation, final boolean reverseHorizontal,
             @Nullable final Map<DecodeHintType, ?> hints) {
-        Objects.requireNonNull(pixels);
-        final byte[] rotatedPixels = Utils.rotateYuv(pixels, width, height, rotation);
+        requireNonNull(pixels);
+        final byte[] rotatedPixels = rotateYuv(pixels, width, height, rotation);
         final int rotatedWidth;
         final int rotatedHeight;
         if (rotation == ROTATION_90 || rotation == ROTATION_270) {
@@ -168,7 +173,7 @@ public final class BarcodeUtils {
         }
         final MultiFormatReader reader = createReader(hints);
         try {
-            return Utils.decodeLuminanceSource(reader,
+            return decodeLuminanceSource(reader,
                     new PlanarYUVLuminanceSource(rotatedPixels, rotatedWidth, rotatedHeight, 0, 0, rotatedWidth,
                             rotatedHeight, reverseHorizontal));
         } catch (final ReaderException e) {
@@ -207,8 +212,8 @@ public final class BarcodeUtils {
     @Nullable
     public static BitMatrix encodeBitMatrix(@NonNull final String content, @NonNull final BarcodeFormat format,
             final int width, final int height, @Nullable final Map<EncodeHintType, ?> hints) {
-        Objects.requireNonNull(content);
-        Objects.requireNonNull(format);
+        requireNonNull(content);
+        requireNonNull(format);
         final MultiFormatWriter writer = new MultiFormatWriter();
         try {
             if (hints != null) {
@@ -268,7 +273,7 @@ public final class BarcodeUtils {
      */
     @NonNull
     public static Bitmap createBitmap(@NonNull final BitMatrix matrix) {
-        Objects.requireNonNull(matrix);
+        requireNonNull(matrix);
         final int width = matrix.getWidth();
         final int height = matrix.getHeight();
         final int length = width * height;
@@ -285,7 +290,7 @@ public final class BarcodeUtils {
         if (hints != null) {
             reader.setHints(hints);
         } else {
-            reader.setHints(Collections.singletonMap(DecodeHintType.POSSIBLE_FORMATS, CodeScanner.ALL_FORMATS));
+            reader.setHints(Collections.singletonMap(POSSIBLE_FORMATS, ALL_FORMATS));
         }
         return reader;
     }

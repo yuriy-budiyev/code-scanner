@@ -27,8 +27,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import android.os.Process;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.zxing.BarcodeFormat;
@@ -36,6 +34,15 @@ import com.google.zxing.DecodeHintType;
 import com.google.zxing.MultiFormatReader;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
+
+import static android.os.Process.THREAD_PRIORITY_BACKGROUND;
+import static android.os.Process.setThreadPriority;
+import static com.budiyev.android.codescanner.Decoder.State.DECODED;
+import static com.budiyev.android.codescanner.Decoder.State.DECODING;
+import static com.budiyev.android.codescanner.Decoder.State.IDLE;
+import static com.budiyev.android.codescanner.Decoder.State.INITIALIZED;
+import static com.budiyev.android.codescanner.Decoder.State.STOPPED;
+import static com.google.zxing.DecodeHintType.POSSIBLE_FORMATS;
 
 final class Decoder {
     private final MultiFormatReader mReader;
@@ -52,15 +59,15 @@ final class Decoder {
         mReader = new MultiFormatReader();
         mDecoderThread = new DecoderThread();
         mHints = new EnumMap<>(DecodeHintType.class);
-        mHints.put(DecodeHintType.POSSIBLE_FORMATS, formats);
+        mHints.put(POSSIBLE_FORMATS, formats);
         mReader.setHints(mHints);
         mCallback = callback;
         mStateListener = stateListener;
-        mState = State.INITIALIZED;
+        mState = INITIALIZED;
     }
 
     public void setFormats(@NonNull final List<BarcodeFormat> formats) {
-        mHints.put(DecodeHintType.POSSIBLE_FORMATS, formats);
+        mHints.put(POSSIBLE_FORMATS, formats);
         mReader.setHints(mHints);
     }
 
@@ -70,7 +77,7 @@ final class Decoder {
 
     public void decode(@NonNull final DecodeTask task) {
         synchronized (mTaskLock) {
-            if (mState != State.STOPPED) {
+            if (mState != STOPPED) {
                 mTask = task;
                 mTaskLock.notify();
             }
@@ -78,7 +85,7 @@ final class Decoder {
     }
 
     public void start() {
-        if (mState != State.INITIALIZED) {
+        if (mState != INITIALIZED) {
             throw new IllegalStateException("Illegal decoder state");
         }
         mDecoderThread.start();
@@ -106,10 +113,10 @@ final class Decoder {
 
         @Override
         public void run() {
-            Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+            setThreadPriority(THREAD_PRIORITY_BACKGROUND);
             mainLoop:
             for (; ; ) {
-                setState(Decoder.State.IDLE);
+                setState(IDLE);
                 Result result = null;
                 try {
                     final DecodeTask task;
@@ -124,18 +131,18 @@ final class Decoder {
                             try {
                                 mTaskLock.wait();
                             } catch (final InterruptedException e) {
-                                setState(Decoder.State.STOPPED);
+                                setState(STOPPED);
                                 break mainLoop;
                             }
                         }
                     }
-                    setState(Decoder.State.DECODING);
+                    setState(DECODING);
                     result = task.decode(mReader);
                 } catch (final ReaderException ignored) {
                 } finally {
                     if (result != null) {
                         mTask = null;
-                        if (setState(Decoder.State.DECODED)) {
+                        if (setState(DECODED)) {
                             final DecodeCallback callback = mCallback;
                             if (callback != null) {
                                 callback.onDecoded(result);
