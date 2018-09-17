@@ -64,8 +64,8 @@ final class Rect {
         return mBottom - mTop;
     }
 
-    public boolean isPointInside(final int x, final int y) {
-        return mLeft < x && mTop < y && mRight > x && mBottom > y;
+    public boolean contains(@NonNull final Rect rect) {
+        return mLeft <= rect.mLeft && mTop <= rect.mTop && mRight >= rect.mRight && mBottom >= rect.mBottom;
     }
 
     @NonNull
