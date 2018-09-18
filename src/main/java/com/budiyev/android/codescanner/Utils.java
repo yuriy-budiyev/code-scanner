@@ -334,7 +334,7 @@ final class Utils {
     }
 
     private static int mapCoordinate(final int value, final int size) {
-        return 1000 - 2000 * value / size;
+        return 2000 * value / size - 1000;
     }
 
     private static final class CameraSizeComparator implements Comparator<Size> {
