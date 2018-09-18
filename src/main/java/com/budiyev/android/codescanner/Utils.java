@@ -133,8 +133,14 @@ final class Utils {
     }
 
     public static void clearFocusAreas(@NonNull final Parameters parameters) {
-        parameters.setFocusAreas(null);
-        parameters.setMeteringAreas(null);
+        List<Area> areas = new ArrayList<>(1);
+        areas.add(new Area(new android.graphics.Rect(0, 0, 0, 0), 1000));
+        if (parameters.getMaxNumFocusAreas() > 0) {
+            parameters.setFocusAreas(areas);
+        }
+        if (parameters.getMaxNumMeteringAreas() > 0) {
+            parameters.setMeteringAreas(areas);
+        }
     }
 
     public static boolean disableAutoFocus(@NonNull final Parameters parameters) {
