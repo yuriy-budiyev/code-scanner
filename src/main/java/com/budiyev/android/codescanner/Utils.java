@@ -123,6 +123,9 @@ final class Utils {
         if (parameters.getMaxNumFocusAreas() > 0) {
             parameters.setFocusAreas(areas);
         }
+        if (parameters.getMaxNumMeteringAreas() > 0) {
+            parameters.setMeteringAreas(areas);
+        }
         final List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes.contains(Parameters.FOCUS_MODE_AUTO)) {
             parameters.setFocusMode(Parameters.FOCUS_MODE_AUTO);
@@ -131,6 +134,7 @@ final class Utils {
 
     public static void clearFocusAreas(@NonNull final Parameters parameters) {
         parameters.setFocusAreas(null);
+        parameters.setMeteringAreas(null);
     }
 
     public static boolean disableAutoFocus(@NonNull final Parameters parameters) {
