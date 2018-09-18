@@ -30,10 +30,6 @@ import com.google.zxing.PlanarYUVLuminanceSource;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 
-import static com.budiyev.android.codescanner.Utils.decodeLuminanceSource;
-import static com.budiyev.android.codescanner.Utils.getImageFrameRect;
-import static com.budiyev.android.codescanner.Utils.rotateYuv;
-
 final class DecodeTask {
     private final byte[] mImage;
     private final Point mImageSize;
@@ -61,19 +57,20 @@ final class DecodeTask {
         int imageWidth = mImageSize.getX();
         int imageHeight = mImageSize.getY();
         final int orientation = mOrientation;
-        final byte[] image = rotateYuv(mImage, imageWidth, imageHeight, orientation);
+        final byte[] image = Utils.rotateYuv(mImage, imageWidth, imageHeight, orientation);
         if (orientation == 90 || orientation == 270) {
             final int width = imageWidth;
             imageWidth = imageHeight;
             imageHeight = width;
         }
-        final Rect frameRect = getImageFrameRect(imageWidth, imageHeight, mViewFrameRect, mPreviewSize, mViewSize);
+        final Rect frameRect =
+                Utils.getImageFrameRect(imageWidth, imageHeight, mViewFrameRect, mPreviewSize, mViewSize);
         final int frameWidth = frameRect.getWidth();
         final int frameHeight = frameRect.getHeight();
         if (frameWidth < 1 || frameHeight < 1) {
             return null;
         }
-        return decodeLuminanceSource(reader,
+        return Utils.decodeLuminanceSource(reader,
                 new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.getLeft(), frameRect.getTop(),
                         frameWidth, frameHeight, mReverseHorizontal));
     }

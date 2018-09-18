@@ -26,6 +26,7 @@ package com.budiyev.android.codescanner;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
@@ -43,12 +44,6 @@ import androidx.annotation.Px;
 import androidx.annotation.RequiresApi;
 import androidx.annotation.StyleRes;
 
-import static android.graphics.Color.WHITE;
-import static android.view.MotionEvent.ACTION_DOWN;
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.widget.ImageView.ScaleType.CENTER;
-import static java.lang.Math.round;
-
 /**
  * A view to display code scanner preview
  *
@@ -60,9 +55,9 @@ public final class CodeScannerView extends ViewGroup {
     private static final int DEFAULT_AUTO_FOCUS_BUTTON_VISIBILITY = VISIBLE;
     private static final int DEFAULT_FLASH_BUTTON_VISIBILITY = VISIBLE;
     private static final int DEFAULT_MASK_COLOR = 0x77000000;
-    private static final int DEFAULT_FRAME_COLOR = WHITE;
-    private static final int DEFAULT_AUTO_FOCUS_BUTTON_COLOR = WHITE;
-    private static final int DEFAULT_FLASH_BUTTON_COLOR = WHITE;
+    private static final int DEFAULT_FRAME_COLOR = Color.WHITE;
+    private static final int DEFAULT_AUTO_FOCUS_BUTTON_COLOR = Color.WHITE;
+    private static final int DEFAULT_FLASH_BUTTON_COLOR = Color.WHITE;
     private static final float DEFAULT_FRAME_THICKNESS_DP = 2f;
     private static final float DEFAULT_FRAME_ASPECT_RATIO_WIDTH = 1f;
     private static final float DEFAULT_FRAME_ASPECT_RATIO_HEIGHT = 1f;
@@ -128,28 +123,28 @@ public final class CodeScannerView extends ViewGroup {
     private void initialize(@NonNull final Context context, @Nullable final AttributeSet attrs,
             @AttrRes final int defStyleAttr, @StyleRes final int defStyleRes) {
         mPreviewView = new SurfaceView(context);
-        mPreviewView.setLayoutParams(new LayoutParams(MATCH_PARENT, MATCH_PARENT));
+        mPreviewView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         mViewFinderView = new ViewFinderView(context);
-        mViewFinderView.setLayoutParams(new LayoutParams(MATCH_PARENT, MATCH_PARENT));
+        mViewFinderView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         final float density = context.getResources().getDisplayMetrics().density;
-        mButtonSize = round(density * BUTTON_SIZE_DP);
-        mFocusAreaSize = round(density * FOCUS_AREA_SIZE_DP);
+        mButtonSize = Math.round(density * BUTTON_SIZE_DP);
+        mFocusAreaSize = Math.round(density * FOCUS_AREA_SIZE_DP);
         mAutoFocusButton = new ImageView(context);
         mAutoFocusButton.setLayoutParams(new LayoutParams(mButtonSize, mButtonSize));
-        mAutoFocusButton.setScaleType(CENTER);
+        mAutoFocusButton.setScaleType(ImageView.ScaleType.CENTER);
         mAutoFocusButton.setImageResource(R.drawable.ic_code_scanner_auto_focus_on);
         mAutoFocusButton.setOnClickListener(new AutoFocusClickListener());
         mFlashButton = new ImageView(context);
         mFlashButton.setLayoutParams(new LayoutParams(mButtonSize, mButtonSize));
-        mFlashButton.setScaleType(CENTER);
+        mFlashButton.setScaleType(ImageView.ScaleType.CENTER);
         mFlashButton.setImageResource(R.drawable.ic_code_scanner_flash_on);
         mFlashButton.setOnClickListener(new FlashClickListener());
         if (attrs == null) {
             mViewFinderView.setFrameAspectRatio(DEFAULT_FRAME_ASPECT_RATIO_WIDTH, DEFAULT_FRAME_ASPECT_RATIO_HEIGHT);
             mViewFinderView.setMaskColor(DEFAULT_MASK_COLOR);
             mViewFinderView.setFrameColor(DEFAULT_FRAME_COLOR);
-            mViewFinderView.setFrameThickness(round(DEFAULT_FRAME_THICKNESS_DP * density));
-            mViewFinderView.setFrameCornersSize(round(DEFAULT_FRAME_CORNER_SIZE_DP * density));
+            mViewFinderView.setFrameThickness(Math.round(DEFAULT_FRAME_THICKNESS_DP * density));
+            mViewFinderView.setFrameCornersSize(Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * density));
             mViewFinderView.setFrameSize(DEFAULT_FRAME_SIZE);
             mAutoFocusButton.setColorFilter(DEFAULT_AUTO_FOCUS_BUTTON_COLOR);
             mFlashButton.setColorFilter(DEFAULT_FLASH_BUTTON_COLOR);
@@ -163,9 +158,9 @@ public final class CodeScannerView extends ViewGroup {
                 setMaskColor(a.getColor(R.styleable.CodeScannerView_maskColor, DEFAULT_MASK_COLOR));
                 setFrameColor(a.getColor(R.styleable.CodeScannerView_frameColor, DEFAULT_FRAME_COLOR));
                 setFrameThickness(a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameThickness,
-                        round(DEFAULT_FRAME_THICKNESS_DP * density)));
+                        Math.round(DEFAULT_FRAME_THICKNESS_DP * density)));
                 setFrameCornersSize(a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameCornersSize,
-                        round(DEFAULT_FRAME_CORNER_SIZE_DP * density)));
+                        Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * density)));
                 setFrameAspectRatio(
                         a.getFloat(R.styleable.CodeScannerView_frameAspectRatioWidth, DEFAULT_FRAME_ASPECT_RATIO_WIDTH),
                         a.getFloat(R.styleable.CodeScannerView_frameAspectRatioHeight,
@@ -235,7 +230,7 @@ public final class CodeScannerView extends ViewGroup {
         final int x = (int) event.getX();
         final int y = (int) event.getY();
         if (codeScanner != null && frameRect != null && codeScanner.isAutoFocusSupportedOrUnknown() &&
-                codeScanner.isTouchFocusEnabled() && event.getAction() == ACTION_DOWN) {
+                codeScanner.isTouchFocusEnabled() && event.getAction() == MotionEvent.ACTION_DOWN) {
             final int areaSize = mFocusAreaSize;
             final Rect area = new Rect(x - areaSize, y - areaSize, x + areaSize, y + areaSize);
             if (frameRect.contains(area)) {

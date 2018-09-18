@@ -23,10 +23,10 @@
  */
 package com.budiyev.android.codescanner;
 
+import android.os.Build;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-
-import static android.os.Build.VERSION_CODES.N;
 
 /**
  * Common class for code scanner runtime exceptions
@@ -48,7 +48,7 @@ public final class CodeScannerException extends RuntimeException {
         super(cause);
     }
 
-    @RequiresApi(N)
+    @RequiresApi(Build.VERSION_CODES.N)
     protected CodeScannerException(@Nullable final String message, @Nullable final Throwable cause,
             final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);

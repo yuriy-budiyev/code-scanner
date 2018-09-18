@@ -35,10 +35,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.Px;
 
-import static android.graphics.Paint.ANTI_ALIAS_FLAG;
-import static android.graphics.Paint.Style.STROKE;
-import static java.lang.Math.round;
-
 final class ViewFinderView extends View {
     private final Paint mMaskPaint;
     private final Paint mFramePaint;
@@ -51,9 +47,9 @@ final class ViewFinderView extends View {
 
     public ViewFinderView(@NonNull final Context context) {
         super(context);
-        mMaskPaint = new Paint(ANTI_ALIAS_FLAG);
-        mFramePaint = new Paint(ANTI_ALIAS_FLAG);
-        mFramePaint.setStyle(STROKE);
+        mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mFramePaint.setStyle(Paint.Style.STROKE);
         mFramePath = new Path();
     }
 
@@ -207,11 +203,11 @@ final class ViewFinderView extends View {
             final int frameWidth;
             final int frameHeight;
             if (viewAR <= frameAR) {
-                frameWidth = round(width * mFrameSize);
-                frameHeight = round(frameWidth / frameAR);
+                frameWidth = Math.round(width * mFrameSize);
+                frameHeight = Math.round(frameWidth / frameAR);
             } else {
-                frameHeight = round(height * mFrameSize);
-                frameWidth = round(frameHeight * frameAR);
+                frameHeight = Math.round(height * mFrameSize);
+                frameWidth = Math.round(frameHeight * frameAR);
             }
             final int frameLeft = (width - frameWidth) / 2;
             final int frameTop = (height - frameHeight) / 2;

@@ -64,8 +64,30 @@ final class Rect {
         return mBottom - mTop;
     }
 
-    public boolean contains(@NonNull final Rect rect) {
-        return mLeft <= rect.mLeft && mTop <= rect.mTop && mRight >= rect.mRight && mBottom >= rect.mBottom;
+    public boolean isPointInside(final int x, final int y) {
+        return mLeft < x && mTop < y && mRight > x && mBottom > y;
+    }
+
+    @NonNull
+    public Rect sort() {
+        int left = mLeft;
+        int top = mTop;
+        int right = mRight;
+        int bottom = mBottom;
+        if (left <= right && top <= bottom) {
+            return this;
+        }
+        if (left > right) {
+            final int temp = left;
+            left = right;
+            right = temp;
+        }
+        if (top > bottom) {
+            final int temp = top;
+            top = bottom;
+            bottom = temp;
+        }
+        return new Rect(left, top, right, bottom);
     }
 
     @NonNull
@@ -87,6 +109,42 @@ final class Rect {
             final int temp = top;
             top = bottom;
             bottom = temp;
+        }
+        return new Rect(left, top, right, bottom);
+    }
+
+    @NonNull
+    public Rect fitIn(@NonNull final Rect area) {
+        int left = mLeft;
+        int top = mTop;
+        int right = mRight;
+        int bottom = mBottom;
+        final int width = getWidth();
+        final int height = getHeight();
+        final int areaLeft = area.mLeft;
+        final int areaTop = area.mTop;
+        final int areaRight = area.mRight;
+        final int areaBottom = area.mBottom;
+        final int areaWidth = area.getWidth();
+        final int areaHeight = area.getHeight();
+        if (left >= areaLeft && top >= areaTop && right <= areaRight && bottom <= areaBottom) {
+            return this;
+        }
+        final int fitWidth = Math.min(width, areaWidth);
+        final int fitHeight = Math.min(height, areaHeight);
+        if (left < areaLeft) {
+            left = areaLeft;
+            right = left + fitWidth;
+        } else if (right > areaRight) {
+            right = areaRight;
+            left = right - fitWidth;
+        }
+        if (top < areaTop) {
+            top = areaTop;
+            bottom = top + fitHeight;
+        } else if (bottom > areaBottom) {
+            bottom = areaBottom;
+            top = bottom - fitHeight;
         }
         return new Rect(left, top, right, bottom);
     }

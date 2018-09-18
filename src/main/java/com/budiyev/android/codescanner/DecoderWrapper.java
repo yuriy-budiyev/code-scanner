@@ -27,8 +27,6 @@ import android.hardware.Camera;
 
 import androidx.annotation.NonNull;
 
-import static android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT;
-
 final class DecoderWrapper {
     private final Camera mCamera;
     private final Camera.CameraInfo mCameraInfo;
@@ -52,7 +50,7 @@ final class DecoderWrapper {
         mPreviewSize = previewSize;
         mViewSize = viewSize;
         mDisplayOrientation = displayOrientation;
-        mReverseHorizontal = cameraInfo.facing == CAMERA_FACING_FRONT;
+        mReverseHorizontal = cameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT;
         mAutoFocusSupported = autoFocusSupported;
         mFlashSupported = flashSupported;
     }

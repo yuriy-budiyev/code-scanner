@@ -24,7 +24,10 @@
 package com.budiyev.android.codescanner;
 
 import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Objects;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -43,17 +46,6 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
-
-import static android.graphics.Bitmap.Config.ARGB_8888;
-import static android.graphics.Color.BLACK;
-import static android.graphics.Color.WHITE;
-import static com.budiyev.android.codescanner.CodeScanner.ALL_FORMATS;
-import static com.budiyev.android.codescanner.Utils.decodeLuminanceSource;
-import static com.budiyev.android.codescanner.Utils.rotateYuv;
-import static com.google.zxing.DecodeHintType.POSSIBLE_FORMATS;
-import static java.lang.annotation.RetentionPolicy.SOURCE;
-import static java.util.Collections.singletonMap;
-import static java.util.Objects.requireNonNull;
 
 /**
  * Utils for decoding and encoding bar codes
@@ -88,7 +80,7 @@ public final class BarcodeUtils {
      */
     @Nullable
     public static Result decodeBitmap(@NonNull final Bitmap bitmap, @Nullable final Map<DecodeHintType, ?> hints) {
-        requireNonNull(bitmap);
+        Objects.requireNonNull(bitmap);
         final int width = bitmap.getWidth();
         final int height = bitmap.getHeight();
         final int[] pixels = new int[width * height];
@@ -124,10 +116,10 @@ public final class BarcodeUtils {
     @Nullable
     public static Result decodeRgb(@NonNull final int[] pixels, final int width, final int height,
             @Nullable final Map<DecodeHintType, ?> hints) {
-        requireNonNull(pixels);
+        Objects.requireNonNull(pixels);
         final MultiFormatReader reader = createReader(hints);
         try {
-            return decodeLuminanceSource(reader, new RGBLuminanceSource(width, height, pixels));
+            return Utils.decodeLuminanceSource(reader, new RGBLuminanceSource(width, height, pixels));
         } catch (final ReaderException e) {
             return null;
         }
@@ -163,8 +155,8 @@ public final class BarcodeUtils {
     public static Result decodeYuv(@NonNull final byte[] pixels, final int width, final int height,
             @Rotation final int rotation, final boolean reverseHorizontal,
             @Nullable final Map<DecodeHintType, ?> hints) {
-        requireNonNull(pixels);
-        final byte[] rotatedPixels = rotateYuv(pixels, width, height, rotation);
+        Objects.requireNonNull(pixels);
+        final byte[] rotatedPixels = Utils.rotateYuv(pixels, width, height, rotation);
         final int rotatedWidth;
         final int rotatedHeight;
         if (rotation == ROTATION_90 || rotation == ROTATION_270) {
@@ -176,7 +168,7 @@ public final class BarcodeUtils {
         }
         final MultiFormatReader reader = createReader(hints);
         try {
-            return decodeLuminanceSource(reader,
+            return Utils.decodeLuminanceSource(reader,
                     new PlanarYUVLuminanceSource(rotatedPixels, rotatedWidth, rotatedHeight, 0, 0, rotatedWidth,
                             rotatedHeight, reverseHorizontal));
         } catch (final ReaderException e) {
@@ -215,8 +207,8 @@ public final class BarcodeUtils {
     @Nullable
     public static BitMatrix encodeBitMatrix(@NonNull final String content, @NonNull final BarcodeFormat format,
             final int width, final int height, @Nullable final Map<EncodeHintType, ?> hints) {
-        requireNonNull(content);
-        requireNonNull(format);
+        Objects.requireNonNull(content);
+        Objects.requireNonNull(format);
         final MultiFormatWriter writer = new MultiFormatWriter();
         try {
             if (hints != null) {
@@ -276,15 +268,15 @@ public final class BarcodeUtils {
      */
     @NonNull
     public static Bitmap createBitmap(@NonNull final BitMatrix matrix) {
-        requireNonNull(matrix);
+        Objects.requireNonNull(matrix);
         final int width = matrix.getWidth();
         final int height = matrix.getHeight();
         final int length = width * height;
         final int[] pixels = new int[length];
         for (int i = 0; i < length; i++) {
-            pixels[i] = matrix.get(i % width, i / height) ? BLACK : WHITE;
+            pixels[i] = matrix.get(i % width, i / height) ? Color.BLACK : Color.WHITE;
         }
-        return Bitmap.createBitmap(pixels, width, height, ARGB_8888);
+        return Bitmap.createBitmap(pixels, width, height, Bitmap.Config.ARGB_8888);
     }
 
     @NonNull
@@ -293,12 +285,12 @@ public final class BarcodeUtils {
         if (hints != null) {
             reader.setHints(hints);
         } else {
-            reader.setHints(singletonMap(POSSIBLE_FORMATS, ALL_FORMATS));
+            reader.setHints(Collections.singletonMap(DecodeHintType.POSSIBLE_FORMATS, CodeScanner.ALL_FORMATS));
         }
         return reader;
     }
 
-    @Retention(SOURCE)
+    @Retention(RetentionPolicy.SOURCE)
     @IntDef({ROTATION_0, ROTATION_90, ROTATION_180, ROTATION_270})
     public @interface Rotation {
     }

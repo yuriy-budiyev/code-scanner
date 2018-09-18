@@ -33,6 +33,7 @@ import android.hardware.Camera.Area;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
+import android.view.Surface;
 import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
@@ -44,24 +45,6 @@ import com.google.zxing.NotFoundException;
 import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
-
-import static android.content.Context.WINDOW_SERVICE;
-import static android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT;
-import static android.hardware.Camera.Parameters.FOCUS_MODE_AUTO;
-import static android.hardware.Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
-import static android.hardware.Camera.Parameters.FOCUS_MODE_FIXED;
-import static android.hardware.Camera.Parameters.PREVIEW_FPS_MAX_INDEX;
-import static android.hardware.Camera.Parameters.PREVIEW_FPS_MIN_INDEX;
-import static android.hardware.Camera.Parameters.SCENE_MODE_BARCODE;
-import static android.view.Surface.ROTATION_0;
-import static android.view.Surface.ROTATION_180;
-import static android.view.Surface.ROTATION_270;
-import static android.view.Surface.ROTATION_90;
-import static com.budiyev.android.codescanner.AutoFocusMode.CONTINUOUS;
-import static java.lang.Math.abs;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static java.lang.Math.round;
 
 final class Utils {
     private static final float MIN_DISTORTION = 0.3f;
@@ -86,7 +69,7 @@ final class Utils {
                     final int width = size.width;
                     final int height = size.height;
                     if (width * height >= MIN_PREVIEW_PIXELS &&
-                            abs(frameRatio - (float) width / (float) height) <= distortion) {
+                            Math.abs(frameRatio - (float) width / (float) height) <= distortion) {
                         return new Point(width, height);
                     }
                 }
@@ -102,7 +85,8 @@ final class Utils {
     public static void configureFpsRange(@NonNull final Parameters parameters) {
         final int[] currentFpsRange = new int[2];
         parameters.getPreviewFpsRange(currentFpsRange);
-        if (currentFpsRange[PREVIEW_FPS_MIN_INDEX] >= MIN_FPS && currentFpsRange[PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
+        if (currentFpsRange[Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS &&
+                currentFpsRange[Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
             return;
         }
         final List<int[]> supportedFpsRanges = parameters.getSupportedPreviewFpsRange();
@@ -110,18 +94,20 @@ final class Utils {
             return;
         }
         for (final int[] fpsRange : supportedFpsRanges) {
-            if (fpsRange[PREVIEW_FPS_MIN_INDEX] >= MIN_FPS && fpsRange[PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
-                parameters.setPreviewFpsRange(fpsRange[PREVIEW_FPS_MIN_INDEX], fpsRange[PREVIEW_FPS_MAX_INDEX]);
+            if (fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS &&
+                    fpsRange[Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
+                parameters.setPreviewFpsRange(fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX],
+                        fpsRange[Parameters.PREVIEW_FPS_MAX_INDEX]);
                 return;
             }
         }
     }
 
     public static void configureSceneMode(@NonNull final Parameters parameters) {
-        if (!SCENE_MODE_BARCODE.equals(parameters.getSceneMode())) {
+        if (!Parameters.SCENE_MODE_BARCODE.equals(parameters.getSceneMode())) {
             final List<String> supportedSceneModes = parameters.getSupportedSceneModes();
-            if (supportedSceneModes != null && supportedSceneModes.contains(SCENE_MODE_BARCODE)) {
-                parameters.setSceneMode(SCENE_MODE_BARCODE);
+            if (supportedSceneModes != null && supportedSceneModes.contains(Parameters.SCENE_MODE_BARCODE)) {
+                parameters.setSceneMode(Parameters.SCENE_MODE_BARCODE);
             }
         }
     }
@@ -143,8 +129,8 @@ final class Utils {
             parameters.setFocusAreas(areas);
         }
         final List<String> focusModes = parameters.getSupportedFocusModes();
-        if (focusModes.contains(FOCUS_MODE_AUTO)) {
-            parameters.setFocusMode(FOCUS_MODE_AUTO);
+        if (focusModes.contains(Parameters.FOCUS_MODE_AUTO)) {
+            parameters.setFocusMode(Parameters.FOCUS_MODE_AUTO);
         }
     }
 
@@ -158,19 +144,19 @@ final class Utils {
             return false;
         }
         final String focusMode = parameters.getFocusMode();
-        if (focusModes.contains(FOCUS_MODE_FIXED)) {
-            if (FOCUS_MODE_FIXED.equals(focusMode)) {
+        if (focusModes.contains(Parameters.FOCUS_MODE_FIXED)) {
+            if (Parameters.FOCUS_MODE_FIXED.equals(focusMode)) {
                 return false;
             } else {
-                parameters.setFocusMode(FOCUS_MODE_FIXED);
+                parameters.setFocusMode(Parameters.FOCUS_MODE_FIXED);
                 return true;
             }
         }
-        if (focusModes.contains(FOCUS_MODE_AUTO)) {
-            if (FOCUS_MODE_AUTO.equals(focusMode)) {
+        if (focusModes.contains(Parameters.FOCUS_MODE_AUTO)) {
+            if (Parameters.FOCUS_MODE_AUTO.equals(focusMode)) {
                 return false;
             } else {
-                parameters.setFocusMode(FOCUS_MODE_AUTO);
+                parameters.setFocusMode(Parameters.FOCUS_MODE_AUTO);
                 return true;
             }
         }
@@ -195,20 +181,20 @@ final class Utils {
         if (focusModes == null || focusModes.isEmpty()) {
             return false;
         }
-        if (autoFocusMode == CONTINUOUS) {
-            if (FOCUS_MODE_CONTINUOUS_PICTURE.equals(parameters.getFocusMode())) {
+        if (autoFocusMode == AutoFocusMode.CONTINUOUS) {
+            if (Parameters.FOCUS_MODE_CONTINUOUS_PICTURE.equals(parameters.getFocusMode())) {
                 return false;
             }
-            if (focusModes.contains(FOCUS_MODE_CONTINUOUS_PICTURE)) {
-                parameters.setFocusMode(FOCUS_MODE_CONTINUOUS_PICTURE);
+            if (focusModes.contains(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                parameters.setFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
                 return true;
             }
         }
-        if (FOCUS_MODE_AUTO.equals(parameters.getFocusMode())) {
+        if (Parameters.FOCUS_MODE_AUTO.equals(parameters.getFocusMode())) {
             return false;
         }
-        if (focusModes.contains(FOCUS_MODE_AUTO)) {
-            parameters.setFocusMode(FOCUS_MODE_AUTO);
+        if (focusModes.contains(Parameters.FOCUS_MODE_AUTO)) {
+            parameters.setFocusMode(Parameters.FOCUS_MODE_AUTO);
             return true;
         } else {
             return false;
@@ -228,23 +214,23 @@ final class Utils {
     }
 
     public static int getDisplayOrientation(@NonNull final Context context, @NonNull final CameraInfo cameraInfo) {
-        final WindowManager windowManager = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+        final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         if (windowManager == null) {
             throw new CodeScannerException("Unable to access window manager");
         }
         final int degrees;
         final int rotation = windowManager.getDefaultDisplay().getRotation();
         switch (rotation) {
-            case ROTATION_0:
+            case Surface.ROTATION_0:
                 degrees = 0;
                 break;
-            case ROTATION_90:
+            case Surface.ROTATION_90:
                 degrees = 90;
                 break;
-            case ROTATION_180:
+            case Surface.ROTATION_180:
                 degrees = 180;
                 break;
-            case ROTATION_270:
+            case Surface.ROTATION_270:
                 degrees = 270;
                 break;
             default:
@@ -254,7 +240,8 @@ final class Utils {
                     throw new CodeScannerException("Invalid display rotation");
                 }
         }
-        return ((cameraInfo.facing == CAMERA_FACING_FRONT ? 180 : 360) + cameraInfo.orientation - degrees) % 360;
+        return ((cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT ? 180 : 360) + cameraInfo.orientation - degrees) %
+                360;
     }
 
     public static boolean isPortrait(final int orientation) {
@@ -286,10 +273,10 @@ final class Utils {
         final int hD = (previewHeight - viewHeight) / 2;
         final float wR = (float) imageWidth / (float) previewWidth;
         final float hR = (float) imageHeight / (float) previewHeight;
-        return new Rect(max(round((viewFrameRect.getLeft() + wD) * wR), 0),
-                max(round((viewFrameRect.getTop() + hD) * hR), 0),
-                min(round((viewFrameRect.getRight() + wD) * wR), imageWidth),
-                min(round((viewFrameRect.getBottom() + hD) * hR), imageHeight));
+        return new Rect(Math.max(Math.round((viewFrameRect.getLeft() + wD) * wR), 0),
+                Math.max(Math.round((viewFrameRect.getTop() + hD) * hR), 0),
+                Math.min(Math.round((viewFrameRect.getRight() + wD) * wR), imageWidth),
+                Math.min(Math.round((viewFrameRect.getBottom() + hD) * hR), imageHeight));
     }
 
     @NonNull

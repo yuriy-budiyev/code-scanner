@@ -23,7 +23,10 @@
  */
 package com.budiyev.android.codescanner;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import android.Manifest;
 import android.app.Activity;
@@ -41,48 +44,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.zxing.BarcodeFormat;
 
-import static android.hardware.Camera.AutoFocusCallback;
-import static android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK;
-import static android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT;
-import static android.hardware.Camera.getCameraInfo;
-import static android.hardware.Camera.getNumberOfCameras;
-import static android.hardware.Camera.open;
-import static com.budiyev.android.codescanner.AutoFocusMode.SAFE;
-import static com.budiyev.android.codescanner.ScanMode.PREVIEW;
-import static com.budiyev.android.codescanner.ScanMode.SINGLE;
-import static com.budiyev.android.codescanner.Utils.clearFocusAreas;
-import static com.budiyev.android.codescanner.Utils.configureFpsRange;
-import static com.budiyev.android.codescanner.Utils.configureSceneMode;
-import static com.budiyev.android.codescanner.Utils.configureTouchFocus;
-import static com.budiyev.android.codescanner.Utils.configureVideoStabilization;
-import static com.budiyev.android.codescanner.Utils.disableAutoFocus;
-import static com.budiyev.android.codescanner.Utils.findSuitableImageSize;
-import static com.budiyev.android.codescanner.Utils.getDisplayOrientation;
-import static com.budiyev.android.codescanner.Utils.getImageFrameRect;
-import static com.budiyev.android.codescanner.Utils.getPreviewSize;
-import static com.budiyev.android.codescanner.Utils.isPortrait;
-import static com.budiyev.android.codescanner.Utils.setFlashMode;
-import static com.google.zxing.BarcodeFormat.AZTEC;
-import static com.google.zxing.BarcodeFormat.CODABAR;
-import static com.google.zxing.BarcodeFormat.CODE_128;
-import static com.google.zxing.BarcodeFormat.CODE_39;
-import static com.google.zxing.BarcodeFormat.CODE_93;
-import static com.google.zxing.BarcodeFormat.DATA_MATRIX;
-import static com.google.zxing.BarcodeFormat.EAN_13;
-import static com.google.zxing.BarcodeFormat.EAN_8;
-import static com.google.zxing.BarcodeFormat.ITF;
-import static com.google.zxing.BarcodeFormat.MAXICODE;
-import static com.google.zxing.BarcodeFormat.PDF_417;
-import static com.google.zxing.BarcodeFormat.QR_CODE;
-import static com.google.zxing.BarcodeFormat.RSS_14;
-import static com.google.zxing.BarcodeFormat.RSS_EXPANDED;
-import static com.google.zxing.BarcodeFormat.UPC_A;
-import static com.google.zxing.BarcodeFormat.UPC_E;
-import static com.google.zxing.BarcodeFormat.UPC_EAN_EXTENSION;
-import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Objects.requireNonNull;
-
 /**
  * Code scanner.
  * Supports portrait and landscape screen orientations, back and front facing cameras,
@@ -96,20 +57,24 @@ public final class CodeScanner {
     /**
      * All supported barcode formats
      */
-    public static final List<BarcodeFormat> ALL_FORMATS = unmodifiableList(asList(BarcodeFormat.values()));
+    public static final List<BarcodeFormat> ALL_FORMATS =
+            Collections.unmodifiableList(Arrays.asList(BarcodeFormat.values()));
 
     /**
      * One dimensional barcode formats
      */
-    public static final List<BarcodeFormat> ONE_DIMENSIONAL_FORMATS = unmodifiableList(
-            asList(CODABAR, CODE_39, CODE_93, CODE_128, EAN_8, EAN_13, ITF, RSS_14, RSS_EXPANDED, UPC_A, UPC_E,
-                    UPC_EAN_EXTENSION));
+    public static final List<BarcodeFormat> ONE_DIMENSIONAL_FORMATS = Collections.unmodifiableList(
+            Arrays.asList(BarcodeFormat.CODABAR, BarcodeFormat.CODE_39, BarcodeFormat.CODE_93, BarcodeFormat.CODE_128,
+                    BarcodeFormat.EAN_8, BarcodeFormat.EAN_13, BarcodeFormat.ITF, BarcodeFormat.RSS_14,
+                    BarcodeFormat.RSS_EXPANDED, BarcodeFormat.UPC_A, BarcodeFormat.UPC_E,
+                    BarcodeFormat.UPC_EAN_EXTENSION));
 
     /**
      * Two dimensional barcode formats
      */
-    public static final List<BarcodeFormat> TWO_DIMENSIONAL_FORMATS =
-            unmodifiableList(asList(AZTEC, DATA_MATRIX, MAXICODE, PDF_417, QR_CODE));
+    public static final List<BarcodeFormat> TWO_DIMENSIONAL_FORMATS = Collections.unmodifiableList(
+            Arrays.asList(BarcodeFormat.AZTEC, BarcodeFormat.DATA_MATRIX, BarcodeFormat.MAXICODE, BarcodeFormat.PDF_417,
+                    BarcodeFormat.QR_CODE));
 
     /**
      * First back-facing camera
@@ -122,8 +87,8 @@ public final class CodeScanner {
     public static final int CAMERA_FRONT = -2;
 
     private static final List<BarcodeFormat> DEFAULT_FORMATS = ALL_FORMATS;
-    private static final ScanMode DEFAULT_SCAN_MODE = SINGLE;
-    private static final AutoFocusMode DEFAULT_AUTO_FOCUS_MODE = SAFE;
+    private static final ScanMode DEFAULT_SCAN_MODE = ScanMode.SINGLE;
+    private static final AutoFocusMode DEFAULT_AUTO_FOCUS_MODE = AutoFocusMode.SAFE;
     private static final boolean DEFAULT_AUTO_FOCUS_ENABLED = true;
     private static final boolean DEFAULT_TOUCH_FOCUS_ENABLED = true;
     private static final boolean DEFAULT_FLASH_ENABLED = false;
@@ -136,8 +101,8 @@ public final class CodeScanner {
     private final SurfaceHolder mSurfaceHolder;
     private final SurfaceHolder.Callback mSurfaceCallback;
     private final Camera.PreviewCallback mPreviewCallback;
-    private final AutoFocusCallback mTouchFocusCallback;
-    private final AutoFocusCallback mSafeAutoFocusCallback;
+    private final Camera.AutoFocusCallback mTouchFocusCallback;
+    private final Camera.AutoFocusCallback mSafeAutoFocusCallback;
     private final Runnable mSafeAutoFocusTask;
     private final Runnable mStopPreviewTask;
     private final DecoderStateListener mDecoderStateListener;
@@ -258,7 +223,7 @@ public final class CodeScanner {
     @MainThread
     public void setFormats(@NonNull final List<BarcodeFormat> formats) {
         synchronized (mInitializeLock) {
-            mFormats = requireNonNull(formats);
+            mFormats = Objects.requireNonNull(formats);
             if (mInitialized) {
                 final DecoderWrapper decoderWrapper = mDecoderWrapper;
                 if (decoderWrapper != null) {
@@ -334,7 +299,7 @@ public final class CodeScanner {
      * @see ScanMode
      */
     public void setScanMode(@NonNull final ScanMode scanMode) {
-        mScanMode = requireNonNull(scanMode);
+        mScanMode = Objects.requireNonNull(scanMode);
     }
 
     /**
@@ -428,7 +393,7 @@ public final class CodeScanner {
     @MainThread
     public void setAutoFocusMode(@NonNull final AutoFocusMode autoFocusMode) {
         synchronized (mInitializeLock) {
-            mAutoFocusMode = requireNonNull(autoFocusMode);
+            mAutoFocusMode = Objects.requireNonNull(autoFocusMode);
             if (mInitialized && mAutoFocusEnabled) {
                 setAutoFocusEnabledInternal(true);
             }
@@ -535,11 +500,11 @@ public final class CodeScanner {
                             imageWidth = imageHeight;
                             imageHeight = width;
                         }
-                        final Rect imageArea = getImageFrameRect(imageWidth, imageHeight, viewFocusArea,
+                        final Rect imageArea = Utils.getImageFrameRect(imageWidth, imageHeight, viewFocusArea,
                                 decoderWrapper.getPreviewSize(), decoderWrapper.getViewSize());
                         final Camera camera = decoderWrapper.getCamera();
                         final Parameters parameters = camera.getParameters();
-                        configureTouchFocus(imageArea, imageWidth, imageHeight, orientation, parameters);
+                        Utils.configureTouchFocus(imageArea, imageWidth, imageHeight, orientation, parameters);
                         camera.cancelAutoFocus();
                         camera.setParameters(parameters);
                         camera.autoFocus(mTouchFocusCallback);
@@ -581,7 +546,7 @@ public final class CodeScanner {
                 mPreviewActive = true;
                 mSafeAutoFocusing = false;
                 mSafeAutoFocusAttemptsCount = 0;
-                if (mAutoFocusMode == SAFE) {
+                if (mAutoFocusMode == AutoFocusMode.SAFE) {
                     scheduleSafeAutoFocusTask();
                 }
             }
@@ -602,10 +567,10 @@ public final class CodeScanner {
                 final Camera camera = decoderWrapper.getCamera();
                 final Parameters parameters = camera.getParameters();
                 if (!internal && decoderWrapper.isFlashSupported() && mFlashEnabled) {
-                    setFlashMode(parameters, Parameters.FLASH_MODE_OFF);
+                    Utils.setFlashMode(parameters, Parameters.FLASH_MODE_OFF);
                 }
                 camera.cancelAutoFocus();
-                clearFocusAreas(parameters);
+                Utils.clearFocusAreas(parameters);
                 camera.setParameters(parameters);
                 camera.setPreviewCallback(null);
                 camera.stopPreview();
@@ -648,9 +613,9 @@ public final class CodeScanner {
                 }
                 final boolean changed;
                 if (flashEnabled) {
-                    changed = setFlashMode(parameters, Parameters.FLASH_MODE_TORCH);
+                    changed = Utils.setFlashMode(parameters, Parameters.FLASH_MODE_TORCH);
                 } else {
-                    changed = setFlashMode(parameters, Parameters.FLASH_MODE_OFF);
+                    changed = Utils.setFlashMode(parameters, Parameters.FLASH_MODE_OFF);
                 }
                 if (changed) {
                     camera.setParameters(parameters);
@@ -669,14 +634,14 @@ public final class CodeScanner {
                 if (parameters == null) {
                     return;
                 }
-                clearFocusAreas(parameters);
+                Utils.clearFocusAreas(parameters);
                 final boolean changed;
                 final AutoFocusMode autoFocusMode = mAutoFocusMode;
                 if (autoFocusEnabled) {
                     changed = Utils.setAutoFocusMode(parameters, autoFocusMode);
                 } else {
                     camera.cancelAutoFocus();
-                    changed = disableAutoFocus(parameters);
+                    changed = Utils.disableAutoFocus(parameters);
                 }
                 if (changed) {
                     camera.setParameters(parameters);
@@ -684,7 +649,7 @@ public final class CodeScanner {
                 if (autoFocusEnabled) {
                     mSafeAutoFocusAttemptsCount = 0;
                     mSafeAutoFocusing = false;
-                    if (autoFocusMode == SAFE) {
+                    if (autoFocusMode == AutoFocusMode.SAFE) {
                         scheduleSafeAutoFocusTask();
                     }
                 }
@@ -755,7 +720,7 @@ public final class CodeScanner {
     private final class PreviewCallback implements Camera.PreviewCallback {
         @Override
         public void onPreviewFrame(final byte[] data, final Camera camera) {
-            if (!mInitialized || mStoppingPreview || mScanMode == PREVIEW || data == null) {
+            if (!mInitialized || mStoppingPreview || mScanMode == ScanMode.PREVIEW || data == null) {
                 return;
             }
             final DecoderWrapper decoderWrapper = mDecoderWrapper;
@@ -803,9 +768,9 @@ public final class CodeScanner {
         public boolean onStateChanged(@NonNull final Decoder.State state) {
             if (state == Decoder.State.DECODED) {
                 final ScanMode scanMode = mScanMode;
-                if (scanMode == PREVIEW) {
+                if (scanMode == ScanMode.PREVIEW) {
                     return false;
-                } else if (scanMode == SINGLE) {
+                } else if (scanMode == ScanMode.SINGLE) {
                     mStoppingPreview = true;
                     mMainThreadHandler.post(mStopPreviewTask);
                 }
@@ -845,19 +810,20 @@ public final class CodeScanner {
             final CameraInfo cameraInfo = new CameraInfo();
             final int cameraId = mCameraId;
             if (cameraId == CAMERA_BACK || cameraId == CAMERA_FRONT) {
-                final int numberOfCameras = getNumberOfCameras();
-                final int facing = cameraId == CAMERA_BACK ? CAMERA_FACING_BACK : CAMERA_FACING_FRONT;
+                final int numberOfCameras = Camera.getNumberOfCameras();
+                final int facing =
+                        cameraId == CAMERA_BACK ? CameraInfo.CAMERA_FACING_BACK : CameraInfo.CAMERA_FACING_FRONT;
                 for (int i = 0; i < numberOfCameras; i++) {
-                    getCameraInfo(i, cameraInfo);
+                    Camera.getCameraInfo(i, cameraInfo);
                     if (cameraInfo.facing == facing) {
-                        camera = open(i);
+                        camera = Camera.open(i);
                         mCameraId = i;
                         break;
                     }
                 }
             } else {
-                camera = open(cameraId);
-                getCameraInfo(cameraId, cameraInfo);
+                camera = Camera.open(cameraId);
+                Camera.getCameraInfo(cameraId, cameraInfo);
             }
             if (camera == null) {
                 throw new CodeScannerException("Unable to access camera");
@@ -866,17 +832,17 @@ public final class CodeScanner {
             if (parameters == null) {
                 throw new CodeScannerException("Unable to configure camera");
             }
-            final int orientation = getDisplayOrientation(mContext, cameraInfo);
-            final boolean portrait = isPortrait(orientation);
+            final int orientation = Utils.getDisplayOrientation(mContext, cameraInfo);
+            final boolean portrait = Utils.isPortrait(orientation);
             final Point imageSize =
-                    findSuitableImageSize(parameters, portrait ? mHeight : mWidth, portrait ? mWidth : mHeight);
+                    Utils.findSuitableImageSize(parameters, portrait ? mHeight : mWidth, portrait ? mWidth : mHeight);
             final int imageWidth = imageSize.getX();
             final int imageHeight = imageSize.getY();
             parameters.setPreviewSize(imageWidth, imageHeight);
             parameters.setPreviewFormat(ImageFormat.NV21);
             final Point previewSize =
-                    getPreviewSize(portrait ? imageHeight : imageWidth, portrait ? imageWidth : imageHeight, mWidth,
-                            mHeight);
+                    Utils.getPreviewSize(portrait ? imageHeight : imageWidth, portrait ? imageWidth : imageHeight,
+                            mWidth, mHeight);
             final List<String> focusModes = parameters.getSupportedFocusModes();
             final boolean autoFocusSupported = focusModes != null && (focusModes.contains(Parameters.FOCUS_MODE_AUTO) ||
                     focusModes.contains(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE));
@@ -895,9 +861,9 @@ public final class CodeScanner {
             if (zoom != 0) {
                 Utils.setZoom(parameters, zoom);
             }
-            configureFpsRange(parameters);
-            configureSceneMode(parameters);
-            configureVideoStabilization(parameters);
+            Utils.configureFpsRange(parameters);
+            Utils.configureSceneMode(parameters);
+            Utils.configureVideoStabilization(parameters);
             camera.setParameters(parameters);
             camera.setDisplayOrientation(orientation);
             synchronized (mInitializeLock) {
@@ -912,13 +878,13 @@ public final class CodeScanner {
         }
     }
 
-    private final class TouchFocusCallback implements AutoFocusCallback {
+    private final class TouchFocusCallback implements Camera.AutoFocusCallback {
         @Override
         public void onAutoFocus(final boolean success, @NonNull final Camera camera) {
         }
     }
 
-    private final class SafeAutoFocusCallback implements AutoFocusCallback {
+    private final class SafeAutoFocusCallback implements Camera.AutoFocusCallback {
         @Override
         public void onAutoFocus(final boolean success, @NonNull final Camera camera) {
             mSafeAutoFocusing = false;
@@ -929,7 +895,7 @@ public final class CodeScanner {
         @Override
         public void run() {
             mSafeAutoFocusTaskScheduled = false;
-            if (mAutoFocusMode == SAFE) {
+            if (mAutoFocusMode == AutoFocusMode.SAFE) {
                 safeAutoFocusCamera();
             }
         }
