@@ -230,13 +230,11 @@ public final class CodeScannerView extends ViewGroup {
         final int x = (int) event.getX();
         final int y = (int) event.getY();
         if (codeScanner != null && frameRect != null && codeScanner.isAutoFocusSupportedOrUnknown() &&
-                codeScanner.isTouchFocusEnabled() && event.getAction() == MotionEvent.ACTION_DOWN) {
+                codeScanner.isTouchFocusEnabled() && event.getAction() == MotionEvent.ACTION_DOWN &&
+                frameRect.isPointInside(x, y)) {
             final int areaSize = mFocusAreaSize;
-            final Rect area = new Rect(x - areaSize, y - areaSize, x + areaSize, y + areaSize);
-            if (frameRect.contains(area)) {
-                codeScanner.performTouchFocus(area);
-                return true;
-            }
+            codeScanner.performTouchFocus(
+                    new Rect(x - areaSize, y - areaSize, x + areaSize, y + areaSize).fitIn(frameRect));
         }
         return super.onTouchEvent(event);
     }
