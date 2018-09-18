@@ -113,8 +113,8 @@ final class Utils {
         }
     }
 
-    public static void configureTouchFocus(@NonNull final Rect area, final int width, final int height,
-            final int orientation, @NonNull final Parameters parameters) {
+    public static void configureFocusArea(@NonNull final Parameters parameters, @NonNull final Rect area,
+            final int width, final int height, final int orientation) {
         final List<Area> areas = new ArrayList<>(1);
         final Rect rotatedArea = area.rotate(-orientation, width / 2f, height / 2f);
         areas.add(new Area(new android.graphics.Rect(mapCoordinate(rotatedArea.getLeft(), width),
@@ -126,20 +126,32 @@ final class Utils {
         if (parameters.getMaxNumMeteringAreas() > 0) {
             parameters.setMeteringAreas(areas);
         }
-        final List<String> focusModes = parameters.getSupportedFocusModes();
-        if (focusModes.contains(Parameters.FOCUS_MODE_AUTO)) {
-            parameters.setFocusMode(Parameters.FOCUS_MODE_AUTO);
-        }
     }
 
-    public static void clearFocusAreas(@NonNull final Parameters parameters) {
-        List<Area> areas = new ArrayList<>(1);
-        areas.add(new Area(new android.graphics.Rect(0, 0, 0, 0), 1000));
-        if (parameters.getMaxNumFocusAreas() > 0) {
-            parameters.setFocusAreas(areas);
+    public static void configureDefaultFocusArea(@NonNull final Parameters parameters, @NonNull Rect frameRect,
+            @NonNull Point previewSize, @NonNull Point viewSize, int width, int height, int orientation) {
+        boolean portrait = isPortrait(orientation);
+        int rotatedWidth = portrait ? height : width;
+        int rotatedHeight = portrait ? width : height;
+        configureFocusArea(parameters, getImageFrameRect(rotatedWidth, rotatedHeight, frameRect, previewSize, viewSize),
+                rotatedWidth, rotatedHeight, orientation);
+    }
+
+    public static void configureDefaultFocusArea(@NonNull Parameters parameters, @NonNull DecoderWrapper decoderWrapper,
+            @NonNull Rect frameRect) {
+        Point imageSize = decoderWrapper.getImageSize();
+        Utils.configureDefaultFocusArea(parameters, frameRect, decoderWrapper.getPreviewSize(),
+                decoderWrapper.getViewSize(), imageSize.getX(), imageSize.getY(),
+                decoderWrapper.getDisplayOrientation());
+    }
+
+    public static void configureFocusModeForTouch(@NonNull Parameters parameters) {
+        if (Parameters.FOCUS_MODE_AUTO.equals(parameters.getFocusMode())) {
+            return;
         }
-        if (parameters.getMaxNumMeteringAreas() > 0) {
-            parameters.setMeteringAreas(areas);
+        List<String> focusModes = parameters.getSupportedFocusModes();
+        if (focusModes != null && focusModes.contains(Parameters.FOCUS_MODE_AUTO)) {
+            parameters.setFocusMode(Parameters.FOCUS_MODE_AUTO);
         }
     }
 
