@@ -83,12 +83,6 @@ final class Utils {
     }
 
     public static void configureFpsRange(@NonNull final Parameters parameters) {
-        final int[] currentFpsRange = new int[2];
-        parameters.getPreviewFpsRange(currentFpsRange);
-        if (currentFpsRange[Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS &&
-                currentFpsRange[Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
-            return;
-        }
         final List<int[]> supportedFpsRanges = parameters.getSupportedPreviewFpsRange();
         if (supportedFpsRanges == null || supportedFpsRanges.isEmpty()) {
             return;
