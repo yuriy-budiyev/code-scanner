@@ -155,29 +155,57 @@ final class Utils {
         }
     }
 
-    public static boolean disableAutoFocus(@NonNull final Parameters parameters) {
+    public static void disableAutoFocus(@NonNull final Parameters parameters) {
         final List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes == null || focusModes.isEmpty()) {
-            return false;
+            return;
         }
         final String focusMode = parameters.getFocusMode();
         if (focusModes.contains(Parameters.FOCUS_MODE_FIXED)) {
             if (Parameters.FOCUS_MODE_FIXED.equals(focusMode)) {
-                return false;
+                return;
             } else {
                 parameters.setFocusMode(Parameters.FOCUS_MODE_FIXED);
-                return true;
+                return;
             }
         }
         if (focusModes.contains(Parameters.FOCUS_MODE_AUTO)) {
-            if (Parameters.FOCUS_MODE_AUTO.equals(focusMode)) {
-                return false;
-            } else {
+            if (!Parameters.FOCUS_MODE_AUTO.equals(focusMode)) {
                 parameters.setFocusMode(Parameters.FOCUS_MODE_AUTO);
-                return true;
             }
         }
-        return false;
+    }
+
+    public static void setAutoFocusMode(@NonNull final Parameters parameters, final AutoFocusMode autoFocusMode) {
+        final List<String> focusModes = parameters.getSupportedFocusModes();
+        if (focusModes == null || focusModes.isEmpty()) {
+            return;
+        }
+        if (autoFocusMode == AutoFocusMode.CONTINUOUS) {
+            if (Parameters.FOCUS_MODE_CONTINUOUS_PICTURE.equals(parameters.getFocusMode())) {
+                return;
+            }
+            if (focusModes.contains(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                parameters.setFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                return;
+            }
+        }
+        if (Parameters.FOCUS_MODE_AUTO.equals(parameters.getFocusMode())) {
+            return;
+        }
+        if (focusModes.contains(Parameters.FOCUS_MODE_AUTO)) {
+            parameters.setFocusMode(Parameters.FOCUS_MODE_AUTO);
+        }
+    }
+
+    public static void setFlashMode(@NonNull final Parameters parameters, @NonNull final String flashMode) {
+        if (flashMode.equals(parameters.getFlashMode())) {
+            return;
+        }
+        final List<String> flashModes = parameters.getSupportedFlashModes();
+        if (flashModes != null && flashModes.contains(flashMode)) {
+            parameters.setFlashMode(flashMode);
+        }
     }
 
     public static void setZoom(@NonNull final Parameters parameters, final int zoom) {
@@ -191,43 +219,6 @@ final class Utils {
                 }
             }
         }
-    }
-
-    public static boolean setAutoFocusMode(@NonNull final Parameters parameters, final AutoFocusMode autoFocusMode) {
-        final List<String> focusModes = parameters.getSupportedFocusModes();
-        if (focusModes == null || focusModes.isEmpty()) {
-            return false;
-        }
-        if (autoFocusMode == AutoFocusMode.CONTINUOUS) {
-            if (Parameters.FOCUS_MODE_CONTINUOUS_PICTURE.equals(parameters.getFocusMode())) {
-                return false;
-            }
-            if (focusModes.contains(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-                parameters.setFocusMode(Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-                return true;
-            }
-        }
-        if (Parameters.FOCUS_MODE_AUTO.equals(parameters.getFocusMode())) {
-            return false;
-        }
-        if (focusModes.contains(Parameters.FOCUS_MODE_AUTO)) {
-            parameters.setFocusMode(Parameters.FOCUS_MODE_AUTO);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public static boolean setFlashMode(@NonNull final Parameters parameters, @NonNull final String flashMode) {
-        if (flashMode.equals(parameters.getFlashMode())) {
-            return false;
-        }
-        final List<String> flashModes = parameters.getSupportedFlashModes();
-        if (flashModes != null && flashModes.contains(flashMode)) {
-            parameters.setFlashMode(flashMode);
-            return true;
-        }
-        return false;
     }
 
     public static int getDisplayOrientation(@NonNull final Context context, @NonNull final CameraInfo cameraInfo) {

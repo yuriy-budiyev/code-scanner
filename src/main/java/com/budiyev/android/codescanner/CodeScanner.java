@@ -619,15 +619,12 @@ public final class CodeScanner {
                 if (parameters == null) {
                     return;
                 }
-                final boolean changed;
                 if (flashEnabled) {
-                    changed = Utils.setFlashMode(parameters, Parameters.FLASH_MODE_TORCH);
+                    Utils.setFlashMode(parameters, Parameters.FLASH_MODE_TORCH);
                 } else {
-                    changed = Utils.setFlashMode(parameters, Parameters.FLASH_MODE_OFF);
+                    Utils.setFlashMode(parameters, Parameters.FLASH_MODE_OFF);
                 }
-                if (changed) {
-                    camera.setParameters(parameters);
-                }
+                camera.setParameters(parameters);
             }
         } catch (final Exception ignored) {
         }
@@ -642,23 +639,20 @@ public final class CodeScanner {
                 if (parameters == null) {
                     return;
                 }
-                final boolean changed;
                 final AutoFocusMode autoFocusMode = mAutoFocusMode;
                 if (autoFocusEnabled) {
-                    changed = Utils.setAutoFocusMode(parameters, autoFocusMode);
+                    Utils.setAutoFocusMode(parameters, autoFocusMode);
                 } else {
                     camera.cancelAutoFocus();
-                    changed = Utils.disableAutoFocus(parameters);
+                    Utils.disableAutoFocus(parameters);
                 }
-                if (changed) {
-                    if (autoFocusEnabled) {
-                        Rect frameRect = mScannerView.getFrameRect();
-                        if (frameRect != null) {
-                            Utils.configureDefaultFocusArea(parameters, decoderWrapper, frameRect);
-                        }
+                if (autoFocusEnabled) {
+                    Rect frameRect = mScannerView.getFrameRect();
+                    if (frameRect != null) {
+                        Utils.configureDefaultFocusArea(parameters, decoderWrapper, frameRect);
                     }
-                    camera.setParameters(parameters);
                 }
+                camera.setParameters(parameters);
                 if (autoFocusEnabled) {
                     mSafeAutoFocusAttemptsCount = 0;
                     mSafeAutoFocusing = false;
