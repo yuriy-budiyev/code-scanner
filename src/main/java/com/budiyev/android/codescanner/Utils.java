@@ -93,6 +93,7 @@ final class Utils {
         if (supportedFpsRanges == null || supportedFpsRanges.isEmpty()) {
             return;
         }
+        Collections.sort(supportedFpsRanges, new FpsRangeComparator());
         for (final int[] fpsRange : supportedFpsRanges) {
             if (fpsRange[Parameters.PREVIEW_FPS_MIN_INDEX] >= MIN_FPS &&
                     fpsRange[Parameters.PREVIEW_FPS_MAX_INDEX] <= MAX_FPS) {
@@ -342,6 +343,17 @@ final class Utils {
         @Override
         public int compare(@NonNull final Size a, @NonNull final Size b) {
             return Integer.compare(b.height * b.width, a.height * a.width);
+        }
+    }
+
+    private static final class FpsRangeComparator implements Comparator<int[]> {
+        @Override
+        public int compare(int[] a, int[] b) {
+            int comparison = Integer.compare(b[Parameters.PREVIEW_FPS_MAX_INDEX], a[Parameters.PREVIEW_FPS_MAX_INDEX]);
+            if (comparison == 0) {
+                comparison = Integer.compare(b[Parameters.PREVIEW_FPS_MIN_INDEX], a[Parameters.PREVIEW_FPS_MIN_INDEX]);
+            }
+            return comparison;
         }
     }
 }
