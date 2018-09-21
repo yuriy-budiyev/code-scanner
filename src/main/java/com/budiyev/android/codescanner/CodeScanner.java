@@ -516,6 +516,16 @@ public final class CodeScanner {
         }
     }
 
+    boolean isAutoFocusSupportedOrUnknown() {
+        final DecoderWrapper wrapper = mDecoderWrapper;
+        return wrapper == null || wrapper.isAutoFocusSupported();
+    }
+
+    boolean isFlashSupportedOrUnknown() {
+        final DecoderWrapper wrapper = mDecoderWrapper;
+        return wrapper == null || wrapper.isFlashSupported();
+    }
+
     private void initialize() {
         initialize(mScannerView.getWidth(), mScannerView.getHeight());
     }
@@ -695,16 +705,6 @@ public final class CodeScanner {
         }
         mSafeAutoFocusTaskScheduled = true;
         mMainThreadHandler.postDelayed(mSafeAutoFocusTask, mSafeAutoFocusInterval);
-    }
-
-    boolean isAutoFocusSupportedOrUnknown() {
-        final DecoderWrapper wrapper = mDecoderWrapper;
-        return wrapper == null || wrapper.isAutoFocusSupported();
-    }
-
-    boolean isFlashSupportedOrUnknown() {
-        final DecoderWrapper wrapper = mDecoderWrapper;
-        return wrapper == null || wrapper.isFlashSupported();
     }
 
     private final class ScannerSizeListener implements CodeScannerView.SizeListener {
