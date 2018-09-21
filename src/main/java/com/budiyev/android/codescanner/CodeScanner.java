@@ -47,7 +47,7 @@ import com.google.zxing.BarcodeFormat;
 /**
  * Code scanner.
  * Supports portrait and landscape screen orientations, back and front facing cameras,
- * auto focus and flash light control, viewfinder customization.
+ * auto focus and flash light control, touch focus, viewfinder customization.
  *
  * @see CodeScannerView
  * @see BarcodeFormat
