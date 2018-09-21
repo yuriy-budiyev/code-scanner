@@ -70,7 +70,7 @@ public final class CodeScannerView extends ViewGroup {
     private ImageView mAutoFocusButton;
     private ImageView mFlashButton;
     private Point mPreviewSize;
-    private LayoutListener mLayoutListener;
+    private SizeListener mSizeListener;
     private CodeScanner mCodeScanner;
     private int mButtonSize;
     private int mAutoFocusButtonColor;
@@ -188,8 +188,10 @@ public final class CodeScannerView extends ViewGroup {
 
     @Override
     protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
-        final int width = right - left;
-        final int height = bottom - top;
+    }
+
+    @Override
+    protected void onSizeChanged(final int width, final int height, final int oldWidth, final int oldHeight) {
         final Point previewSize = mPreviewSize;
         if (previewSize == null) {
             mPreviewView.layout(0, 0, width, height);
@@ -216,9 +218,9 @@ public final class CodeScannerView extends ViewGroup {
         final int buttonSize = mButtonSize;
         mAutoFocusButton.layout(0, 0, buttonSize, buttonSize);
         mFlashButton.layout(width - buttonSize, 0, width, buttonSize);
-        final LayoutListener listener = mLayoutListener;
+        final SizeListener listener = mSizeListener;
         if (listener != null) {
-            listener.onLayout(width, height);
+            listener.onSizeChanged(width, height);
         }
     }
 
@@ -501,8 +503,8 @@ public final class CodeScannerView extends ViewGroup {
         requestLayout();
     }
 
-    void setLayoutListener(@Nullable final LayoutListener layoutListener) {
-        mLayoutListener = layoutListener;
+    void setSizeListener(@Nullable final SizeListener sizeListener) {
+        mSizeListener = sizeListener;
     }
 
     void setCodeScanner(@NonNull final CodeScanner codeScanner) {
@@ -524,8 +526,8 @@ public final class CodeScannerView extends ViewGroup {
                 .setImageResource(enabled ? R.drawable.ic_code_scanner_flash_on : R.drawable.ic_code_scanner_flash_off);
     }
 
-    interface LayoutListener {
-        void onLayout(int width, int height);
+    interface SizeListener {
+        void onSizeChanged(int width, int height);
     }
 
     private final class AutoFocusClickListener implements OnClickListener {

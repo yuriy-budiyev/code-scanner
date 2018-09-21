@@ -150,7 +150,7 @@ public final class CodeScanner {
         mStopPreviewTask = new StopPreviewTask();
         mDecoderStateListener = new DecoderStateListener();
         mScannerView.setCodeScanner(this);
-        mScannerView.setLayoutListener(new ScannerLayoutListener());
+        mScannerView.setSizeListener(new ScannerSizeListener());
     }
 
     /**
@@ -548,9 +548,9 @@ public final class CodeScanner {
                 mSafeAutoFocusing = false;
                 mSafeAutoFocusAttemptsCount = 0;
                 if (decoderWrapper.isAutoFocusSupported() && mAutoFocusEnabled) {
-                    Rect frameRect = mScannerView.getFrameRect();
+                    final Rect frameRect = mScannerView.getFrameRect();
                     if (frameRect != null) {
-                        Parameters parameters = camera.getParameters();
+                        final Parameters parameters = camera.getParameters();
                         Utils.configureDefaultFocusArea(parameters, decoderWrapper, frameRect);
                         camera.setParameters(parameters);
                     }
@@ -647,7 +647,7 @@ public final class CodeScanner {
                     Utils.disableAutoFocus(parameters);
                 }
                 if (autoFocusEnabled) {
-                    Rect frameRect = mScannerView.getFrameRect();
+                    final Rect frameRect = mScannerView.getFrameRect();
                     if (frameRect != null) {
                         Utils.configureDefaultFocusArea(parameters, decoderWrapper, frameRect);
                     }
@@ -707,9 +707,9 @@ public final class CodeScanner {
         return wrapper == null || wrapper.isFlashSupported();
     }
 
-    private final class ScannerLayoutListener implements CodeScannerView.LayoutListener {
+    private final class ScannerSizeListener implements CodeScannerView.SizeListener {
         @Override
-        public void onLayout(final int width, final int height) {
+        public void onSizeChanged(final int width, final int height) {
             synchronized (mInitializeLock) {
                 if (width != mViewWidth || height != mViewHeight) {
                     final boolean previewActive = mPreviewActive;
@@ -856,10 +856,10 @@ public final class CodeScanner {
             if (!autoFocusSupported) {
                 mAutoFocusEnabled = false;
             }
-            Point viewSize = new Point(mWidth, mHeight);
+            final Point viewSize = new Point(mWidth, mHeight);
             if (autoFocusSupported && mAutoFocusEnabled) {
                 Utils.setAutoFocusMode(parameters, mAutoFocusMode);
-                Rect frameRect = mScannerView.getFrameRect();
+                final Rect frameRect = mScannerView.getFrameRect();
                 if (frameRect != null) {
                     Utils.configureDefaultFocusArea(parameters, frameRect, previewSize, viewSize, imageWidth,
                             imageHeight, orientation);

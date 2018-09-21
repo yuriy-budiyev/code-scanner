@@ -116,7 +116,7 @@ final class Utils {
     public static void configureFocusArea(@NonNull final Parameters parameters, @NonNull final Rect area,
             final int width, final int height, final int orientation) {
         final List<Area> areas = new ArrayList<>(1);
-        final Rect rotatedArea = area.rotate(-orientation, width / 2f, height / 2f);
+        final Rect rotatedArea = area.rotate(-orientation, width / 2f, height / 2f).bound(0, 0, width, height);
         areas.add(new Area(new android.graphics.Rect(mapCoordinate(rotatedArea.getLeft(), width),
                 mapCoordinate(rotatedArea.getTop(), height), mapCoordinate(rotatedArea.getRight(), width),
                 mapCoordinate(rotatedArea.getBottom(), height)), 1000));
@@ -128,28 +128,29 @@ final class Utils {
         }
     }
 
-    public static void configureDefaultFocusArea(@NonNull final Parameters parameters, @NonNull Rect frameRect,
-            @NonNull Point previewSize, @NonNull Point viewSize, int width, int height, int orientation) {
-        boolean portrait = isPortrait(orientation);
-        int rotatedWidth = portrait ? height : width;
-        int rotatedHeight = portrait ? width : height;
+    public static void configureDefaultFocusArea(@NonNull final Parameters parameters, @NonNull final Rect frameRect,
+            @NonNull final Point previewSize, @NonNull final Point viewSize, final int width, final int height,
+            final int orientation) {
+        final boolean portrait = isPortrait(orientation);
+        final int rotatedWidth = portrait ? height : width;
+        final int rotatedHeight = portrait ? width : height;
         configureFocusArea(parameters, getImageFrameRect(rotatedWidth, rotatedHeight, frameRect, previewSize, viewSize),
                 rotatedWidth, rotatedHeight, orientation);
     }
 
-    public static void configureDefaultFocusArea(@NonNull Parameters parameters, @NonNull DecoderWrapper decoderWrapper,
-            @NonNull Rect frameRect) {
-        Point imageSize = decoderWrapper.getImageSize();
+    public static void configureDefaultFocusArea(@NonNull final Parameters parameters,
+            @NonNull final DecoderWrapper decoderWrapper, @NonNull final Rect frameRect) {
+        final Point imageSize = decoderWrapper.getImageSize();
         Utils.configureDefaultFocusArea(parameters, frameRect, decoderWrapper.getPreviewSize(),
                 decoderWrapper.getViewSize(), imageSize.getX(), imageSize.getY(),
                 decoderWrapper.getDisplayOrientation());
     }
 
-    public static void configureFocusModeForTouch(@NonNull Parameters parameters) {
+    public static void configureFocusModeForTouch(@NonNull final Parameters parameters) {
         if (Parameters.FOCUS_MODE_AUTO.equals(parameters.getFocusMode())) {
             return;
         }
-        List<String> focusModes = parameters.getSupportedFocusModes();
+        final List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes != null && focusModes.contains(Parameters.FOCUS_MODE_AUTO)) {
             parameters.setFocusMode(Parameters.FOCUS_MODE_AUTO);
         }
@@ -355,7 +356,7 @@ final class Utils {
 
     private static final class FpsRangeComparator implements Comparator<int[]> {
         @Override
-        public int compare(int[] a, int[] b) {
+        public int compare(final int[] a, final int[] b) {
             int comparison = Integer.compare(b[Parameters.PREVIEW_FPS_MAX_INDEX], a[Parameters.PREVIEW_FPS_MAX_INDEX]);
             if (comparison == 0) {
                 comparison = Integer.compare(b[Parameters.PREVIEW_FPS_MIN_INDEX], a[Parameters.PREVIEW_FPS_MIN_INDEX]);

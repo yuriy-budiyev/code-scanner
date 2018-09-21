@@ -91,6 +91,18 @@ final class Rect {
     }
 
     @NonNull
+    public Rect bound(final int left, final int top, final int right, final int bottom) {
+        final int l = mLeft;
+        final int t = mTop;
+        final int r = mRight;
+        final int b = mBottom;
+        if (l >= left && t >= top && r <= right && b <= bottom) {
+            return this;
+        }
+        return new Rect(Math.max(l, left), Math.max(t, top), Math.min(r, right), Math.min(b, bottom));
+    }
+
+    @NonNull
     public Rect rotate(final float angle, final float x, final float y) {
         final Matrix matrix = new Matrix();
         final float[] rect = new float[] {mLeft, mTop, mRight, mBottom};
