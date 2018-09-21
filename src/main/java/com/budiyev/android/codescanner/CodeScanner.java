@@ -697,16 +697,6 @@ public final class CodeScanner {
         mMainThreadHandler.postDelayed(mSafeAutoFocusTask, mSafeAutoFocusInterval);
     }
 
-    boolean isAutoFocusSupportedOrUnknown() {
-        final DecoderWrapper wrapper = mDecoderWrapper;
-        return wrapper == null || wrapper.isAutoFocusSupported();
-    }
-
-    boolean isFlashSupportedOrUnknown() {
-        final DecoderWrapper wrapper = mDecoderWrapper;
-        return wrapper == null || wrapper.isFlashSupported();
-    }
-
     private final class ScannerLayoutListener implements CodeScannerView.LayoutListener {
         @Override
         public void onLayout(final int width, final int height) {
