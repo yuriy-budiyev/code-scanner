@@ -12,7 +12,8 @@ Code scanner library for [Android](https://developer.android.com), based on [ZXi
 * Portrait and landscape screen orientations
 * Back and front facing cameras
 * Customizable viewfinder
-* Kotlin-friendly
+* Kotlin friendly
+* Touch focus
 
 ### Supported formats
 | 1D product | 1D industrial | 2D
@@ -29,7 +30,7 @@ Code scanner library for [Android](https://developer.android.com), based on [ZXi
 Add dependency:
 ```gradle
 dependencies {
-    implementation 'com.budiyev.android:code-scanner:1.9.4'
+    implementation 'com.budiyev.android:code-scanner:2.0.0'
 }
 ```
 Add camera permission to AndroidManifest.xml (Don't forget about dynamic permissions on API >= 23):
