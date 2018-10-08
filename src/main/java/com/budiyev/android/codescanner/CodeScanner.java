@@ -648,6 +648,7 @@ public final class CodeScanner {
             if (decoderWrapper != null) {
                 final Camera camera = decoderWrapper.getCamera();
                 camera.cancelAutoFocus();
+                mTouchFocusing = false;
                 final Parameters parameters = camera.getParameters();
                 final AutoFocusMode autoFocusMode = mAutoFocusMode;
                 if (autoFocusEnabled) {
@@ -663,7 +664,6 @@ public final class CodeScanner {
                 }
                 camera.setParameters(parameters);
                 if (autoFocusEnabled) {
-                    mTouchFocusing = false;
                     mSafeAutoFocusAttemptsCount = 0;
                     mSafeAutoFocusing = false;
                     if (autoFocusMode == AutoFocusMode.SAFE) {
