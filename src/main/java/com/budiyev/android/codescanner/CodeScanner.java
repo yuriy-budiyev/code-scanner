@@ -504,10 +504,10 @@ public final class CodeScanner {
                         final Rect imageArea = Utils.getImageFrameRect(imageWidth, imageHeight, viewFocusArea,
                                 decoderWrapper.getPreviewSize(), decoderWrapper.getViewSize());
                         final Camera camera = decoderWrapper.getCamera();
+                        camera.cancelAutoFocus();
                         final Parameters parameters = camera.getParameters();
                         Utils.configureFocusArea(parameters, imageArea, imageWidth, imageHeight, orientation);
                         Utils.configureFocusModeForTouch(parameters);
-                        camera.cancelAutoFocus();
                         camera.setParameters(parameters);
                         camera.autoFocus(mTouchFocusCallback);
                         mTouchFocusing = true;
@@ -586,11 +586,11 @@ public final class CodeScanner {
             final DecoderWrapper decoderWrapper = mDecoderWrapper;
             if (decoderWrapper != null) {
                 final Camera camera = decoderWrapper.getCamera();
+                camera.cancelAutoFocus();
                 final Parameters parameters = camera.getParameters();
                 if (!internal && decoderWrapper.isFlashSupported() && mFlashEnabled) {
                     Utils.setFlashMode(parameters, Parameters.FLASH_MODE_OFF);
                 }
-                camera.cancelAutoFocus();
                 camera.setParameters(parameters);
                 camera.setPreviewCallback(null);
                 camera.stopPreview();
@@ -647,15 +647,12 @@ public final class CodeScanner {
             final DecoderWrapper decoderWrapper = mDecoderWrapper;
             if (decoderWrapper != null) {
                 final Camera camera = decoderWrapper.getCamera();
+                camera.cancelAutoFocus();
                 final Parameters parameters = camera.getParameters();
-                if (parameters == null) {
-                    return;
-                }
                 final AutoFocusMode autoFocusMode = mAutoFocusMode;
                 if (autoFocusEnabled) {
                     Utils.setAutoFocusMode(parameters, autoFocusMode);
                 } else {
-                    camera.cancelAutoFocus();
                     Utils.disableAutoFocus(parameters);
                 }
                 if (autoFocusEnabled) {
