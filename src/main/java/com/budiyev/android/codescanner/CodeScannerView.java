@@ -188,36 +188,12 @@ public final class CodeScannerView extends ViewGroup {
 
     @Override
     protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
+        performLayout(right - left, bottom - top);
     }
 
     @Override
     protected void onSizeChanged(final int width, final int height, final int oldWidth, final int oldHeight) {
-        final Point previewSize = mPreviewSize;
-        if (previewSize == null) {
-            mPreviewView.layout(0, 0, width, height);
-        } else {
-            int frameLeft = 0;
-            int frameTop = 0;
-            int frameRight = width;
-            int frameBottom = height;
-            final int previewWidth = previewSize.getX();
-            if (previewWidth > width) {
-                final int d = (previewWidth - width) / 2;
-                frameLeft -= d;
-                frameRight += d;
-            }
-            final int previewHeight = previewSize.getY();
-            if (previewHeight > height) {
-                final int d = (previewHeight - height) / 2;
-                frameTop -= d;
-                frameBottom += d;
-            }
-            mPreviewView.layout(frameLeft, frameTop, frameRight, frameBottom);
-        }
-        mViewFinderView.layout(0, 0, width, height);
-        final int buttonSize = mButtonSize;
-        mAutoFocusButton.layout(0, 0, buttonSize, buttonSize);
-        mFlashButton.layout(width - buttonSize, 0, width, buttonSize);
+        performLayout(width, height);
         final SizeListener listener = mSizeListener;
         if (listener != null) {
             listener.onSizeChanged(width, height);
@@ -524,6 +500,35 @@ public final class CodeScannerView extends ViewGroup {
     void setFlashEnabled(final boolean enabled) {
         mFlashButton
                 .setImageResource(enabled ? R.drawable.ic_code_scanner_flash_on : R.drawable.ic_code_scanner_flash_off);
+    }
+
+    private void performLayout(int width, int height) {
+        final Point previewSize = mPreviewSize;
+        if (previewSize == null) {
+            mPreviewView.layout(0, 0, width, height);
+        } else {
+            int frameLeft = 0;
+            int frameTop = 0;
+            int frameRight = width;
+            int frameBottom = height;
+            final int previewWidth = previewSize.getX();
+            if (previewWidth > width) {
+                final int d = (previewWidth - width) / 2;
+                frameLeft -= d;
+                frameRight += d;
+            }
+            final int previewHeight = previewSize.getY();
+            if (previewHeight > height) {
+                final int d = (previewHeight - height) / 2;
+                frameTop -= d;
+                frameBottom += d;
+            }
+            mPreviewView.layout(frameLeft, frameTop, frameRight, frameBottom);
+        }
+        mViewFinderView.layout(0, 0, width, height);
+        final int buttonSize = mButtonSize;
+        mAutoFocusButton.layout(0, 0, buttonSize, buttonSize);
+        mFlashButton.layout(width - buttonSize, 0, width, buttonSize);
     }
 
     interface SizeListener {
