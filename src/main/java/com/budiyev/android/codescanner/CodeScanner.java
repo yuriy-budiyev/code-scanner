@@ -663,6 +663,7 @@ public final class CodeScanner {
                 }
                 camera.setParameters(parameters);
                 if (autoFocusEnabled) {
+                    mTouchFocusing = false;
                     mSafeAutoFocusAttemptsCount = 0;
                     mSafeAutoFocusing = false;
                     if (autoFocusMode == AutoFocusMode.SAFE) {
