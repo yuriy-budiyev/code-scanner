@@ -109,25 +109,26 @@ public final class CodeScanner {
     private volatile List<BarcodeFormat> mFormats = DEFAULT_FORMATS;
     private volatile ScanMode mScanMode = DEFAULT_SCAN_MODE;
     private volatile AutoFocusMode mAutoFocusMode = DEFAULT_AUTO_FOCUS_MODE;
-    private volatile DecodeCallback mDecodeCallback;
-    private volatile ErrorCallback mErrorCallback;
-    private volatile DecoderWrapper mDecoderWrapper;
-    private volatile boolean mInitialization;
-    private volatile boolean mInitialized;
-    private volatile boolean mStoppingPreview;
+    private volatile DecodeCallback mDecodeCallback = null;
+    private volatile ErrorCallback mErrorCallback = null;
+    private volatile DecoderWrapper mDecoderWrapper = null;
+    private volatile boolean mInitialization = false;
+    private volatile boolean mInitialized = false;
+    private volatile boolean mStoppingPreview = false;
     private volatile boolean mAutoFocusEnabled = DEFAULT_AUTO_FOCUS_ENABLED;
     private volatile boolean mFlashEnabled = DEFAULT_FLASH_ENABLED;
     private volatile long mSafeAutoFocusInterval = DEFAULT_SAFE_AUTO_FOCUS_INTERVAL;
     private volatile int mCameraId = CAMERA_BACK;
     private volatile int mZoom = 0;
     private boolean mTouchFocusEnabled = DEFAULT_TOUCH_FOCUS_ENABLED;
-    private boolean mPreviewActive;
-    private boolean mSafeAutoFocusing;
-    private boolean mSafeAutoFocusTaskScheduled;
-    private boolean mInitializationRequested;
-    private int mSafeAutoFocusAttemptsCount;
-    private int mViewWidth;
-    private int mViewHeight;
+    private boolean mTouchFocusing = false;
+    private boolean mPreviewActive = false;
+    private boolean mSafeAutoFocusing = false;
+    private boolean mSafeAutoFocusTaskScheduled = false;
+    private boolean mInitializationRequested = false;
+    private int mSafeAutoFocusAttemptsCount = 0;
+    private int mViewWidth = 0;
+    private int mViewHeight = 0;
 
     /**
      * CodeScanner, associated with the first back-facing camera on the device
@@ -486,7 +487,7 @@ public final class CodeScanner {
     @SuppressWarnings("SuspiciousNameCombination")
     void performTouchFocus(final Rect viewFocusArea) {
         synchronized (mInitializeLock) {
-            if (mInitialized && mPreviewActive) {
+            if (mInitialized && mPreviewActive && !mTouchFocusing) {
                 try {
                     setAutoFocusEnabled(false);
                     final DecoderWrapper decoderWrapper = mDecoderWrapper;
@@ -509,6 +510,7 @@ public final class CodeScanner {
                         camera.cancelAutoFocus();
                         camera.setParameters(parameters);
                         camera.autoFocus(mTouchFocusCallback);
+                        mTouchFocusing = true;
                     }
                 } catch (final Exception ignored) {
                 }
@@ -895,6 +897,7 @@ public final class CodeScanner {
     private final class TouchFocusCallback implements Camera.AutoFocusCallback {
         @Override
         public void onAutoFocus(final boolean success, @NonNull final Camera camera) {
+            mTouchFocusing = false;
         }
     }
 
