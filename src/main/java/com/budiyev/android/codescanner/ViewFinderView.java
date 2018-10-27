@@ -68,10 +68,9 @@ final class ViewFinderView extends View {
         final int left = frameRect.getLeft();
         final int right = frameRect.getRight();
         final int bottom = frameRect.getBottom();
-        final float frameStrokeWidth = mFrameCornersSize == 0 ? 0f : mFramePaint.getStrokeWidth() / 2.0f;
         final float rx = mFrameCornersRadiusX > (mFrameCornersSize / 2.0f) ? mFrameCornersSize / 2.0f : mFrameCornersRadiusX;
         final float ry = mFrameCornersRadiusY > (mFrameCornersSize / 2.0f) ? mFrameCornersSize / 2.0f : mFrameCornersRadiusY;
-        invalidateMaskPath(left, top, right, bottom, width, height, frameStrokeWidth, rx, ry);
+        invalidateMaskPath(left, top, right, bottom, width, height, rx, ry);
         invalidateFramePath(left, top, right, bottom, rx, ry);
         canvas.drawPath(mMaskPath, mMaskPaint);
         canvas.drawPath(mFramePath, mFramePaint);
@@ -237,38 +236,18 @@ final class ViewFinderView extends View {
             final int bottom,
             final int width,
             final int height,
-            final float frameStrokeWidth,
             final float rx,
             final float ry) {
         mMaskPath.reset();
-        mMaskPath.moveTo(left + frameStrokeWidth, top + mFrameCornersSize);
-        mMaskPath.lineTo(left + frameStrokeWidth, top + frameStrokeWidth + ry);
-        mMaskPath.quadTo(left + (frameStrokeWidth / 2), top + (frameStrokeWidth / 2),
-                left + frameStrokeWidth + rx, top + frameStrokeWidth);
-        mMaskPath.lineTo(left + mFrameCornersSize, top + frameStrokeWidth);
-        mMaskPath.rLineTo(0, -frameStrokeWidth);
-        mMaskPath.lineTo(right - mFrameCornersSize, top);
-        mMaskPath.rLineTo(0, frameStrokeWidth);
-        mMaskPath.lineTo(right - frameStrokeWidth - rx, top + frameStrokeWidth);
-        mMaskPath.quadTo(right - (frameStrokeWidth / 2), top + (frameStrokeWidth / 2),
-                right - frameStrokeWidth, top + frameStrokeWidth + ry);
-        mMaskPath.lineTo(right - frameStrokeWidth, top + mFrameCornersSize);
-        mMaskPath.rLineTo(frameStrokeWidth, 0);
-        mMaskPath.lineTo(right, bottom - mFrameCornersSize);
-        mMaskPath.rLineTo(-frameStrokeWidth, 0);
-        mMaskPath.lineTo(right - frameStrokeWidth, bottom - frameStrokeWidth - ry);
-        mMaskPath.quadTo(right - (frameStrokeWidth / 2), bottom - (frameStrokeWidth / 2),
-                right - frameStrokeWidth - rx, bottom - frameStrokeWidth);
-        mMaskPath.lineTo(right - mFrameCornersSize, bottom - frameStrokeWidth);
-        mMaskPath.rLineTo(0, frameStrokeWidth);
-        mMaskPath.lineTo(left + mFrameCornersSize, bottom);
-        mMaskPath.rLineTo(0, -frameStrokeWidth);
-        mMaskPath.lineTo(left + frameStrokeWidth + rx, bottom - frameStrokeWidth);
-        mMaskPath.quadTo(left + (frameStrokeWidth / 2), bottom - (frameStrokeWidth / 2),
-                left + frameStrokeWidth, bottom - frameStrokeWidth - ry);
-        mMaskPath.lineTo(left + frameStrokeWidth, bottom - mFrameCornersSize);
-        mMaskPath.rLineTo(-frameStrokeWidth, 0);
-        mMaskPath.lineTo(left, top + mFrameCornersSize);
+        mMaskPath.moveTo(left, top + ry);
+        mMaskPath.rQuadTo(0, -ry, rx, -ry);
+        mMaskPath.lineTo(right - rx, top);
+        mMaskPath.rQuadTo(rx, 0, rx, ry);
+        mMaskPath.lineTo(right, bottom - ry);
+        mMaskPath.rQuadTo(0, ry, -rx, ry);
+        mMaskPath.lineTo(left + rx, bottom);
+        mMaskPath.rQuadTo(-rx, 0, -rx, -ry);
+        mMaskPath.lineTo(left, top + ry);
         mMaskPath.moveTo(0, 0);
         mMaskPath.rLineTo(0, height);
         mMaskPath.rLineTo(width, 0);
