@@ -38,8 +38,7 @@ final class ViewFinderView extends View {
     private final Paint mMaskPaint;
     private final Paint mFramePaint;
     private final Path mFramePath;
-    private final Path mFrameMaskTopRectPath;
-    private final Path mFrameMaskBottomRectPath;
+    private final Path mMaskPath;
     private Rect mFrameRect;
     private int mFrameCornersSize;
     private float mFrameRatioWidth = 1f;
@@ -54,8 +53,7 @@ final class ViewFinderView extends View {
         mFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFramePaint.setStyle(Paint.Style.STROKE);
         mFramePath = new Path();
-        mFrameMaskTopRectPath = new Path();
-        mFrameMaskBottomRectPath = new Path();
+        mMaskPath = new Path();
     }
 
     @Override
@@ -71,15 +69,11 @@ final class ViewFinderView extends View {
         final int right = frameRect.getRight();
         final int bottom = frameRect.getBottom();
         final float frameStrokeWidth = mFrameCornersSize == 0 ? 0f : mFramePaint.getStrokeWidth() / 2.0f;
-        final float rx = mFrameCornersRadiusX > (mFrameCornersSize / 2.0f) ? mFrameCornersSize / 2.0f
-                : mFrameCornersRadiusX;
-        final float ry = mFrameCornersRadiusY > (mFrameCornersSize / 2.0f) ? mFrameCornersSize / 2.0f
-                : mFrameCornersRadiusY;
-        invalidateFrameMaskTopRect(left, top, right, width, frameStrokeWidth, rx, ry);
-        invalidateFrameMaskBottomRect(left, top, right, bottom, width, height, frameStrokeWidth, rx, ry);
+        final float rx = mFrameCornersRadiusX > (mFrameCornersSize / 2.0f) ? mFrameCornersSize / 2.0f : mFrameCornersRadiusX;
+        final float ry = mFrameCornersRadiusY > (mFrameCornersSize / 2.0f) ? mFrameCornersSize / 2.0f : mFrameCornersRadiusY;
+        invalidateMaskPath(left, top, right, bottom, width, height, frameStrokeWidth, rx, ry);
         invalidateFramePath(left, top, right, bottom, rx, ry);
-        canvas.drawPath(mFrameMaskTopRectPath, mMaskPaint);
-        canvas.drawPath(mFrameMaskBottomRectPath, mMaskPaint);
+        canvas.drawPath(mMaskPath, mMaskPaint);
         canvas.drawPath(mFramePath, mFramePaint);
     }
 
@@ -237,37 +231,7 @@ final class ViewFinderView extends View {
         }
     }
 
-    private void invalidateFrameMaskTopRect(final int left,
-            final int top,
-            final int right,
-            final int width,
-            final float frameStrokeWidth,
-            final float rx,
-            final float ry) {
-        mFrameMaskTopRectPath.reset();
-        mFrameMaskTopRectPath.moveTo(0, 0);
-        mFrameMaskTopRectPath.rLineTo(0, top + mFrameCornersSize);
-        mFrameMaskTopRectPath.rLineTo(left + frameStrokeWidth, 0);
-        // Top-left corner
-        mFrameMaskTopRectPath.lineTo(left + frameStrokeWidth, top + frameStrokeWidth + ry);
-        mFrameMaskTopRectPath.quadTo(left + (frameStrokeWidth / 2), top + (frameStrokeWidth / 2),
-                left + frameStrokeWidth + rx, top + frameStrokeWidth);
-        mFrameMaskTopRectPath.lineTo(left + mFrameCornersSize, top + frameStrokeWidth);
-        mFrameMaskTopRectPath.rLineTo(0, -frameStrokeWidth);
-        mFrameMaskTopRectPath.lineTo(right - mFrameCornersSize, top);
-        mFrameMaskTopRectPath.rLineTo(0, frameStrokeWidth);
-        // Top-right corner
-        mFrameMaskTopRectPath.lineTo(right - frameStrokeWidth - rx, top + frameStrokeWidth);
-        mFrameMaskTopRectPath.quadTo(right - (frameStrokeWidth / 2), top + (frameStrokeWidth / 2),
-                right - frameStrokeWidth, top + frameStrokeWidth + ry);
-        mFrameMaskTopRectPath.lineTo(right - frameStrokeWidth, top + mFrameCornersSize);
-        mFrameMaskTopRectPath.lineTo(width, top + mFrameCornersSize);
-        mFrameMaskTopRectPath.lineTo(width, 0);
-        mFrameMaskTopRectPath.lineTo(0, 0);
-        mFrameMaskTopRectPath.close();
-    }
-
-    private void invalidateFrameMaskBottomRect(final int left,
+    private void invalidateMaskPath(final int left,
             final int top,
             final int right,
             final int bottom,
@@ -276,31 +240,40 @@ final class ViewFinderView extends View {
             final float frameStrokeWidth,
             final float rx,
             final float ry) {
-        mFrameMaskBottomRectPath.reset();
-        mFrameMaskBottomRectPath.moveTo(0, height);
-        mFrameMaskBottomRectPath.lineTo(0, top + mFrameCornersSize);
-        mFrameMaskBottomRectPath.rLineTo(left, 0);
-        mFrameMaskBottomRectPath.lineTo(left, bottom - mFrameCornersSize);
-        mFrameMaskBottomRectPath.rLineTo(frameStrokeWidth, 0);
-        // Bottom left corner
-        mFrameMaskBottomRectPath.lineTo(left + frameStrokeWidth, bottom - frameStrokeWidth - ry);
-        mFrameMaskBottomRectPath.quadTo(left + (frameStrokeWidth / 2), bottom - (frameStrokeWidth / 2),
-                left + frameStrokeWidth + rx, bottom - frameStrokeWidth);
-        mFrameMaskBottomRectPath.lineTo(left + mFrameCornersSize, bottom - frameStrokeWidth);
-        mFrameMaskBottomRectPath.rLineTo(0, frameStrokeWidth);
-        mFrameMaskBottomRectPath.lineTo(right - mFrameCornersSize, bottom);
-        mFrameMaskBottomRectPath.rLineTo(0, -frameStrokeWidth);
-        // Bottom right corner
-        mFrameMaskBottomRectPath.lineTo(right - frameStrokeWidth - rx, bottom - frameStrokeWidth);
-        mFrameMaskBottomRectPath.quadTo(right - (frameStrokeWidth / 2), bottom - (frameStrokeWidth / 2),
-                right - frameStrokeWidth, bottom - frameStrokeWidth - ry);
-        mFrameMaskBottomRectPath.lineTo(right - frameStrokeWidth, bottom - mFrameCornersSize);
-        mFrameMaskBottomRectPath.rLineTo(frameStrokeWidth, 0);
-        mFrameMaskBottomRectPath.lineTo(right, top + mFrameCornersSize);
-        mFrameMaskBottomRectPath.lineTo(width, top + mFrameCornersSize);
-        mFrameMaskBottomRectPath.lineTo(width, height);
-        mFrameMaskBottomRectPath.lineTo(0, height);
-        mFrameMaskBottomRectPath.close();
+        mMaskPath.reset();
+        mMaskPath.moveTo(left + frameStrokeWidth, top + mFrameCornersSize);
+        mMaskPath.lineTo(left + frameStrokeWidth, top + frameStrokeWidth + ry);
+        mMaskPath.quadTo(left + (frameStrokeWidth / 2), top + (frameStrokeWidth / 2),
+                left + frameStrokeWidth + rx, top + frameStrokeWidth);
+        mMaskPath.lineTo(left + mFrameCornersSize, top + frameStrokeWidth);
+        mMaskPath.rLineTo(0, -frameStrokeWidth);
+        mMaskPath.lineTo(right - mFrameCornersSize, top);
+        mMaskPath.rLineTo(0, frameStrokeWidth);
+        mMaskPath.lineTo(right - frameStrokeWidth - rx, top + frameStrokeWidth);
+        mMaskPath.quadTo(right - (frameStrokeWidth / 2), top + (frameStrokeWidth / 2),
+                right - frameStrokeWidth, top + frameStrokeWidth + ry);
+        mMaskPath.lineTo(right - frameStrokeWidth, top + mFrameCornersSize);
+        mMaskPath.rLineTo(frameStrokeWidth, 0);
+        mMaskPath.lineTo(right, bottom - mFrameCornersSize);
+        mMaskPath.rLineTo(-frameStrokeWidth, 0);
+        mMaskPath.lineTo(right - frameStrokeWidth, bottom - frameStrokeWidth - ry);
+        mMaskPath.quadTo(right - (frameStrokeWidth / 2), bottom - (frameStrokeWidth / 2),
+                right - frameStrokeWidth - rx, bottom - frameStrokeWidth);
+        mMaskPath.lineTo(right - mFrameCornersSize, bottom - frameStrokeWidth);
+        mMaskPath.rLineTo(0, frameStrokeWidth);
+        mMaskPath.lineTo(left + mFrameCornersSize, bottom);
+        mMaskPath.rLineTo(0, -frameStrokeWidth);
+        mMaskPath.lineTo(left + frameStrokeWidth + rx, bottom - frameStrokeWidth);
+        mMaskPath.quadTo(left + (frameStrokeWidth / 2), bottom - (frameStrokeWidth / 2),
+                left + frameStrokeWidth, bottom - frameStrokeWidth - ry);
+        mMaskPath.lineTo(left + frameStrokeWidth, bottom - mFrameCornersSize);
+        mMaskPath.rLineTo(-frameStrokeWidth, 0);
+        mMaskPath.lineTo(left, top + mFrameCornersSize);
+        mMaskPath.moveTo(0, 0);
+        mMaskPath.rLineTo(0, height);
+        mMaskPath.rLineTo(width, 0);
+        mMaskPath.rLineTo(0, -height);
+        mMaskPath.rLineTo(-width, 0);
     }
 
     private void invalidateFramePath(final int left,
