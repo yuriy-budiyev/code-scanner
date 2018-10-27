@@ -9,6 +9,8 @@
         <attr format="boolean" name="flashButtonVisible"/>
         <attr format="dimension" name="frameThickness"/>
         <attr format="dimension" name="frameCornersSize"/>
+        <attr format="float" name="frameCornersRadiusX" />
+        <attr format="float" name="frameCornersRadiusY"/>
         <attr format="float" name="frameAspectRatioWidth"/>
         <attr format="float" name="frameAspectRatioHeight"/>
         <attr format="float" name="frameSize"/>
