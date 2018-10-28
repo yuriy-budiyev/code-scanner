@@ -34,7 +34,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.FloatRange;
@@ -62,6 +61,8 @@ public final class CodeScannerView extends ViewGroup {
     private static final float DEFAULT_FRAME_ASPECT_RATIO_WIDTH = 1f;
     private static final float DEFAULT_FRAME_ASPECT_RATIO_HEIGHT = 1f;
     private static final float DEFAULT_FRAME_CORNER_SIZE_DP = 50f;
+    private static final float DEFAULT_FRAME_CORNERS_RADIUS_X = 0f;
+    private static final float DEFAULT_FRAME_CORNERS_RADIUS_Y = 0f;
     private static final float DEFAULT_FRAME_SIZE = 0.75f;
     private static final float BUTTON_SIZE_DP = 56f;
     private static final float FOCUS_AREA_SIZE_DP = 20f;
@@ -145,6 +146,8 @@ public final class CodeScannerView extends ViewGroup {
             mViewFinderView.setFrameColor(DEFAULT_FRAME_COLOR);
             mViewFinderView.setFrameThickness(Math.round(DEFAULT_FRAME_THICKNESS_DP * density));
             mViewFinderView.setFrameCornersSize(Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * density));
+            mViewFinderView.setFrameCornersRadiusX(DEFAULT_FRAME_CORNERS_RADIUS_X);
+            mViewFinderView.setFrameCornersRadiusY(DEFAULT_FRAME_CORNERS_RADIUS_Y);
             mViewFinderView.setFrameSize(DEFAULT_FRAME_SIZE);
             mAutoFocusButton.setColorFilter(DEFAULT_AUTO_FOCUS_BUTTON_COLOR);
             mFlashButton.setColorFilter(DEFAULT_FLASH_BUTTON_COLOR);
@@ -161,8 +164,13 @@ public final class CodeScannerView extends ViewGroup {
                         Math.round(DEFAULT_FRAME_THICKNESS_DP * density)));
                 setFrameCornersSize(a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameCornersSize,
                         Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * density)));
+                setFrameCornersRadiusX(a.getFloat(R.styleable.CodeScannerView_frameCornersRadiusX,
+                        DEFAULT_FRAME_CORNERS_RADIUS_X));
+                setFrameCornersRadiusY(a.getFloat(R.styleable.CodeScannerView_frameCornersRadiusY,
+                        DEFAULT_FRAME_CORNERS_RADIUS_Y));
                 setFrameAspectRatio(
-                        a.getFloat(R.styleable.CodeScannerView_frameAspectRatioWidth, DEFAULT_FRAME_ASPECT_RATIO_WIDTH),
+                        a.getFloat(R.styleable.CodeScannerView_frameAspectRatioWidth,
+                                DEFAULT_FRAME_ASPECT_RATIO_WIDTH),
                         a.getFloat(R.styleable.CodeScannerView_frameAspectRatioHeight,
                                 DEFAULT_FRAME_ASPECT_RATIO_HEIGHT));
                 setFrameSize(a.getFloat(R.styleable.CodeScannerView_frameSize, DEFAULT_FRAME_SIZE));
@@ -171,7 +179,8 @@ public final class CodeScannerView extends ViewGroup {
                 setFlashButtonVisible(
                         a.getBoolean(R.styleable.CodeScannerView_flashButtonVisible, DEFAULT_FLASH_BUTTON_VISIBLE));
                 setAutoFocusButtonColor(
-                        a.getColor(R.styleable.CodeScannerView_autoFocusButtonColor, DEFAULT_AUTO_FOCUS_BUTTON_COLOR));
+                        a.getColor(R.styleable.CodeScannerView_autoFocusButtonColor,
+                                DEFAULT_AUTO_FOCUS_BUTTON_COLOR));
                 setFlashButtonColor(
                         a.getColor(R.styleable.CodeScannerView_flashButtonColor, DEFAULT_FLASH_BUTTON_COLOR));
             } finally {
@@ -297,6 +306,50 @@ public final class CodeScannerView extends ViewGroup {
             throw new IllegalArgumentException("Frame corners size can't be negative");
         }
         mViewFinderView.setFrameCornersSize(size);
+    }
+
+    /**
+     * Get current frame corners x-radius
+     *
+     * @see #setFrameCornersRadiusX
+     */
+    @FloatRange(from = 0f)
+    public float getFrameCornersRadiusX() {
+        return mViewFinderView.getFrameCornersRadiusX();
+    }
+
+    /**
+     * Set current frame corners x-radius
+     *
+     * @param radiusX x-radius of the oval used to round the corners
+     */
+    public void setFrameCornersRadiusX(@FloatRange(from = 0) final float radiusX) {
+        if (radiusX < 0) {
+            throw new IllegalArgumentException("Frame corners x-radius should be greater than zero");
+        }
+        mViewFinderView.setFrameCornersRadiusX(radiusX);
+    }
+
+    /**
+     * Get current frame corners y-radius
+     *
+     * @see #setFrameCornersRadiusY
+     */
+    @FloatRange(from = 0f)
+    public float getFrameCornersRadiusY() {
+        return mViewFinderView.getFrameCornersRadiusY();
+    }
+
+    /**
+     * Set current frame corners x-radius
+     *
+     * @param radiusY y-radius of the oval used to round the corners
+     */
+    public void setFrameCornersRadiusY(@FloatRange(from = 0) final float radiusY) {
+        if (radiusY < 0) {
+            throw new IllegalArgumentException("Frame corners y-radius should be greater than zero");
+        }
+        mViewFinderView.setFrameCornersRadiusY(radiusY);
     }
 
     /**

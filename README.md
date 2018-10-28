@@ -56,6 +56,8 @@ Define a view in your layout file:
         app:flashButtonVisible="true"
         app:frameColor="@android:color/white"
         app:frameCornersSize="50dp"
+        app:frameCornersRadiusX="0"
+        app:frameCornersRadiusY="0"
         app:frameAspectRatioWidth="1"
         app:frameAspectRatioHeight="1"
         app:frameSize="0.75"
