@@ -75,24 +75,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val scannerView = findViewById<CodeScannerView>(R.id.scanner_view)
         
-        codeScanner = CodeScanner(this, scannerView)
-        
-        // Parameters (default values)
-        codeScanner.camera = CodeScanner.CAMERA_BACK // or CAMERA_FRONT or specific camera id
-        codeScanner.formats = CodeScanner.ALL_FORMATS // list of type BarcodeFormat,
-                                                      // ex. listOf(BarcodeFormat.QR_CODE)
-        codeScanner.autoFocusMode = AutoFocusMode.SAFE // or CONTINUOUS
-        codeScanner.scanMode = ScanMode.SINGLE // or CONTINUOUS or PREVIEW
-        codeScanner.isAutoFocusEnabled = true // Whether to enable auto focus or not
-        codeScanner.isFlashEnabled = false // Whether to enable flash or not
-        
+        codeScanner = CodeScanner(this, scannerView).apply {
+            // Parameters (default values)
+            camera = CodeScanner.CAMERA_BACK // or CAMERA_FRONT or specific camera id
+            formats = CodeScanner.ALL_FORMATS // list of type BarcodeFormat,
+                                              // ex. listOf(BarcodeFormat.QR_CODE)
+            autoFocusMode = AutoFocusMode.SAFE // or CONTINUOUS
+            scanMode = ScanMode.SINGLE // or CONTINUOUS or PREVIEW
+            isAutoFocusEnabled = true // Whether to enable auto focus or not
+            isFlashEnabled = false // Whether to enable flash or not
+        }
+               
         // Callbacks
-        codeScanner.decodeCallback = DecodeCallback {
+        codeScanner.setDecodeCallback {
             runOnUiThread {
                 Toast.makeText(this, "Scan result: ${it.text}", Toast.LENGTH_LONG).show()
             }
         }
-        codeScanner.errorCallback = ErrorCallback { // or ErrorCallback.SUPPRESS
+        codeScanner.setErrorCallback {
             runOnUiThread {
                 Toast.makeText(this, "Camera initialization error: ${it.message}",
                         Toast.LENGTH_LONG).show()
