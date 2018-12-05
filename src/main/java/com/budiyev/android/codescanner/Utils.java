@@ -58,13 +58,14 @@ final class Utils {
     }
 
     @NonNull
-    public static Point findSuitableImageSize(@NonNull final Parameters parameters, final int frameWidth,
-            final int frameHeight) {
+    public static Point findSuitableImageSize(@NonNull final Parameters parameters,
+            final int frameWidth, final int frameHeight) {
         final List<Size> sizes = parameters.getSupportedPreviewSizes();
         if (sizes != null && !sizes.isEmpty()) {
             Collections.sort(sizes, new CameraSizeComparator());
             final float frameRatio = (float) frameWidth / (float) frameHeight;
-            for (float distortion = MIN_DISTORTION; distortion <= MAX_DISTORTION; distortion += DISTORTION_STEP) {
+            for (float distortion = MIN_DISTORTION; distortion <= MAX_DISTORTION;
+                    distortion += DISTORTION_STEP) {
                 for (final Size size : sizes) {
                     final int width = size.width;
                     final int height = size.height;
@@ -101,7 +102,8 @@ final class Utils {
     public static void configureSceneMode(@NonNull final Parameters parameters) {
         if (!Parameters.SCENE_MODE_BARCODE.equals(parameters.getSceneMode())) {
             final List<String> supportedSceneModes = parameters.getSupportedSceneModes();
-            if (supportedSceneModes != null && supportedSceneModes.contains(Parameters.SCENE_MODE_BARCODE)) {
+            if (supportedSceneModes != null &&
+                    supportedSceneModes.contains(Parameters.SCENE_MODE_BARCODE)) {
                 parameters.setSceneMode(Parameters.SCENE_MODE_BARCODE);
             }
         }
@@ -113,12 +115,14 @@ final class Utils {
         }
     }
 
-    public static void configureFocusArea(@NonNull final Parameters parameters, @NonNull final Rect area,
-            final int width, final int height, final int orientation) {
+    public static void configureFocusArea(@NonNull final Parameters parameters,
+            @NonNull final Rect area, final int width, final int height, final int orientation) {
         final List<Area> areas = new ArrayList<>(1);
-        final Rect rotatedArea = area.rotate(-orientation, width / 2f, height / 2f).bound(0, 0, width, height);
+        final Rect rotatedArea =
+                area.rotate(-orientation, width / 2f, height / 2f).bound(0, 0, width, height);
         areas.add(new Area(new android.graphics.Rect(mapCoordinate(rotatedArea.getLeft(), width),
-                mapCoordinate(rotatedArea.getTop(), height), mapCoordinate(rotatedArea.getRight(), width),
+                mapCoordinate(rotatedArea.getTop(), height),
+                mapCoordinate(rotatedArea.getRight(), width),
                 mapCoordinate(rotatedArea.getBottom(), height)), 1000));
         if (parameters.getMaxNumFocusAreas() > 0) {
             parameters.setFocusAreas(areas);
@@ -128,13 +132,15 @@ final class Utils {
         }
     }
 
-    public static void configureDefaultFocusArea(@NonNull final Parameters parameters, @NonNull final Rect frameRect,
-            @NonNull final Point previewSize, @NonNull final Point viewSize, final int width, final int height,
+    public static void configureDefaultFocusArea(@NonNull final Parameters parameters,
+            @NonNull final Rect frameRect, @NonNull final Point previewSize,
+            @NonNull final Point viewSize, final int width, final int height,
             final int orientation) {
         final boolean portrait = isPortrait(orientation);
         final int rotatedWidth = portrait ? height : width;
         final int rotatedHeight = portrait ? width : height;
-        configureFocusArea(parameters, getImageFrameRect(rotatedWidth, rotatedHeight, frameRect, previewSize, viewSize),
+        configureFocusArea(parameters,
+                getImageFrameRect(rotatedWidth, rotatedHeight, frameRect, previewSize, viewSize),
                 rotatedWidth, rotatedHeight, orientation);
     }
 
@@ -177,7 +183,8 @@ final class Utils {
         }
     }
 
-    public static void setAutoFocusMode(@NonNull final Parameters parameters, final AutoFocusMode autoFocusMode) {
+    public static void setAutoFocusMode(@NonNull final Parameters parameters,
+            final AutoFocusMode autoFocusMode) {
         final List<String> focusModes = parameters.getSupportedFocusModes();
         if (focusModes == null || focusModes.isEmpty()) {
             return;
@@ -199,7 +206,8 @@ final class Utils {
         }
     }
 
-    public static void setFlashMode(@NonNull final Parameters parameters, @NonNull final String flashMode) {
+    public static void setFlashMode(@NonNull final Parameters parameters,
+            @NonNull final String flashMode) {
         if (flashMode.equals(parameters.getFlashMode())) {
             return;
         }
@@ -222,8 +230,10 @@ final class Utils {
         }
     }
 
-    public static int getDisplayOrientation(@NonNull final Context context, @NonNull final CameraInfo cameraInfo) {
-        final WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+    public static int getDisplayOrientation(@NonNull final Context context,
+            @NonNull final CameraInfo cameraInfo) {
+        final WindowManager windowManager =
+                (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         if (windowManager == null) {
             throw new CodeScannerException("Unable to access window manager");
         }
@@ -249,8 +259,8 @@ final class Utils {
                     throw new CodeScannerException("Invalid display rotation");
                 }
         }
-        return ((cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT ? 180 : 360) + cameraInfo.orientation - degrees) %
-                360;
+        return ((cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT ? 180 : 360) +
+                cameraInfo.orientation - degrees) % 360;
     }
 
     public static boolean isPortrait(final int orientation) {
@@ -258,8 +268,8 @@ final class Utils {
     }
 
     @NonNull
-    public static Point getPreviewSize(final int imageWidth, final int imageHeight, final int frameWidth,
-            final int frameHeight) {
+    public static Point getPreviewSize(final int imageWidth, final int imageHeight,
+            final int frameWidth, final int frameHeight) {
         if (imageWidth == frameWidth && imageHeight == frameHeight) {
             return new Point(frameWidth, frameHeight);
         }
@@ -272,8 +282,9 @@ final class Utils {
     }
 
     @NonNull
-    public static Rect getImageFrameRect(final int imageWidth, final int imageHeight, @NonNull final Rect viewFrameRect,
-            @NonNull final Point previewSize, @NonNull final Point viewSize) {
+    public static Rect getImageFrameRect(final int imageWidth, final int imageHeight,
+            @NonNull final Rect viewFrameRect, @NonNull final Point previewSize,
+            @NonNull final Point viewSize) {
         final int previewWidth = previewSize.getX();
         final int previewHeight = previewSize.getY();
         final int viewWidth = viewSize.getX();
@@ -330,7 +341,8 @@ final class Utils {
         try {
             return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource)));
         } catch (final NotFoundException e) {
-            return reader.decodeWithState(new BinaryBitmap(new HybridBinarizer(luminanceSource.invert())));
+            return reader.decodeWithState(
+                    new BinaryBitmap(new HybridBinarizer(luminanceSource.invert())));
         } finally {
             reader.reset();
         }
@@ -357,9 +369,11 @@ final class Utils {
     private static final class FpsRangeComparator implements Comparator<int[]> {
         @Override
         public int compare(final int[] a, final int[] b) {
-            int comparison = Integer.compare(b[Parameters.PREVIEW_FPS_MAX_INDEX], a[Parameters.PREVIEW_FPS_MAX_INDEX]);
+            int comparison = Integer.compare(b[Parameters.PREVIEW_FPS_MAX_INDEX],
+                    a[Parameters.PREVIEW_FPS_MAX_INDEX]);
             if (comparison == 0) {
-                comparison = Integer.compare(b[Parameters.PREVIEW_FPS_MIN_INDEX], a[Parameters.PREVIEW_FPS_MIN_INDEX]);
+                comparison = Integer.compare(b[Parameters.PREVIEW_FPS_MIN_INDEX],
+                        a[Parameters.PREVIEW_FPS_MIN_INDEX]);
             }
             return comparison;
         }

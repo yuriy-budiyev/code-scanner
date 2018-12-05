@@ -99,7 +99,8 @@ final class Rect {
         if (l >= left && t >= top && r <= right && b <= bottom) {
             return this;
         }
-        return new Rect(Math.max(l, left), Math.max(t, top), Math.min(r, right), Math.min(b, bottom));
+        return new Rect(Math.max(l, left), Math.max(t, top), Math.min(r, right),
+                Math.min(b, bottom));
     }
 
     @NonNull
@@ -172,7 +173,8 @@ final class Rect {
             return true;
         } else if (obj instanceof Rect) {
             final Rect other = (Rect) obj;
-            return mLeft == other.mLeft && mTop == other.mTop && mRight == other.mRight && mBottom == other.mBottom;
+            return mLeft == other.mLeft && mTop == other.mTop && mRight == other.mRight &&
+                    mBottom == other.mBottom;
         } else {
             return false;
         }

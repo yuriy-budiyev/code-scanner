@@ -34,6 +34,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.FloatRange;
@@ -61,8 +62,7 @@ public final class CodeScannerView extends ViewGroup {
     private static final float DEFAULT_FRAME_ASPECT_RATIO_WIDTH = 1f;
     private static final float DEFAULT_FRAME_ASPECT_RATIO_HEIGHT = 1f;
     private static final float DEFAULT_FRAME_CORNER_SIZE_DP = 50f;
-    private static final float DEFAULT_FRAME_CORNERS_RADIUS_X = 0f;
-    private static final float DEFAULT_FRAME_CORNERS_RADIUS_Y = 0f;
+    private static final float DEFAULT_FRAME_CORNERS_RADIUS_DP = 0f;
     private static final float DEFAULT_FRAME_SIZE = 0.75f;
     private static final float BUTTON_SIZE_DP = 56f;
     private static final float FOCUS_AREA_SIZE_DP = 20f;
@@ -115,8 +115,8 @@ public final class CodeScannerView extends ViewGroup {
      * @see CodeScanner
      */
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    public CodeScannerView(final Context context, final AttributeSet attrs, @AttrRes final int defStyleAttr,
-            @StyleRes final int defStyleRes) {
+    public CodeScannerView(final Context context, final AttributeSet attrs,
+            @AttrRes final int defStyleAttr, @StyleRes final int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initialize(context, attrs, defStyleAttr, defStyleRes);
     }
@@ -124,9 +124,11 @@ public final class CodeScannerView extends ViewGroup {
     private void initialize(@NonNull final Context context, @Nullable final AttributeSet attrs,
             @AttrRes final int defStyleAttr, @StyleRes final int defStyleRes) {
         mPreviewView = new SurfaceView(context);
-        mPreviewView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        mPreviewView.setLayoutParams(
+                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         mViewFinderView = new ViewFinderView(context);
-        mViewFinderView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        mViewFinderView.setLayoutParams(
+                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         final float density = context.getResources().getDisplayMetrics().density;
         mButtonSize = Math.round(density * BUTTON_SIZE_DP);
         mFocusAreaSize = Math.round(density * FOCUS_AREA_SIZE_DP);
@@ -141,13 +143,13 @@ public final class CodeScannerView extends ViewGroup {
         mFlashButton.setImageResource(R.drawable.ic_code_scanner_flash_on);
         mFlashButton.setOnClickListener(new FlashClickListener());
         if (attrs == null) {
-            mViewFinderView.setFrameAspectRatio(DEFAULT_FRAME_ASPECT_RATIO_WIDTH, DEFAULT_FRAME_ASPECT_RATIO_HEIGHT);
+            mViewFinderView.setFrameAspectRatio(DEFAULT_FRAME_ASPECT_RATIO_WIDTH,
+                    DEFAULT_FRAME_ASPECT_RATIO_HEIGHT);
             mViewFinderView.setMaskColor(DEFAULT_MASK_COLOR);
             mViewFinderView.setFrameColor(DEFAULT_FRAME_COLOR);
             mViewFinderView.setFrameThickness(Math.round(DEFAULT_FRAME_THICKNESS_DP * density));
             mViewFinderView.setFrameCornersSize(Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * density));
-            mViewFinderView.setFrameCornersRadiusX(DEFAULT_FRAME_CORNERS_RADIUS_X);
-            mViewFinderView.setFrameCornersRadiusY(DEFAULT_FRAME_CORNERS_RADIUS_Y);
+            mViewFinderView.setFrameCornersRadius(DEFAULT_FRAME_CORNERS_RADIUS_DP * density);
             mViewFinderView.setFrameSize(DEFAULT_FRAME_SIZE);
             mAutoFocusButton.setColorFilter(DEFAULT_AUTO_FOCUS_BUTTON_COLOR);
             mFlashButton.setColorFilter(DEFAULT_FLASH_BUTTON_COLOR);
@@ -157,32 +159,33 @@ public final class CodeScannerView extends ViewGroup {
             TypedArray a = null;
             try {
                 a = context.getTheme()
-                        .obtainStyledAttributes(attrs, R.styleable.CodeScannerView, defStyleAttr, defStyleRes);
+                        .obtainStyledAttributes(attrs, R.styleable.CodeScannerView, defStyleAttr,
+                                defStyleRes);
                 setMaskColor(a.getColor(R.styleable.CodeScannerView_maskColor, DEFAULT_MASK_COLOR));
-                setFrameColor(a.getColor(R.styleable.CodeScannerView_frameColor, DEFAULT_FRAME_COLOR));
-                setFrameThickness(a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameThickness,
-                        Math.round(DEFAULT_FRAME_THICKNESS_DP * density)));
-                setFrameCornersSize(a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameCornersSize,
-                        Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * density)));
-                setFrameCornersRadiusX(a.getFloat(R.styleable.CodeScannerView_frameCornersRadiusX,
-                        DEFAULT_FRAME_CORNERS_RADIUS_X));
-                setFrameCornersRadiusY(a.getFloat(R.styleable.CodeScannerView_frameCornersRadiusY,
-                        DEFAULT_FRAME_CORNERS_RADIUS_Y));
-                setFrameAspectRatio(
-                        a.getFloat(R.styleable.CodeScannerView_frameAspectRatioWidth,
-                                DEFAULT_FRAME_ASPECT_RATIO_WIDTH),
+                setFrameColor(
+                        a.getColor(R.styleable.CodeScannerView_frameColor, DEFAULT_FRAME_COLOR));
+                setFrameThickness(
+                        a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameThickness,
+                                Math.round(DEFAULT_FRAME_THICKNESS_DP * density)));
+                setFrameCornersSize(
+                        a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameCornersSize,
+                                Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * density)));
+                setFrameCornersRadius(a.getDimension(R.styleable.CodeScannerView_frameCornersRadius,
+                        DEFAULT_FRAME_CORNERS_RADIUS_DP * density));
+                setFrameAspectRatio(a.getFloat(R.styleable.CodeScannerView_frameAspectRatioWidth,
+                        DEFAULT_FRAME_ASPECT_RATIO_WIDTH),
                         a.getFloat(R.styleable.CodeScannerView_frameAspectRatioHeight,
                                 DEFAULT_FRAME_ASPECT_RATIO_HEIGHT));
                 setFrameSize(a.getFloat(R.styleable.CodeScannerView_frameSize, DEFAULT_FRAME_SIZE));
-                setAutoFocusButtonVisible(a.getBoolean(R.styleable.CodeScannerView_autoFocusButtonVisible,
-                        DEFAULT_AUTO_FOCUS_BUTTON_VISIBLE));
-                setFlashButtonVisible(
-                        a.getBoolean(R.styleable.CodeScannerView_flashButtonVisible, DEFAULT_FLASH_BUTTON_VISIBLE));
-                setAutoFocusButtonColor(
-                        a.getColor(R.styleable.CodeScannerView_autoFocusButtonColor,
-                                DEFAULT_AUTO_FOCUS_BUTTON_COLOR));
-                setFlashButtonColor(
-                        a.getColor(R.styleable.CodeScannerView_flashButtonColor, DEFAULT_FLASH_BUTTON_COLOR));
+                setAutoFocusButtonVisible(
+                        a.getBoolean(R.styleable.CodeScannerView_autoFocusButtonVisible,
+                                DEFAULT_AUTO_FOCUS_BUTTON_VISIBLE));
+                setFlashButtonVisible(a.getBoolean(R.styleable.CodeScannerView_flashButtonVisible,
+                        DEFAULT_FLASH_BUTTON_VISIBLE));
+                setAutoFocusButtonColor(a.getColor(R.styleable.CodeScannerView_autoFocusButtonColor,
+                        DEFAULT_AUTO_FOCUS_BUTTON_COLOR));
+                setFlashButtonColor(a.getColor(R.styleable.CodeScannerView_flashButtonColor,
+                        DEFAULT_FLASH_BUTTON_COLOR));
             } finally {
                 if (a != null) {
                     a.recycle();
@@ -196,12 +199,14 @@ public final class CodeScannerView extends ViewGroup {
     }
 
     @Override
-    protected void onLayout(final boolean changed, final int left, final int top, final int right, final int bottom) {
+    protected void onLayout(final boolean changed, final int left, final int top, final int right,
+            final int bottom) {
         performLayout(right - left, bottom - top);
     }
 
     @Override
-    protected void onSizeChanged(final int width, final int height, final int oldWidth, final int oldHeight) {
+    protected void onSizeChanged(final int width, final int height, final int oldWidth,
+            final int oldHeight) {
         performLayout(width, height);
         final SizeListener listener = mSizeListener;
         if (listener != null) {
@@ -216,12 +221,13 @@ public final class CodeScannerView extends ViewGroup {
         final Rect frameRect = getFrameRect();
         final int x = (int) event.getX();
         final int y = (int) event.getY();
-        if (codeScanner != null && frameRect != null && codeScanner.isAutoFocusSupportedOrUnknown() &&
-                codeScanner.isTouchFocusEnabled() && event.getAction() == MotionEvent.ACTION_DOWN &&
-                frameRect.isPointInside(x, y)) {
+        if (codeScanner != null && frameRect != null &&
+                codeScanner.isAutoFocusSupportedOrUnknown() && codeScanner.isTouchFocusEnabled() &&
+                event.getAction() == MotionEvent.ACTION_DOWN && frameRect.isPointInside(x, y)) {
             final int areaSize = mFocusAreaSize;
             codeScanner.performTouchFocus(
-                    new Rect(x - areaSize, y - areaSize, x + areaSize, y + areaSize).fitIn(frameRect));
+                    new Rect(x - areaSize, y - areaSize, x + areaSize, y + areaSize)
+                            .fitIn(frameRect));
         }
         return super.onTouchEvent(event);
     }
@@ -311,45 +317,24 @@ public final class CodeScannerView extends ViewGroup {
     /**
      * Get current frame corners x-radius
      *
-     * @see #setFrameCornersRadiusX
+     * @see #setFrameCornersRadius
      */
     @FloatRange(from = 0f)
-    public float getFrameCornersRadiusX() {
-        return mViewFinderView.getFrameCornersRadiusX();
+    public float getFrameCornersRadius() {
+        return mViewFinderView.getFrameCornersRadius();
     }
 
     /**
      * Set current frame corners x-radius
      *
-     * @param radiusX x-radius of the oval used to round the corners
+     * @param radius Frame corner radius
      */
-    public void setFrameCornersRadiusX(@FloatRange(from = 0) final float radiusX) {
-        if (radiusX < 0) {
-            throw new IllegalArgumentException("Frame corners x-radius should be greater than zero");
+    public void setFrameCornersRadius(@FloatRange(from = 0) final float radius) {
+        if (radius < 0) {
+            throw new IllegalArgumentException(
+                    "Frame corners x-radius should be greater than zero");
         }
-        mViewFinderView.setFrameCornersRadiusX(radiusX);
-    }
-
-    /**
-     * Get current frame corners y-radius
-     *
-     * @see #setFrameCornersRadiusY
-     */
-    @FloatRange(from = 0f)
-    public float getFrameCornersRadiusY() {
-        return mViewFinderView.getFrameCornersRadiusY();
-    }
-
-    /**
-     * Set current frame corners x-radius
-     *
-     * @param radiusY y-radius of the oval used to round the corners
-     */
-    public void setFrameCornersRadiusY(@FloatRange(from = 0) final float radiusY) {
-        if (radiusY < 0) {
-            throw new IllegalArgumentException("Frame corners y-radius should be greater than zero");
-        }
-        mViewFinderView.setFrameCornersRadiusY(radiusY);
+        mViewFinderView.setFrameCornersRadius(radius);
     }
 
     /**
@@ -369,7 +354,8 @@ public final class CodeScannerView extends ViewGroup {
      */
     public void setFrameSize(@FloatRange(from = 0.1, to = 1) final float size) {
         if (size < 0.1 || size > 1) {
-            throw new IllegalArgumentException("Max frame size value should be between 0.1 and 1, inclusive");
+            throw new IllegalArgumentException(
+                    "Max frame size value should be between 0.1 and 1, inclusive");
         }
         mViewFinderView.setFrameSize(size);
     }
@@ -391,9 +377,11 @@ public final class CodeScannerView extends ViewGroup {
      * @param ratioWidth Frame aspect ratio width
      * @see #setFrameAspectRatio
      */
-    public void setFrameAspectRatioWidth(@FloatRange(from = 0, fromInclusive = false) final float ratioWidth) {
+    public void setFrameAspectRatioWidth(
+            @FloatRange(from = 0, fromInclusive = false) final float ratioWidth) {
         if (ratioWidth <= 0) {
-            throw new IllegalArgumentException("Frame aspect ratio values should be greater than zero");
+            throw new IllegalArgumentException(
+                    "Frame aspect ratio values should be greater than zero");
         }
         mViewFinderView.setFrameAspectRatioWidth(ratioWidth);
     }
@@ -415,9 +403,11 @@ public final class CodeScannerView extends ViewGroup {
      * @param ratioHeight Frame aspect ratio width
      * @see #setFrameAspectRatio
      */
-    public void setFrameAspectRatioHeight(@FloatRange(from = 0, fromInclusive = false) final float ratioHeight) {
+    public void setFrameAspectRatioHeight(
+            @FloatRange(from = 0, fromInclusive = false) final float ratioHeight) {
         if (ratioHeight <= 0) {
-            throw new IllegalArgumentException("Frame aspect ratio values should be greater than zero");
+            throw new IllegalArgumentException(
+                    "Frame aspect ratio values should be greater than zero");
         }
         mViewFinderView.setFrameAspectRatioHeight(ratioHeight);
     }
@@ -428,10 +418,12 @@ public final class CodeScannerView extends ViewGroup {
      * @param ratioWidth  Frame aspect ratio width
      * @param ratioHeight Frame aspect ratio height
      */
-    public void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) final float ratioWidth,
+    public void setFrameAspectRatio(
+            @FloatRange(from = 0, fromInclusive = false) final float ratioWidth,
             @FloatRange(from = 0, fromInclusive = false) final float ratioHeight) {
         if (ratioWidth <= 0 || ratioHeight <= 0) {
-            throw new IllegalArgumentException("Frame aspect ratio values should be greater than zero");
+            throw new IllegalArgumentException(
+                    "Frame aspect ratio values should be greater than zero");
         }
         mViewFinderView.setFrameAspectRatio(ratioWidth, ratioHeight);
     }
@@ -546,13 +538,13 @@ public final class CodeScannerView extends ViewGroup {
     }
 
     void setAutoFocusEnabled(final boolean enabled) {
-        mAutoFocusButton.setImageResource(
-                enabled ? R.drawable.ic_code_scanner_auto_focus_on : R.drawable.ic_code_scanner_auto_focus_off);
+        mAutoFocusButton.setImageResource(enabled ? R.drawable.ic_code_scanner_auto_focus_on :
+                R.drawable.ic_code_scanner_auto_focus_off);
     }
 
     void setFlashEnabled(final boolean enabled) {
-        mFlashButton
-                .setImageResource(enabled ? R.drawable.ic_code_scanner_flash_on : R.drawable.ic_code_scanner_flash_off);
+        mFlashButton.setImageResource(enabled ? R.drawable.ic_code_scanner_flash_on :
+                R.drawable.ic_code_scanner_flash_off);
     }
 
     private void performLayout(int width, int height) {

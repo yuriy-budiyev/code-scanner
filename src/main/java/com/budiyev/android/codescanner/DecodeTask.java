@@ -39,8 +39,9 @@ final class DecodeTask {
     private final int mOrientation;
     private final boolean mReverseHorizontal;
 
-    public DecodeTask(@NonNull final byte[] image, @NonNull final Point imageSize, @NonNull final Point previewSize,
-            @NonNull final Point viewSize, @NonNull final Rect viewFrameRect, final int orientation,
+    public DecodeTask(@NonNull final byte[] image, @NonNull final Point imageSize,
+            @NonNull final Point previewSize, @NonNull final Point viewSize,
+            @NonNull final Rect viewFrameRect, final int orientation,
             final boolean reverseHorizontal) {
         mImage = image;
         mImageSize = imageSize;
@@ -64,14 +65,15 @@ final class DecodeTask {
             imageHeight = width;
         }
         final Rect frameRect =
-                Utils.getImageFrameRect(imageWidth, imageHeight, mViewFrameRect, mPreviewSize, mViewSize);
+                Utils.getImageFrameRect(imageWidth, imageHeight, mViewFrameRect, mPreviewSize,
+                        mViewSize);
         final int frameWidth = frameRect.getWidth();
         final int frameHeight = frameRect.getHeight();
         if (frameWidth < 1 || frameHeight < 1) {
             return null;
         }
         return Utils.decodeLuminanceSource(reader,
-                new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.getLeft(), frameRect.getTop(),
-                        frameWidth, frameHeight, mReverseHorizontal));
+                new PlanarYUVLuminanceSource(image, imageWidth, imageHeight, frameRect.getLeft(),
+                        frameRect.getTop(), frameWidth, frameHeight, mReverseHorizontal));
     }
 }

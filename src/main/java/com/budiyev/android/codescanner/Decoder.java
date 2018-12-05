@@ -47,8 +47,8 @@ final class Decoder {
     private volatile DecodeTask mTask;
     private volatile State mState;
 
-    public Decoder(@NonNull final StateListener stateListener, @NonNull final List<BarcodeFormat> formats,
-            @Nullable final DecodeCallback callback) {
+    public Decoder(@NonNull final StateListener stateListener,
+            @NonNull final List<BarcodeFormat> formats, @Nullable final DecodeCallback callback) {
         mReader = new MultiFormatReader();
         mDecoderThread = new DecoderThread();
         mHints = new EnumMap<>(DecodeHintType.class);
