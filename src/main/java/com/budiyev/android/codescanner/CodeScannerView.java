@@ -149,7 +149,8 @@ public final class CodeScannerView extends ViewGroup {
             mViewFinderView.setFrameColor(DEFAULT_FRAME_COLOR);
             mViewFinderView.setFrameThickness(Math.round(DEFAULT_FRAME_THICKNESS_DP * density));
             mViewFinderView.setFrameCornersSize(Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * density));
-            mViewFinderView.setFrameCornersRadius(DEFAULT_FRAME_CORNERS_RADIUS_DP * density);
+            mViewFinderView
+                    .setFrameCornersRadius(Math.round(DEFAULT_FRAME_CORNERS_RADIUS_DP * density));
             mViewFinderView.setFrameSize(DEFAULT_FRAME_SIZE);
             mAutoFocusButton.setColorFilter(DEFAULT_AUTO_FOCUS_BUTTON_COLOR);
             mFlashButton.setColorFilter(DEFAULT_FLASH_BUTTON_COLOR);
@@ -170,8 +171,9 @@ public final class CodeScannerView extends ViewGroup {
                 setFrameCornersSize(
                         a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameCornersSize,
                                 Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * density)));
-                setFrameCornersRadius(a.getDimension(R.styleable.CodeScannerView_frameCornersRadius,
-                        DEFAULT_FRAME_CORNERS_RADIUS_DP * density));
+                setFrameCornersRadius(
+                        a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameCornersRadius,
+                                Math.round(DEFAULT_FRAME_CORNERS_RADIUS_DP * density)));
                 setFrameAspectRatio(a.getFloat(R.styleable.CodeScannerView_frameAspectRatioWidth,
                         DEFAULT_FRAME_ASPECT_RATIO_WIDTH),
                         a.getFloat(R.styleable.CodeScannerView_frameAspectRatioHeight,
@@ -319,8 +321,8 @@ public final class CodeScannerView extends ViewGroup {
      *
      * @see #setFrameCornersRadius
      */
-    @FloatRange(from = 0f)
-    public float getFrameCornersRadius() {
+    @Px
+    public int getFrameCornersRadius() {
         return mViewFinderView.getFrameCornersRadius();
     }
 
@@ -329,7 +331,7 @@ public final class CodeScannerView extends ViewGroup {
      *
      * @param radius Frame corner radius
      */
-    public void setFrameCornersRadius(@FloatRange(from = 0) final float radius) {
+    public void setFrameCornersRadius(@Px final int radius) {
         if (radius < 0) {
             throw new IllegalArgumentException(
                     "Frame corners x-radius should be greater than zero");

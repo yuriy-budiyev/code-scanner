@@ -41,10 +41,10 @@ final class ViewFinderView extends View {
     private final Path mFramePath;
     private final Path mMaskPath;
     private Rect mFrameRect;
-    private int mFrameCornersSize;
+    private int mFrameCornersSize = 0;
+    private int mFrameCornersRadius = 0;
     private float mFrameRatioWidth = 1f;
     private float mFrameRatioHeight = 1f;
-    private float mFrameCornersRadius = 0f;
     private float mFrameSize = 0.75f;
 
     public ViewFinderView(@NonNull final Context context) {
@@ -174,13 +174,13 @@ final class ViewFinderView extends View {
         }
     }
 
-    @FloatRange(from = 0.0)
-    float getFrameCornersRadius() {
-        return (int) mFrameCornersRadius;
+    @Px
+    int getFrameCornersRadius() {
+        return mFrameCornersRadius;
     }
 
-    void setFrameCornersRadius(@FloatRange(from = 0.0) final float radiusX) {
-        mFrameCornersRadius = radiusX;
+    void setFrameCornersRadius(@Px final int radius) {
+        mFrameCornersRadius = radius;
         if (isLaidOut()) {
             invalidate();
         }
