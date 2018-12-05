@@ -49,6 +49,7 @@ final class ViewFinderView extends View {
     public ViewFinderView(@NonNull final Context context) {
         super(context);
         mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mMaskPaint.setStyle(Paint.Style.FILL);
         mFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFramePaint.setStyle(Paint.Style.STROKE);
         mPath = new Path();
@@ -60,7 +61,8 @@ final class ViewFinderView extends View {
         if (frame == null) {
             return;
         }
-
+        int width = getWidth();
+        int height = getHeight();
         final float top = frame.getTop();
         final float left = frame.getLeft();
         final float right = frame.getRight();
@@ -73,6 +75,39 @@ final class ViewFinderView extends View {
             final Path path = mPath;
 
             path.reset();
+
+            path.moveTo(left, top + normalizedRadius);
+            path.quadTo(left, top, left + normalizedRadius, top);
+            path.moveTo(left + normalizedRadius, top);
+            path.lineTo(right - normalizedRadius, top);
+
+            path.moveTo(right - normalizedRadius, top);
+            path.quadTo(right, top, right, top + normalizedRadius);
+            path.moveTo(right, top + normalizedRadius);
+            path.lineTo(right, bottom - normalizedRadius);
+
+            path.moveTo(right, bottom - normalizedRadius);
+            path.quadTo(right, bottom, right - normalizedRadius, bottom);
+            path.moveTo(right - normalizedRadius, bottom);
+            path.lineTo(left + normalizedRadius, bottom);
+
+            path.moveTo(left + normalizedRadius, bottom);
+            path.quadTo(left, bottom, left, bottom - normalizedRadius);
+            path.moveTo(left, bottom - normalizedRadius);
+            path.lineTo(left, top + normalizedRadius);
+
+            path.moveTo(0, 0);
+            path.lineTo(width, 0);
+            path.moveTo(width, 0);
+            path.lineTo(width, height);
+            path.moveTo(width, height);
+            path.lineTo(0, height);
+            path.moveTo(0, height);
+            path.lineTo(0, 0);
+
+            canvas.drawPath(path, mMaskPaint);
+
+/*            path.reset();
 
             path.moveTo(left, top + frameCornersSize);
             path.lineTo(left, top + normalizedRadius);
@@ -102,9 +137,8 @@ final class ViewFinderView extends View {
             path.moveTo(left, bottom - normalizedRadius);
             path.lineTo(left, bottom - frameCornersSize);
 
-            canvas.drawPath(path, mFramePaint);
+            canvas.drawPath(path, mFramePaint);*/
         }
-
     }
 
     @Override
