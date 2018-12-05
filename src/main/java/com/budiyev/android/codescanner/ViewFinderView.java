@@ -52,7 +52,9 @@ final class ViewFinderView extends View {
         mMaskPaint.setStyle(Paint.Style.FILL);
         mFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFramePaint.setStyle(Paint.Style.STROKE);
-        mPath = new Path();
+        Path path = new Path();
+        path.setFillType(Path.FillType.EVEN_ODD);
+        mPath = path;
     }
 
     @Override
@@ -78,66 +80,44 @@ final class ViewFinderView extends View {
 
             path.moveTo(left, top + normalizedRadius);
             path.quadTo(left, top, left + normalizedRadius, top);
-            path.moveTo(left + normalizedRadius, top);
             path.lineTo(right - normalizedRadius, top);
-
-            path.moveTo(right - normalizedRadius, top);
             path.quadTo(right, top, right, top + normalizedRadius);
-            path.moveTo(right, top + normalizedRadius);
             path.lineTo(right, bottom - normalizedRadius);
-
-            path.moveTo(right, bottom - normalizedRadius);
             path.quadTo(right, bottom, right - normalizedRadius, bottom);
-            path.moveTo(right - normalizedRadius, bottom);
             path.lineTo(left + normalizedRadius, bottom);
-
-            path.moveTo(left + normalizedRadius, bottom);
             path.quadTo(left, bottom, left, bottom - normalizedRadius);
-            path.moveTo(left, bottom - normalizedRadius);
             path.lineTo(left, top + normalizedRadius);
-
             path.moveTo(0, 0);
             path.lineTo(width, 0);
-            path.moveTo(width, 0);
             path.lineTo(width, height);
-            path.moveTo(width, height);
             path.lineTo(0, height);
-            path.moveTo(0, height);
             path.lineTo(0, 0);
 
             canvas.drawPath(path, mMaskPaint);
 
-/*            path.reset();
+            path.reset();
 
             path.moveTo(left, top + frameCornersSize);
             path.lineTo(left, top + normalizedRadius);
-            path.moveTo(left, top + normalizedRadius);
             path.quadTo(left, top, left + normalizedRadius, top);
-            path.moveTo(left + normalizedRadius, top);
             path.lineTo(left + frameCornersSize, top);
 
             path.moveTo(right - frameCornersSize, top);
             path.lineTo(right - normalizedRadius, top);
-            path.moveTo(right - normalizedRadius, top);
             path.quadTo(right, top, right, top + normalizedRadius);
-            path.moveTo(right, top + normalizedRadius);
             path.lineTo(right, top + frameCornersSize);
 
             path.moveTo(right, bottom - frameCornersSize);
             path.lineTo(right, bottom - normalizedRadius);
-            path.moveTo(right, bottom - normalizedRadius);
             path.quadTo(right, bottom, right - normalizedRadius, bottom);
-            path.moveTo(right - normalizedRadius, bottom);
             path.lineTo(right - frameCornersSize, bottom);
 
             path.moveTo(left + frameCornersSize, bottom);
             path.lineTo(left + normalizedRadius, bottom);
-            path.moveTo(left + normalizedRadius, bottom);
             path.quadTo(left, bottom, left, bottom - normalizedRadius);
-            path.moveTo(left, bottom - normalizedRadius);
             path.lineTo(left, bottom - frameCornersSize);
 
-            canvas.drawPath(path, mFramePaint);*/
+            canvas.drawPath(path, mFramePaint);
         }
     }
 
