@@ -56,54 +56,55 @@ final class ViewFinderView extends View {
 
     @Override
     protected void onDraw(@NonNull final Canvas canvas) {
-        final Rect frameRect = mFrameRect;
-        if (frameRect == null) {
+        final Rect frame = mFrameRect;
+        if (frame == null) {
             return;
         }
-        final float width = getWidth();
-        final float height = getHeight();
-        final float top = frameRect.getTop();
-        final float left = frameRect.getLeft();
-        final float right = frameRect.getRight();
-        final float bottom = frameRect.getBottom();
+
+        final float top = frame.getTop();
+        final float left = frame.getLeft();
+        final float right = frame.getRight();
+        final float bottom = frame.getBottom();
         final float frameCornersSize = mFrameCornersSize;
         final float frameCornersRadius = mFrameCornersRadius;
-        final float normalizedRadius =
-                frameCornersRadius > frameCornersSize ? frameCornersSize : frameCornersRadius;
-        mPath.reset();
-        mPath.moveTo(left, top + normalizedRadius);
-        mPath.rQuadTo(0, -normalizedRadius, normalizedRadius, -normalizedRadius);
-        mPath.lineTo(right - normalizedRadius, top);
-        mPath.rQuadTo(normalizedRadius, 0, normalizedRadius, normalizedRadius);
-        mPath.lineTo(right, bottom - normalizedRadius);
-        mPath.rQuadTo(0, normalizedRadius, -normalizedRadius, normalizedRadius);
-        mPath.lineTo(left + normalizedRadius, bottom);
-        mPath.rQuadTo(-normalizedRadius, 0, -normalizedRadius, -normalizedRadius);
-        mPath.lineTo(left, top + normalizedRadius);
-        mPath.moveTo(0, 0);
-        mPath.rLineTo(0, height);
-        mPath.rLineTo(width, 0);
-        mPath.rLineTo(0, -height);
-        mPath.rLineTo(-width, 0);
-        canvas.drawPath(mPath, mMaskPaint);
-        mPath.reset();
-        mPath.moveTo(left, top + frameCornersSize);
-        mPath.lineTo(left, top + normalizedRadius);
-        mPath.rQuadTo(0, -normalizedRadius, normalizedRadius, -normalizedRadius);
-        mPath.lineTo(left + frameCornersSize, top);
-        mPath.moveTo(right, top + frameCornersSize);
-        mPath.lineTo(right, top + normalizedRadius);
-        mPath.rQuadTo(0, -normalizedRadius, -normalizedRadius, -normalizedRadius);
-        mPath.lineTo(right - frameCornersSize, top);
-        mPath.moveTo(right, bottom - frameCornersSize);
-        mPath.lineTo(right, bottom - normalizedRadius);
-        mPath.rQuadTo(0, normalizedRadius, -normalizedRadius, normalizedRadius);
-        mPath.lineTo(right - frameCornersSize, bottom);
-        mPath.moveTo(left, bottom - frameCornersSize);
-        mPath.lineTo(left, bottom - normalizedRadius);
-        mPath.rQuadTo(0, normalizedRadius, normalizedRadius, normalizedRadius);
-        mPath.lineTo(left + frameCornersSize, bottom);
-        canvas.drawPath(mPath, mFramePaint);
+        if (frameCornersRadius > 0) {
+            final float normalizedRadius =
+                    frameCornersRadius > frameCornersSize ? frameCornersSize : frameCornersRadius;
+            final Path path = mPath;
+
+            path.reset();
+
+            path.moveTo(left, top + frameCornersSize);
+            path.lineTo(left, top + normalizedRadius);
+            path.moveTo(left, top + normalizedRadius);
+            path.quadTo(left, top, left + normalizedRadius, top);
+            path.moveTo(left + normalizedRadius, top);
+            path.lineTo(left + frameCornersSize, top);
+
+            path.moveTo(right - frameCornersSize, top);
+            path.lineTo(right - normalizedRadius, top);
+            path.moveTo(right - normalizedRadius, top);
+            path.quadTo(right, top, right, top + normalizedRadius);
+            path.moveTo(right, top + normalizedRadius);
+            path.lineTo(right, top + frameCornersSize);
+
+            path.moveTo(right, bottom - frameCornersSize);
+            path.lineTo(right, bottom - normalizedRadius);
+            path.moveTo(right, bottom - normalizedRadius);
+            path.quadTo(right, bottom, right - normalizedRadius, bottom);
+            path.moveTo(right - normalizedRadius, bottom);
+            path.lineTo(right - frameCornersSize, bottom);
+
+            path.moveTo(left + frameCornersSize, bottom);
+            path.lineTo(left + normalizedRadius, bottom);
+            path.moveTo(left + normalizedRadius, bottom);
+            path.quadTo(left, bottom, left, bottom - normalizedRadius);
+            path.moveTo(left, bottom - normalizedRadius);
+            path.lineTo(left, bottom - frameCornersSize);
+
+            canvas.drawPath(path, mFramePaint);
+        }
+
     }
 
     @Override
