@@ -317,7 +317,7 @@ public final class CodeScannerView extends ViewGroup {
     }
 
     /**
-     * Get current frame corners x-radius
+     * Get current frame corners radius
      *
      * @see #setFrameCornersRadius
      */
@@ -327,14 +327,13 @@ public final class CodeScannerView extends ViewGroup {
     }
 
     /**
-     * Set current frame corners x-radius
+     * Set current frame corners radius
      *
-     * @param radius Frame corner radius
+     * @param radius Frame corners radius
      */
     public void setFrameCornersRadius(@Px final int radius) {
         if (radius < 0) {
-            throw new IllegalArgumentException(
-                    "Frame corners x-radius should be greater than zero");
+            throw new IllegalArgumentException("Frame corners radius can't be negative");
         }
         mViewFinderView.setFrameCornersRadius(radius);
     }

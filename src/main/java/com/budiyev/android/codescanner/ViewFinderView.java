@@ -38,8 +38,7 @@ import androidx.annotation.Px;
 final class ViewFinderView extends View {
     private final Paint mMaskPaint;
     private final Paint mFramePaint;
-    private final Path mFramePath;
-    private final Path mMaskPath;
+    private final Path mPath;
     private Rect mFrameRect;
     private int mFrameCornersSize = 0;
     private int mFrameCornersRadius = 0;
@@ -52,8 +51,7 @@ final class ViewFinderView extends View {
         mMaskPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFramePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mFramePaint.setStyle(Paint.Style.STROKE);
-        mFramePath = new Path();
-        mMaskPath = new Path();
+        mPath = new Path();
     }
 
     @Override
@@ -62,19 +60,50 @@ final class ViewFinderView extends View {
         if (frameRect == null) {
             return;
         }
-        final int width = getWidth();
-        final int height = getHeight();
-        final int top = frameRect.getTop();
-        final int left = frameRect.getLeft();
-        final int right = frameRect.getRight();
-        final int bottom = frameRect.getBottom();
-        final float r =
-                mFrameCornersRadius > (mFrameCornersSize / 2.0f) ? mFrameCornersSize / 2.0f :
-                        mFrameCornersRadius;
-        invalidateMaskPath(left, top, right, bottom, width, height, r);
-        invalidateFramePath(left, top, right, bottom, r);
-        canvas.drawPath(mMaskPath, mMaskPaint);
-        canvas.drawPath(mFramePath, mFramePaint);
+        final float width = getWidth();
+        final float height = getHeight();
+        final float top = frameRect.getTop();
+        final float left = frameRect.getLeft();
+        final float right = frameRect.getRight();
+        final float bottom = frameRect.getBottom();
+        final float frameCornersSize = mFrameCornersSize;
+        final float frameCornersRadius = mFrameCornersRadius;
+        final float normalizedRadius =
+                frameCornersRadius > frameCornersSize ? frameCornersSize : frameCornersRadius;
+        mPath.reset();
+        mPath.moveTo(left, top + normalizedRadius);
+        mPath.rQuadTo(0, -normalizedRadius, normalizedRadius, -normalizedRadius);
+        mPath.lineTo(right - normalizedRadius, top);
+        mPath.rQuadTo(normalizedRadius, 0, normalizedRadius, normalizedRadius);
+        mPath.lineTo(right, bottom - normalizedRadius);
+        mPath.rQuadTo(0, normalizedRadius, -normalizedRadius, normalizedRadius);
+        mPath.lineTo(left + normalizedRadius, bottom);
+        mPath.rQuadTo(-normalizedRadius, 0, -normalizedRadius, -normalizedRadius);
+        mPath.lineTo(left, top + normalizedRadius);
+        mPath.moveTo(0, 0);
+        mPath.rLineTo(0, height);
+        mPath.rLineTo(width, 0);
+        mPath.rLineTo(0, -height);
+        mPath.rLineTo(-width, 0);
+        canvas.drawPath(mPath, mMaskPaint);
+        mPath.reset();
+        mPath.moveTo(left, top + frameCornersSize);
+        mPath.lineTo(left, top + normalizedRadius);
+        mPath.rQuadTo(0, -normalizedRadius, normalizedRadius, -normalizedRadius);
+        mPath.lineTo(left + frameCornersSize, top);
+        mPath.moveTo(right, top + frameCornersSize);
+        mPath.lineTo(right, top + normalizedRadius);
+        mPath.rQuadTo(0, -normalizedRadius, -normalizedRadius, -normalizedRadius);
+        mPath.lineTo(right - frameCornersSize, top);
+        mPath.moveTo(right, bottom - frameCornersSize);
+        mPath.lineTo(right, bottom - normalizedRadius);
+        mPath.rQuadTo(0, normalizedRadius, -normalizedRadius, normalizedRadius);
+        mPath.lineTo(right - frameCornersSize, bottom);
+        mPath.moveTo(left, bottom - frameCornersSize);
+        mPath.lineTo(left, bottom - normalizedRadius);
+        mPath.rQuadTo(0, normalizedRadius, normalizedRadius, normalizedRadius);
+        mPath.lineTo(left + frameCornersSize, bottom);
+        canvas.drawPath(mPath, mFramePaint);
     }
 
     @Override
@@ -221,45 +250,5 @@ final class ViewFinderView extends View {
             mFrameRect =
                     new Rect(frameLeft, frameTop, frameLeft + frameWidth, frameTop + frameHeight);
         }
-    }
-
-    private void invalidateMaskPath(final int left, final int top, final int right,
-            final int bottom, final int width, final int height, final float r) {
-        mMaskPath.reset();
-        mMaskPath.moveTo(left, top + r);
-        mMaskPath.rQuadTo(0, -r, r, -r);
-        mMaskPath.lineTo(right - r, top);
-        mMaskPath.rQuadTo(r, 0, r, r);
-        mMaskPath.lineTo(right, bottom - r);
-        mMaskPath.rQuadTo(0, r, -r, r);
-        mMaskPath.lineTo(left + r, bottom);
-        mMaskPath.rQuadTo(-r, 0, -r, -r);
-        mMaskPath.lineTo(left, top + r);
-        mMaskPath.moveTo(0, 0);
-        mMaskPath.rLineTo(0, height);
-        mMaskPath.rLineTo(width, 0);
-        mMaskPath.rLineTo(0, -height);
-        mMaskPath.rLineTo(-width, 0);
-    }
-
-    private void invalidateFramePath(final int left, final int top, final int right,
-            final int bottom, final float r) {
-        mFramePath.reset();
-        mFramePath.moveTo(left, top + mFrameCornersSize);
-        mFramePath.lineTo(left, top + r);
-        mFramePath.rQuadTo(0, -r, r, -r);
-        mFramePath.lineTo(left + mFrameCornersSize, top);
-        mFramePath.moveTo(right, top + mFrameCornersSize);
-        mFramePath.lineTo(right, top + r);
-        mFramePath.rQuadTo(0, -r, -r, -r);
-        mFramePath.lineTo(right - mFrameCornersSize, top);
-        mFramePath.moveTo(right, bottom - mFrameCornersSize);
-        mFramePath.lineTo(right, bottom - r);
-        mFramePath.rQuadTo(0, r, -r, r);
-        mFramePath.lineTo(right - mFrameCornersSize, bottom);
-        mFramePath.moveTo(left, bottom - mFrameCornersSize);
-        mFramePath.lineTo(left, bottom - r);
-        mFramePath.rQuadTo(0, r, r, r);
-        mFramePath.lineTo(left + mFrameCornersSize, bottom);
     }
 }
