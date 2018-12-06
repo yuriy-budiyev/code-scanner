@@ -305,9 +305,9 @@ public final class CodeScannerView extends ViewGroup {
     }
 
     /**
-     * Set length on the frame corners
+     * Set size of the frame corners
      *
-     * @param size Length in pixels
+     * @param size Size in pixels
      */
     public void setFrameCornersSize(@Px final int size) {
         if (size < 0) {
@@ -329,7 +329,7 @@ public final class CodeScannerView extends ViewGroup {
     /**
      * Set current frame corners radius
      *
-     * @param radius Frame corners radius
+     * @param radius Frame corners radius in pixels
      */
     public void setFrameCornersRadius(@Px final int radius) {
         if (radius < 0) {
