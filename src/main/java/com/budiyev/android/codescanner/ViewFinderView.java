@@ -74,7 +74,7 @@ final class ViewFinderView extends View {
         final Path path = mPath;
         if (frameCornersRadius > 0) {
             final float normalizedRadius =
-                    frameCornersRadius > frameCornersSize ? frameCornersSize : frameCornersRadius;
+                    Math.min(frameCornersRadius, Math.max(frameCornersSize - 1, 0));
             path.reset();
             path.moveTo(left, top + normalizedRadius);
             path.quadTo(left, top, left + normalizedRadius, top);
@@ -135,7 +135,7 @@ final class ViewFinderView extends View {
             path.moveTo(left + frameCornersSize, bottom);
             path.lineTo(left, bottom);
             path.lineTo(left, bottom - frameCornersSize);
-            canvas.drawPath(path, mMaskPaint);
+            canvas.drawPath(path, mFramePaint);
         }
     }
 
