@@ -548,7 +548,7 @@ public final class CodeScannerView extends ViewGroup {
                 R.drawable.ic_code_scanner_flash_off);
     }
 
-    private void performLayout(int width, int height) {
+    private void performLayout(final int width, final int height) {
         final Point previewSize = mPreviewSize;
         if (previewSize == null) {
             mPreviewView.layout(0, 0, width, height);
