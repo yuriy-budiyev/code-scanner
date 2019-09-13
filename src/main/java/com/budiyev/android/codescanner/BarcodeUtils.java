@@ -81,7 +81,7 @@ public final class BarcodeUtils {
     @Nullable
     public static Result decodeBitmap(@NonNull final Bitmap bitmap,
             @Nullable final Map<DecodeHintType, ?> hints) {
-        Objects.requireNonNull(bitmap);
+        requireNonNullPatch(bitmap);
         final int width = bitmap.getWidth();
         final int height = bitmap.getHeight();
         final int[] pixels = new int[width * height];
@@ -117,7 +117,7 @@ public final class BarcodeUtils {
     @Nullable
     public static Result decodeRgb(@NonNull final int[] pixels, final int width, final int height,
             @Nullable final Map<DecodeHintType, ?> hints) {
-        Objects.requireNonNull(pixels);
+        requireNonNullPatch(pixels);
         final MultiFormatReader reader = createReader(hints);
         try {
             return Utils
@@ -141,6 +141,12 @@ public final class BarcodeUtils {
         return decodeYuv(pixels, width, height, ROTATION_0, false, null);
     }
 
+    public static <T> T requireNonNullPatch(T obj) {
+        if (obj == null)
+            throw new NullPointerException();
+        return obj;
+    }
+
     /**
      * Decode barcode from YUV pixels array
      *
@@ -158,7 +164,7 @@ public final class BarcodeUtils {
     public static Result decodeYuv(@NonNull final byte[] pixels, final int width, final int height,
             @Rotation final int rotation, final boolean reverseHorizontal,
             @Nullable final Map<DecodeHintType, ?> hints) {
-        Objects.requireNonNull(pixels);
+        requireNonNullPatch(pixels);
         final byte[] rotatedPixels = Utils.rotateYuv(pixels, width, height, rotation);
         final int rotatedWidth;
         final int rotatedHeight;
@@ -211,8 +217,8 @@ public final class BarcodeUtils {
     public static BitMatrix encodeBitMatrix(@NonNull final String content,
             @NonNull final BarcodeFormat format, final int width, final int height,
             @Nullable final Map<EncodeHintType, ?> hints) {
-        Objects.requireNonNull(content);
-        Objects.requireNonNull(format);
+        requireNonNullPatch(content);
+        requireNonNullPatch(format);
         final MultiFormatWriter writer = new MultiFormatWriter();
         try {
             if (hints != null) {
@@ -273,7 +279,7 @@ public final class BarcodeUtils {
      */
     @NonNull
     public static Bitmap createBitmap(@NonNull final BitMatrix matrix) {
-        Objects.requireNonNull(matrix);
+        requireNonNullPatch(matrix);
         final int width = matrix.getWidth();
         final int height = matrix.getHeight();
         final int length = width * height;

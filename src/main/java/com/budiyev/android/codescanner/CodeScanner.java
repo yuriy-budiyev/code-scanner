@@ -44,6 +44,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.zxing.BarcodeFormat;
 
+import static com.budiyev.android.codescanner.BarcodeUtils.requireNonNullPatch;
+
 /**
  * Code scanner.
  * Supports portrait and landscape screen orientations, back and front facing cameras,
@@ -225,7 +227,7 @@ public final class CodeScanner {
     @MainThread
     public void setFormats(@NonNull final List<BarcodeFormat> formats) {
         synchronized (mInitializeLock) {
-            mFormats = Objects.requireNonNull(formats);
+            mFormats = requireNonNullPatch(formats);
             if (mInitialized) {
                 final DecoderWrapper decoderWrapper = mDecoderWrapper;
                 if (decoderWrapper != null) {
@@ -301,7 +303,7 @@ public final class CodeScanner {
      * @see ScanMode
      */
     public void setScanMode(@NonNull final ScanMode scanMode) {
-        mScanMode = Objects.requireNonNull(scanMode);
+        mScanMode = requireNonNullPatch(scanMode);
     }
 
     /**
@@ -395,7 +397,7 @@ public final class CodeScanner {
     @MainThread
     public void setAutoFocusMode(@NonNull final AutoFocusMode autoFocusMode) {
         synchronized (mInitializeLock) {
-            mAutoFocusMode = Objects.requireNonNull(autoFocusMode);
+            mAutoFocusMode = requireNonNullPatch(autoFocusMode);
             if (mInitialized && mAutoFocusEnabled) {
                 setAutoFocusEnabledInternal(true);
             }
