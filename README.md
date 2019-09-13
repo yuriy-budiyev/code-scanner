@@ -121,12 +121,14 @@ Java
 ```java
 public class MainActivity extends AppCompatActivity {
     private CodeScanner mCodeScanner;
+    private Activity activity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         CodeScannerView scannerView = findViewById(R.id.scanner_view);
+        activity = this;
         mCodeScanner = new CodeScanner(this, scannerView);
         mCodeScanner.setDecodeCallback(new DecodeCallback() {
             @Override
