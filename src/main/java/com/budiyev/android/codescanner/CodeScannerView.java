@@ -453,7 +453,7 @@ public final class CodeScannerView extends ViewGroup {
      * @see #setMaskVisible
      */
     public boolean isMaskVisible() {
-        return mAutoFocusButton.getVisibility() == VISIBLE;
+        return mViewFinderView.getVisibility() == VISIBLE;
     }
 
     /**
