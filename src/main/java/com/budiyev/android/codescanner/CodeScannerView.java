@@ -448,6 +448,24 @@ public final class CodeScannerView extends ViewGroup {
     }
 
     /**
+     * Whether if mask is currently visible
+     *
+     * @see #setMaskVisible
+     */
+    public boolean isMaskVisible() {
+        return mViewFinderView.getVisibility() == VISIBLE;
+    }
+
+    /**
+     * Set whether mask is visible or not
+     *
+     * @param visible Visibility
+     */
+    public void setMaskVisible(final boolean visible) {
+        mViewFinderView.setVisibility(visible ? VISIBLE : INVISIBLE);
+    }
+
+    /**
      * Whether if flash button is currently visible
      *
      * @see #setFlashButtonVisible
