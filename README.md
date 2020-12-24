@@ -131,10 +131,10 @@ public class MainActivity extends AppCompatActivity {
         mCodeScanner.setDecodeCallback(new DecodeCallback() {
             @Override
             public void onDecoded(@NonNull final Result result) {
-                activity.runOnUiThread(new Runnable() {
+                runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(activity, result.getText(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }
