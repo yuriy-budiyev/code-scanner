@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Objects;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
@@ -473,7 +472,7 @@ public final class CodeScanner {
     }
 
     /**
-     * Release resources, and stop preview if needed; call this method in {@link Activity#onPause()}
+     * Release resources, and stop preview if needed; call this method in onPause()
      */
     @MainThread
     public void releaseResources() {

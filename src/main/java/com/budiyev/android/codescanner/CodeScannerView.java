@@ -50,6 +50,7 @@ import androidx.annotation.StyleRes;
  * @see CodeScanner
  */
 public final class CodeScannerView extends ViewGroup {
+
     private static final boolean DEFAULT_AUTO_FOCUS_BUTTON_VISIBLE = true;
     private static final boolean DEFAULT_FLASH_BUTTON_VISIBLE = true;
     private static final int DEFAULT_AUTO_FOCUS_BUTTON_VISIBILITY = VISIBLE;

@@ -34,9 +34,11 @@ import androidx.annotation.WorkerThread;
  * Code scanner error callback
  */
 public interface ErrorCallback {
+
     /**
      * Callback to suppress errors
      */
+    @NonNull
     ErrorCallback SUPPRESS = new Utils.SuppressErrorCallback();
 
     /**

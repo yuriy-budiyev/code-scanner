@@ -31,6 +31,7 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 
 final class DecodeTask {
+
     private final byte[] mImage;
     private final Point mImageSize;
     private final Point mPreviewSize;

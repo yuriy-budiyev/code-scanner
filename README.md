@@ -1,9 +1,8 @@
 # ![Code Scanner](https://raw.githubusercontent.com/yuriy-budiyev/code-scanner/master/images/logo_wide_512.png)
 
-[![Download](https://api.bintray.com/packages/yuriy-budiyev/maven/code-scanner/images/download.svg)](https://bintray.com/yuriy-budiyev/maven/code-scanner/_latestVersion)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Code%20Scanner-blue.svg?style=flat)](https://android-arsenal.com/details/1/6095)
 [![API](https://img.shields.io/badge/API-19%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=19)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/04f32141b2ef480580f709883541b469)](https://www.codacy.com/app/yuriy-budiyev/code-scanner?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yuriy-budiyev/code-scanner&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/ef3215911f6040e6acbcf0a497a49b22)](https://www.codacy.com/gh/yuriy-budiyev/code-scanner/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=yuriy-budiyev/code-scanner&amp;utm_campaign=Badge_Grade)
 
 Code scanner library for [Android](https://developer.android.com), based on [ZXing](https://github.com/zxing/zxing)
 

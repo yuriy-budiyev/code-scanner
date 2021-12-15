@@ -29,6 +29,7 @@ package com.budiyev.android.codescanner;
  * @see CodeScanner#setScanMode(ScanMode)
  */
 public enum ScanMode {
+
     /**
      * Preview will stop after first decoded code
      */

@@ -29,6 +29,7 @@ package com.budiyev.android.codescanner;
  * @see CodeScanner#setAutoFocusMode(AutoFocusMode)
  */
 public enum AutoFocusMode {
+
     /**
      * Auto focus camera with the specified interval
      *

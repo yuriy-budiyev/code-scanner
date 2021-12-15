@@ -28,6 +28,7 @@ import android.graphics.Matrix;
 import androidx.annotation.NonNull;
 
 final class Rect {
+
     private final int mLeft;
     private final int mTop;
     private final int mRight;

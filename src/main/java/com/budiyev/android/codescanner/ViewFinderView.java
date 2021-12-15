@@ -36,6 +36,7 @@ import androidx.annotation.Nullable;
 import androidx.annotation.Px;
 
 final class ViewFinderView extends View {
+
     private final Paint mMaskPaint;
     private final Paint mFramePaint;
     private final Path mPath;

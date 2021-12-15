@@ -35,6 +35,7 @@ import com.google.zxing.Result;
  * Callback of the decoding process
  */
 public interface DecodeCallback {
+
     /**
      * Called when decoder has successfully decoded the code
      * <br>

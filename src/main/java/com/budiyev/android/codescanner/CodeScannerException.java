@@ -32,6 +32,7 @@ import androidx.annotation.RequiresApi;
  * Common class for code scanner runtime exceptions
  */
 public final class CodeScannerException extends RuntimeException {
+
     public CodeScannerException() {
         super();
     }

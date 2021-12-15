@@ -24,6 +24,7 @@
 package com.budiyev.android.codescanner;
 
 final class Point {
+
     private final int mX;
     private final int mY;
 

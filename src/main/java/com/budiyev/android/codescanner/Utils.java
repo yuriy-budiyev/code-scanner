@@ -47,6 +47,7 @@ import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 
 final class Utils {
+
     private static final float MIN_DISTORTION = 0.3f;
     private static final float MAX_DISTORTION = 3f;
     private static final float DISTORTION_STEP = 0.1f;
@@ -221,11 +222,7 @@ final class Utils {
         if (parameters.isZoomSupported()) {
             if (parameters.getZoom() != zoom) {
                 final int maxZoom = parameters.getMaxZoom();
-                if (zoom <= maxZoom) {
-                    parameters.setZoom(zoom);
-                } else {
-                    parameters.setZoom(maxZoom);
-                }
+                parameters.setZoom(Math.min(zoom, maxZoom));
             }
         }
     }

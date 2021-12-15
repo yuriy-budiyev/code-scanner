@@ -38,6 +38,7 @@ import com.google.zxing.ReaderException;
 import com.google.zxing.Result;
 
 final class Decoder {
+
     private final MultiFormatReader mReader;
     private final DecoderThread mDecoderThread;
     private final StateListener mStateListener;

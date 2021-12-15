@@ -51,6 +51,7 @@ import com.google.zxing.common.BitMatrix;
  * Utils for decoding and encoding bar codes
  */
 public final class BarcodeUtils {
+
     public static final int ROTATION_0 = 0;
     public static final int ROTATION_90 = 90;
     public static final int ROTATION_180 = 180;
