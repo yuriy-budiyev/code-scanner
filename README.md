@@ -27,7 +27,8 @@ Code scanner library for [Android](https://developer.android.com), based on [ZXi
 
 ### Usage ([sample](https://github.com/yuriy-budiyev/lib-demo-app))
 Add dependency:
-```allprojects {
+```gradle
+allprojects {
     repositories {
         ...
         maven { url 'https://jitpack.io' }
