@@ -27,9 +27,17 @@ Code scanner library for [Android](https://developer.android.com), based on [ZXi
 
 ### Usage ([sample](https://github.com/yuriy-budiyev/lib-demo-app))
 Add dependency:
+```allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+   }
+}
+```
+
 ```gradle
 dependencies {
-    implementation 'com.budiyev.android:code-scanner:2.1.0'
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.1.0'
 }
 ```
 Add camera permission to AndroidManifest.xml (Don't forget about dynamic permissions on API >= 23):
