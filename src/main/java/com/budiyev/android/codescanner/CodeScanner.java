@@ -30,6 +30,7 @@ import java.util.Objects;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
@@ -128,6 +129,7 @@ public final class CodeScanner {
     private int mSafeAutoFocusAttemptsCount = 0;
     private int mViewWidth = 0;
     private int mViewHeight = 0;
+    private Thread.UncaughtExceptionHandler mExceptionHandler = null;
 
     /**
      * CodeScanner, associated with the first back-facing camera on the device
@@ -282,6 +284,16 @@ public final class CodeScanner {
      */
     public void setErrorCallback(@Nullable final ErrorCallback errorCallback) {
         mErrorCallback = errorCallback;
+    }
+
+    /**
+     * Camera initialization uncaught exception andler
+     * its optional to handle exception in application flow
+     *
+     * @param exceptionHandler Exception Handler for thread
+     */
+    public void setExceptionHandler(@Nullable final Thread.UncaughtExceptionHandler exceptionHandler) {
+        mExceptionHandler = exceptionHandler;
     }
 
     /**
@@ -441,6 +453,12 @@ public final class CodeScanner {
         return mPreviewActive;
     }
 
+    /** Check if this device has a camera */
+    private boolean checkCameraHardware(Context context) {
+        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+    }
+
+
     /**
      * Start camera preview
      * <br>
@@ -542,7 +560,9 @@ public final class CodeScanner {
         if (width > 0 && height > 0) {
             mInitialization = true;
             mInitializationRequested = false;
-            new InitializationThread(width, height).start();
+            InitializationThread initThread = new InitializationThread(width, height);
+            initThread.setUncaughtExceptionHandler(mExceptionHandler);
+            initThread.start();
         } else {
             mInitializationRequested = true;
         }
@@ -808,6 +828,9 @@ public final class CodeScanner {
         public void run() {
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
             try {
+                if (!checkCameraHardware(mContext)) {
+                    throw new IllegalStateException("Camera not available");
+                }
                 initialize();
             } catch (final Exception e) {
                 releaseResourcesInternal();
@@ -820,7 +843,7 @@ public final class CodeScanner {
             }
         }
 
-        private void initialize() {
+        private void initialize() throws RuntimeException {
             Camera camera = null;
             final CameraInfo cameraInfo = new CameraInfo();
             final int cameraId = mCameraId;
