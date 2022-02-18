@@ -24,23 +24,15 @@ allprojects {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
 
 ext {
-    libraryName = 'CodeScanner'
-    libraryDescription = 'Code scanner library for Android, based on ZXing'
     libraryVersion = '2.1.0'
-    artifact = 'code-scanner'
-    developerId = 'yuriy-budiyev'
-    developerName = 'Yuriy Budiyev'
-    developerEmail = 'yuriy.budiyev@yandex.ru'
     publishedGroupId = 'com.budiyev.android'
-    siteUrl = 'https://github.com/yuriy-budiyev/code-scanner'
-    gitUrl = 'https://github.com/yuriy-budiyev/code-scanner.git'
-    bintrayRepo = 'maven'
-    bintrayName = 'code-scanner'
-    licenseName = 'MIT License'
-    allLicenses = ['MIT']
 }
+
+group = publishedGroupId
+version = libraryVersion
 
 android {
     compileSdkVersion 31
@@ -90,4 +82,17 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
     archives javadocJar
     archives sourcesJar
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            release(MavenPublication) {
+                from components.release
+                artifactId = 'code-scanner'
+                groupId = publishedGroupId
+                version = libraryVersion
+            }
+        }
+    }
 }
