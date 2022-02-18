@@ -37,7 +37,7 @@ allprojects {
 
 ```gradle
 dependencies {
-    implementation 'com.github.yuriy-budiyev:code-scanner:2.1.0'
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.1.1'
 }
 ```
 Add camera permission to AndroidManifest.xml (Don't forget about dynamic permissions on API >= 23):
