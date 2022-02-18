@@ -25,7 +25,8 @@ Code scanner library for [Android](https://developer.android.com), based on [ZXi
 |            | RSS-Expanded  |
 
 ### Usage ([sample](https://github.com/yuriy-budiyev/lib-demo-app))
-Add dependency:
+
+Step 1. Add it in your root build.gradle at the end of repositories:
 ```gradle
 allprojects {
     repositories {
@@ -35,6 +36,18 @@ allprojects {
 }
 ```
 
+or in settings.gradle file:
+```gradle
+dependencyResolutionManagement {
+    ...
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+
+Step 2. Add dependency:
 ```gradle
 dependencies {
     implementation 'com.github.yuriy-budiyev:code-scanner:2.1.1'
