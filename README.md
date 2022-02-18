@@ -1,5 +1,6 @@
 # ![Code Scanner](https://raw.githubusercontent.com/yuriy-budiyev/code-scanner/master/images/logo_wide_512.png)
 
+[![Release](https://jitpack.io/v/yuriy-budiyev/code-scanner.svg)](https://jitpack.io/#yuriy-budiyev/code-scanner)
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Code%20Scanner-blue.svg?style=flat)](https://android-arsenal.com/details/1/6095)
 [![API](https://img.shields.io/badge/API-19%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=19)
 
