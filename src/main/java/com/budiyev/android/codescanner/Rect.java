@@ -181,6 +181,7 @@ final class Rect {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "[(" + mLeft + "; " + mTop + ") - (" + mRight + "; " + mBottom + ")]";
