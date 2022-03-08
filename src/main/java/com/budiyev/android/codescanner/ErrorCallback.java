@@ -46,11 +46,11 @@ public interface ErrorCallback {
      * <br>
      * Note that this method always called on a worker thread
      *
-     * @param error Exception that has been thrown
+     * @param thrown Throwable that has been thrown
      * @see Handler
      * @see Looper#getMainLooper()
      * @see Activity#runOnUiThread(Runnable)
      */
     @WorkerThread
-    void onError(@NonNull Exception error);
+    void onError(@NonNull Throwable thrown);
 }

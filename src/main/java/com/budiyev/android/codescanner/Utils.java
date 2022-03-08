@@ -347,7 +347,7 @@ final class Utils {
 
     public static final class SuppressErrorCallback implements ErrorCallback {
         @Override
-        public void onError(@NonNull final Exception error) {
+        public void onError(@NonNull final Throwable thrown) {
             // Do nothing
         }
     }

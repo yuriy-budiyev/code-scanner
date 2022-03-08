@@ -105,6 +105,7 @@ public final class CodeScanner {
     private final Runnable mSafeAutoFocusTask;
     private final Runnable mStopPreviewTask;
     private final DecoderStateListener mDecoderStateListener;
+    private final ExceptionHandler mExceptionHandler;
     private volatile List<BarcodeFormat> mFormats = DEFAULT_FORMATS;
     private volatile ScanMode mScanMode = DEFAULT_SCAN_MODE;
     private volatile AutoFocusMode mAutoFocusMode = DEFAULT_AUTO_FOCUS_MODE;
@@ -149,6 +150,7 @@ public final class CodeScanner {
         mSafeAutoFocusTask = new SafeAutoFocusTask();
         mStopPreviewTask = new StopPreviewTask();
         mDecoderStateListener = new DecoderStateListener();
+        mExceptionHandler = new ExceptionHandler();
         mScannerView.setCodeScanner(this);
         mScannerView.setSizeListener(new ScannerSizeListener());
     }
@@ -273,7 +275,7 @@ public final class CodeScanner {
     }
 
     /**
-     * Camera initialization error callback.
+     * Camera initialization and image decoding error callback.
      * If not set, an exception will be thrown when error will occur.
      *
      * @param errorCallback Callback
@@ -542,7 +544,10 @@ public final class CodeScanner {
         if (width > 0 && height > 0) {
             mInitialization = true;
             mInitializationRequested = false;
-            new InitializationThread(width, height).start();
+            final InitializationThread initializationThread =
+                    new InitializationThread(width, height);
+            initializationThread.setUncaughtExceptionHandler(mExceptionHandler);
+            initializationThread.start();
         } else {
             mInitializationRequested = true;
         }
@@ -807,17 +812,7 @@ public final class CodeScanner {
         @Override
         public void run() {
             Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-            try {
-                initialize();
-            } catch (final Exception e) {
-                releaseResourcesInternal();
-                final ErrorCallback errorCallback = mErrorCallback;
-                if (errorCallback != null) {
-                    errorCallback.onError(e);
-                } else {
-                    throw e;
-                }
-            }
+            initialize();
         }
 
         private void initialize() {
@@ -891,7 +886,8 @@ public final class CodeScanner {
             camera.setDisplayOrientation(orientation);
             synchronized (mInitializeLock) {
                 final Decoder decoder =
-                        new Decoder(mDecoderStateListener, mFormats, mDecodeCallback);
+                        new Decoder(mDecoderStateListener, mExceptionHandler, mFormats,
+                                mDecodeCallback);
                 mDecoderWrapper =
                         new DecoderWrapper(camera, cameraInfo, decoder, imageSize, previewSize,
                                 viewSize, orientation, autoFocusSupported, flashSupported);
@@ -900,6 +896,20 @@ public final class CodeScanner {
                 mInitialized = true;
             }
             mMainThreadHandler.post(new FinishInitializationTask(previewSize));
+        }
+    }
+
+    private final class ExceptionHandler implements Thread.UncaughtExceptionHandler {
+
+        @Override
+        public void uncaughtException(@NonNull final Thread t, @NonNull final Throwable e) {
+            releaseResourcesInternal();
+            final ErrorCallback errorCallback = mErrorCallback;
+            if (errorCallback != null) {
+                errorCallback.onError(e);
+            } else {
+                throw new CodeScannerException(e);
+            }
         }
     }
 

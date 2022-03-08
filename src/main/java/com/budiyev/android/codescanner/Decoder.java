@@ -49,9 +49,11 @@ final class Decoder {
     private volatile State mState;
 
     public Decoder(@NonNull final StateListener stateListener,
+            @NonNull final Thread.UncaughtExceptionHandler exceptionHandler,
             @NonNull final List<BarcodeFormat> formats, @Nullable final DecodeCallback callback) {
         mReader = new MultiFormatReader();
         mDecoderThread = new DecoderThread();
+        mDecoderThread.setUncaughtExceptionHandler(exceptionHandler);
         mHints = new EnumMap<>(DecodeHintType.class);
         mHints.put(DecodeHintType.POSSIBLE_FORMATS, formats);
         mReader.setHints(mHints);
