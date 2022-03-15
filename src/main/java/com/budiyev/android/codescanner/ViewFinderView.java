@@ -35,7 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.Px;
 
-final class ViewFinderView extends View {
+class ViewFinderView extends View {
 
     private final Paint mMaskPaint;
     private final Paint mFramePaint;
@@ -142,7 +142,7 @@ final class ViewFinderView extends View {
 
     @Override
     protected void onLayout(final boolean changed, final int left, final int top, final int right,
-            final int bottom) {
+                            final int bottom) {
         invalidateFrameRect(right - left, bottom - top);
     }
 
@@ -152,7 +152,7 @@ final class ViewFinderView extends View {
     }
 
     void setFrameAspectRatio(@FloatRange(from = 0, fromInclusive = false) final float ratioWidth,
-            @FloatRange(from = 0, fromInclusive = false) final float ratioHeight) {
+                             @FloatRange(from = 0, fromInclusive = false) final float ratioHeight) {
         mFrameRatioWidth = ratioWidth;
         mFrameRatioHeight = ratioHeight;
         invalidateFrameRect();
