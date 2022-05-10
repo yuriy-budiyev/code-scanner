@@ -9,7 +9,7 @@ buildscript {
 
     dependencies {
 
-        classpath 'com.android.tools.build:gradle:7.1.2'
+        classpath 'com.android.tools.build:gradle:7.2.0'
     }
 }
 
@@ -35,12 +35,12 @@ group = publishedGroupId
 version = libraryVersion
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion '31.0.0'
+    compileSdkVersion 32
+    buildToolsVersion '32.0.0'
 
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 31
+        targetSdkVersion 32
         versionCode 59
         versionName libraryVersion
     }
