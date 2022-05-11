@@ -23,6 +23,8 @@
  */
 package com.budiyev.android.codescanner;
 
+import androidx.annotation.NonNull;
+
 final class Point {
 
     private final int mX;
@@ -58,6 +60,7 @@ final class Point {
         }
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "(" + mX + "; " + mY + ")";

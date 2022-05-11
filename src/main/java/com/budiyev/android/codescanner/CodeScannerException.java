@@ -50,7 +50,7 @@ public final class CodeScannerException extends RuntimeException {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    protected CodeScannerException(@Nullable final String message, @Nullable final Throwable cause,
+    public CodeScannerException(@Nullable final String message, @Nullable final Throwable cause,
             final boolean enableSuppression, final boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
