@@ -150,8 +150,8 @@ public final class CodeScannerView extends ViewGroup {
             mViewFinderView.setFrameColor(DEFAULT_FRAME_COLOR);
             mViewFinderView.setFrameThickness(Math.round(DEFAULT_FRAME_THICKNESS_DP * density));
             mViewFinderView.setFrameCornersSize(Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * density));
-            mViewFinderView
-                    .setFrameCornersRadius(Math.round(DEFAULT_FRAME_CORNERS_RADIUS_DP * density));
+            mViewFinderView.setFrameCornersRadius(
+                    Math.round(DEFAULT_FRAME_CORNERS_RADIUS_DP * density));
             mViewFinderView.setFrameSize(DEFAULT_FRAME_SIZE);
             mAutoFocusButton.setColorFilter(DEFAULT_AUTO_FOCUS_BUTTON_COLOR);
             mFlashButton.setColorFilter(DEFAULT_FLASH_BUTTON_COLOR);
@@ -176,7 +176,7 @@ public final class CodeScannerView extends ViewGroup {
                         a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameCornersRadius,
                                 Math.round(DEFAULT_FRAME_CORNERS_RADIUS_DP * density)));
                 setFrameAspectRatio(a.getFloat(R.styleable.CodeScannerView_frameAspectRatioWidth,
-                        DEFAULT_FRAME_ASPECT_RATIO_WIDTH),
+                                DEFAULT_FRAME_ASPECT_RATIO_WIDTH),
                         a.getFloat(R.styleable.CodeScannerView_frameAspectRatioHeight,
                                 DEFAULT_FRAME_ASPECT_RATIO_HEIGHT));
                 setFrameSize(a.getFloat(R.styleable.CodeScannerView_frameSize, DEFAULT_FRAME_SIZE));
@@ -204,13 +204,39 @@ public final class CodeScannerView extends ViewGroup {
     @Override
     protected void onLayout(final boolean changed, final int left, final int top, final int right,
             final int bottom) {
-        performLayout(right - left, bottom - top);
+        final int width = right - left;
+        final int height = bottom - top;
+        final Point previewSize = mPreviewSize;
+        if (previewSize == null) {
+            mPreviewView.layout(0, 0, width, height);
+        } else {
+            int frameLeft = 0;
+            int frameTop = 0;
+            int frameRight = width;
+            int frameBottom = height;
+            final int previewWidth = previewSize.getX();
+            if (previewWidth > width) {
+                final int d = (previewWidth - width) / 2;
+                frameLeft -= d;
+                frameRight += d;
+            }
+            final int previewHeight = previewSize.getY();
+            if (previewHeight > height) {
+                final int d = (previewHeight - height) / 2;
+                frameTop -= d;
+                frameBottom += d;
+            }
+            mPreviewView.layout(frameLeft, frameTop, frameRight, frameBottom);
+        }
+        mViewFinderView.layout(0, 0, width, height);
+        final int buttonSize = mButtonSize;
+        mAutoFocusButton.layout(0, 0, buttonSize, buttonSize);
+        mFlashButton.layout(width - buttonSize, 0, width, buttonSize);
     }
 
     @Override
     protected void onSizeChanged(final int width, final int height, final int oldWidth,
             final int oldHeight) {
-        performLayout(width, height);
         final SizeListener listener = mSizeListener;
         if (listener != null) {
             listener.onSizeChanged(width, height);
@@ -229,8 +255,8 @@ public final class CodeScannerView extends ViewGroup {
                 event.getAction() == MotionEvent.ACTION_DOWN && frameRect.isPointInside(x, y)) {
             final int areaSize = mFocusAreaSize;
             codeScanner.performTouchFocus(
-                    new Rect(x - areaSize, y - areaSize, x + areaSize, y + areaSize)
-                            .fitIn(frameRect));
+                    new Rect(x - areaSize, y - areaSize, x + areaSize, y + areaSize).fitIn(
+                            frameRect));
         }
         return super.onTouchEvent(event);
     }
@@ -565,35 +591,6 @@ public final class CodeScannerView extends ViewGroup {
     void setFlashEnabled(final boolean enabled) {
         mFlashButton.setImageResource(enabled ? R.drawable.ic_code_scanner_flash_on :
                 R.drawable.ic_code_scanner_flash_off);
-    }
-
-    private void performLayout(final int width, final int height) {
-        final Point previewSize = mPreviewSize;
-        if (previewSize == null) {
-            mPreviewView.layout(0, 0, width, height);
-        } else {
-            int frameLeft = 0;
-            int frameTop = 0;
-            int frameRight = width;
-            int frameBottom = height;
-            final int previewWidth = previewSize.getX();
-            if (previewWidth > width) {
-                final int d = (previewWidth - width) / 2;
-                frameLeft -= d;
-                frameRight += d;
-            }
-            final int previewHeight = previewSize.getY();
-            if (previewHeight > height) {
-                final int d = (previewHeight - height) / 2;
-                frameTop -= d;
-                frameBottom += d;
-            }
-            mPreviewView.layout(frameLeft, frameTop, frameRight, frameBottom);
-        }
-        mViewFinderView.layout(0, 0, width, height);
-        final int buttonSize = mButtonSize;
-        mAutoFocusButton.layout(0, 0, buttonSize, buttonSize);
-        mFlashButton.layout(width - buttonSize, 0, width, buttonSize);
     }
 
     interface SizeListener {
