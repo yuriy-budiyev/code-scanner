@@ -65,6 +65,7 @@ public final class CodeScannerView extends ViewGroup {
     private static final float DEFAULT_FRAME_CORNER_SIZE_DP = 50f;
     private static final float DEFAULT_FRAME_CORNERS_RADIUS_DP = 0f;
     private static final float DEFAULT_FRAME_SIZE = 0.75f;
+    private static final float DEFAULT_FRAME_VERTICAL_BIAS = 0.5f;
     private static final float BUTTON_SIZE_DP = 56f;
     private static final float FOCUS_AREA_SIZE_DP = 20f;
     private SurfaceView mPreviewView;
@@ -153,6 +154,7 @@ public final class CodeScannerView extends ViewGroup {
             mViewFinderView.setFrameCornersRadius(
                     Math.round(DEFAULT_FRAME_CORNERS_RADIUS_DP * density));
             mViewFinderView.setFrameSize(DEFAULT_FRAME_SIZE);
+            mViewFinderView.setFrameVerticalBias(DEFAULT_FRAME_VERTICAL_BIAS);
             mAutoFocusButton.setColorFilter(DEFAULT_AUTO_FOCUS_BUTTON_COLOR);
             mFlashButton.setColorFilter(DEFAULT_FLASH_BUTTON_COLOR);
             mAutoFocusButton.setVisibility(DEFAULT_AUTO_FOCUS_BUTTON_VISIBILITY);
@@ -180,6 +182,8 @@ public final class CodeScannerView extends ViewGroup {
                         a.getFloat(R.styleable.CodeScannerView_frameAspectRatioHeight,
                                 DEFAULT_FRAME_ASPECT_RATIO_HEIGHT));
                 setFrameSize(a.getFloat(R.styleable.CodeScannerView_frameSize, DEFAULT_FRAME_SIZE));
+                setFrameVerticalBias(a.getFloat(R.styleable.CodeScannerView_frameVerticalBias,
+                        DEFAULT_FRAME_VERTICAL_BIAS));
                 setAutoFocusButtonVisible(
                         a.getBoolean(R.styleable.CodeScannerView_autoFocusButtonVisible,
                                 DEFAULT_AUTO_FOCUS_BUTTON_VISIBLE));
@@ -386,6 +390,19 @@ public final class CodeScannerView extends ViewGroup {
                     "Max frame size value should be between 0.1 and 1, inclusive");
         }
         mViewFinderView.setFrameSize(size);
+    }
+
+    @FloatRange(from = 0.0f, to = 1.0f)
+    public float getFrameVerticalBias() {
+        return mViewFinderView.getFrameVerticalBias();
+    }
+
+    public void setFrameVerticalBias(@FloatRange(from = 0.0f, to = 1.0f) final float bias) {
+        if (bias < 0f || bias > 1f) {
+            throw new IllegalArgumentException(
+                    "Max frame size value should be between 0 and 1, inclusive");
+        }
+        mViewFinderView.setFrameVerticalBias(bias);
     }
 
     /**

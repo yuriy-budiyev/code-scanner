@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CodeScannerView">
-        <attr format="color" name="maskColor"/>
-        <attr format="color" name="frameColor"/>
-        <attr format="color" name="autoFocusButtonColor"/>
-        <attr format="color" name="flashButtonColor"/>
-        <attr format="boolean" name="autoFocusButtonVisible"/>
-        <attr format="boolean" name="flashButtonVisible"/>
-        <attr format="dimension" name="frameThickness"/>
-        <attr format="dimension" name="frameCornersSize"/>
-        <attr format="dimension" name="frameCornersRadius"/>
-        <attr format="float" name="frameAspectRatioWidth"/>
-        <attr format="float" name="frameAspectRatioHeight"/>
-        <attr format="float" name="frameSize"/>
+        <attr name="maskColor" format="color"/>
+        <attr name="frameColor" format="color"/>
+        <attr name="autoFocusButtonColor" format="color"/>
+        <attr name="flashButtonColor" format="color"/>
+        <attr name="autoFocusButtonVisible" format="boolean"/>
+        <attr name="flashButtonVisible" format="boolean"/>
+        <attr name="frameThickness" format="dimension"/>
+        <attr name="frameCornersSize" format="dimension"/>
+        <attr name="frameCornersRadius" format="dimension"/>
+        <attr name="frameAspectRatioWidth" format="float"/>
+        <attr name="frameAspectRatioHeight" format="float"/>
+        <attr name="frameSize" format="float"/>
+        <attr name="frameVerticalBias" format="float"/>
     </declare-styleable>
 </resources>

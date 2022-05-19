@@ -46,6 +46,7 @@ final class ViewFinderView extends View {
     private float mFrameRatioWidth = 1f;
     private float mFrameRatioHeight = 1f;
     private float mFrameSize = 0.75f;
+    private float mFrameVerticalBias = 0.5f;
 
     public ViewFinderView(@NonNull final Context context) {
         super(context);
@@ -262,6 +263,19 @@ final class ViewFinderView extends View {
         }
     }
 
+    @FloatRange(from = 0.0f, to = 1.0f)
+    public float getFrameVerticalBias() {
+        return mFrameVerticalBias;
+    }
+
+    public void setFrameVerticalBias(@FloatRange(from = 0.0f, to = 1.0f) final float bias) {
+        mFrameVerticalBias = bias;
+        invalidateFrameRect();
+        if (isLaidOut()) {
+            invalidate();
+        }
+    }
+
     private void invalidateFrameRect() {
         invalidateFrameRect(getWidth(), getHeight());
     }
@@ -270,17 +284,18 @@ final class ViewFinderView extends View {
         if (width > 0 && height > 0) {
             final float viewAR = (float) width / (float) height;
             final float frameAR = mFrameRatioWidth / mFrameRatioHeight;
+            final float frameSize = mFrameSize;
             final int frameWidth;
             final int frameHeight;
             if (viewAR <= frameAR) {
-                frameWidth = Math.round(width * mFrameSize);
+                frameWidth = Math.round(width * frameSize);
                 frameHeight = Math.round(frameWidth / frameAR);
             } else {
-                frameHeight = Math.round(height * mFrameSize);
+                frameHeight = Math.round(height * frameSize);
                 frameWidth = Math.round(frameHeight * frameAR);
             }
             final int frameLeft = (width - frameWidth) / 2;
-            final int frameTop = (height - frameHeight) / 2;
+            final int frameTop = Math.round((height - frameHeight) * mFrameVerticalBias);
             mFrameRect =
                     new Rect(frameLeft, frameTop, frameLeft + frameWidth, frameTop + frameHeight);
         }
