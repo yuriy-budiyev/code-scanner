@@ -213,7 +213,7 @@ public final class CodeScannerView extends ViewGroup {
 
     @Override
     protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
-        int childCount = getChildCount();
+        final int childCount = getChildCount();
         if (childCount > MAX_CHILD_COUNT) {
             throw new IllegalStateException("CodeScannerView can have zero or one child");
         }
@@ -222,7 +222,7 @@ public final class CodeScannerView extends ViewGroup {
         measureChildWithMargins(mAutoFocusButton, widthMeasureSpec, 0, heightMeasureSpec, 0);
         measureChildWithMargins(mFlashButton, widthMeasureSpec, 0, heightMeasureSpec, 0);
         if (childCount == MAX_CHILD_COUNT) {
-            Rect frameRect = mViewFinderView.getFrameRect();
+            final Rect frameRect = mViewFinderView.getFrameRect();
             measureChildWithMargins(getChildAt(HINT_VIEW_INDEX), widthMeasureSpec, 0,
                     heightMeasureSpec, frameRect != null ? frameRect.getBottom() : 0);
         }
@@ -233,7 +233,7 @@ public final class CodeScannerView extends ViewGroup {
     @Override
     protected void onLayout(final boolean changed, final int left, final int top, final int right,
             final int bottom) {
-        int childCount = getChildCount();
+        final int childCount = getChildCount();
         if (childCount > MAX_CHILD_COUNT) {
             throw new IllegalStateException("CodeScannerView can have zero or one child");
         }
@@ -687,19 +687,19 @@ public final class CodeScannerView extends ViewGroup {
 
     public static class LayoutParams extends MarginLayoutParams {
 
-        public LayoutParams(@NonNull Context c, @Nullable AttributeSet attrs) {
+        public LayoutParams(@NonNull final Context c, @Nullable final AttributeSet attrs) {
             super(c, attrs);
         }
 
-        public LayoutParams(int width, int height) {
+        public LayoutParams(final int width, final int height) {
             super(width, height);
         }
 
-        public LayoutParams(@NonNull MarginLayoutParams source) {
+        public LayoutParams(@NonNull final MarginLayoutParams source) {
             super(source);
         }
 
-        public LayoutParams(@NonNull ViewGroup.LayoutParams source) {
+        public LayoutParams(@NonNull final ViewGroup.LayoutParams source) {
             super(source);
         }
     }

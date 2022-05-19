@@ -121,8 +121,8 @@ public final class BarcodeUtils {
         Objects.requireNonNull(pixels);
         final MultiFormatReader reader = createReader(hints);
         try {
-            return Utils
-                    .decodeLuminanceSource(reader, new RGBLuminanceSource(width, height, pixels));
+            return Utils.decodeLuminanceSource(reader,
+                    new RGBLuminanceSource(width, height, pixels));
         } catch (final ReaderException e) {
             return null;
         }
@@ -291,8 +291,8 @@ public final class BarcodeUtils {
         if (hints != null) {
             reader.setHints(hints);
         } else {
-            reader.setHints(Collections
-                    .singletonMap(DecodeHintType.POSSIBLE_FORMATS, CodeScanner.ALL_FORMATS));
+            reader.setHints(Collections.singletonMap(DecodeHintType.POSSIBLE_FORMATS,
+                    CodeScanner.ALL_FORMATS));
         }
         return reader;
     }
