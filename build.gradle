@@ -27,7 +27,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 
 ext {
-    libraryVersion = '2.1.2'
+    libraryVersion = '2.2.0'
     publishedGroupId = 'com.budiyev.android'
 }
 
@@ -41,7 +41,7 @@ android {
     defaultConfig {
         minSdkVersion 19
         targetSdkVersion 32
-        versionCode 59
+        versionCode 60
         versionName libraryVersion
     }
 
