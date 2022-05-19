@@ -52,7 +52,7 @@ dependencyResolutionManagement {
 Step 2. Add dependency:
 ```gradle
 dependencies {
-    implementation 'com.github.yuriy-budiyev:code-scanner:2.1.2'
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.2.0'
 }
 ```
 Add camera permission and hardware feature to AndroidManifest.xml (Don't forget about dynamic permissions on API >= 23):
@@ -87,6 +87,7 @@ Define a view in your layout file:
         app:frameAspectRatioHeight="1"
         app:frameSize="0.75"
         app:frameThickness="2dp"
+        app:frameVerticalBias="0.5"
         app:maskColor="#77000000"/>
 </FrameLayout>
 ```
@@ -196,7 +197,7 @@ class MainFragment : Fragment() {
     private lateinit var codeScanner: CodeScanner
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, 
-            savedInstanceState: Bundle?): View? {
+            savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
