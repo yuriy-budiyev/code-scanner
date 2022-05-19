@@ -60,6 +60,18 @@ final class ViewFinderView extends View {
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        invalidateFrameRect(getMeasuredWidth(), getMeasuredHeight());
+    }
+
+    @Override
+    protected void onLayout(final boolean changed, final int left, final int top, final int right,
+            final int bottom) {
+        invalidateFrameRect(right - left, bottom - top);
+    }
+
+    @Override
     protected void onDraw(@NonNull final Canvas canvas) {
         final Rect frame = mFrameRect;
         if (frame == null) {
@@ -139,12 +151,6 @@ final class ViewFinderView extends View {
             path.lineTo(left, bottom - frameCornersSize);
             canvas.drawPath(path, mFramePaint);
         }
-    }
-
-    @Override
-    protected void onLayout(final boolean changed, final int left, final int top, final int right,
-            final int bottom) {
-        invalidateFrameRect(right - left, bottom - top);
     }
 
     @Nullable

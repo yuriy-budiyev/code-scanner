@@ -59,6 +59,8 @@ public final class CodeScannerView extends ViewGroup {
     private static final int DEFAULT_FRAME_COLOR = Color.WHITE;
     private static final int DEFAULT_AUTO_FOCUS_BUTTON_COLOR = Color.WHITE;
     private static final int DEFAULT_FLASH_BUTTON_COLOR = Color.WHITE;
+    private static final int HINT_VIEW_INDEX = 4;
+    private static final int MAX_CHILD_COUNT = 5;
     private static final float DEFAULT_FRAME_THICKNESS_DP = 2f;
     private static final float DEFAULT_FRAME_ASPECT_RATIO_WIDTH = 1f;
     private static final float DEFAULT_FRAME_ASPECT_RATIO_HEIGHT = 1f;
@@ -199,15 +201,42 @@ public final class CodeScannerView extends ViewGroup {
                 }
             }
         }
-        addView(mPreviewView);
-        addView(mViewFinderView);
-        addView(mAutoFocusButton);
-        addView(mFlashButton);
+        addView(mPreviewView,
+                new MarginLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        addView(mViewFinderView,
+                new MarginLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+        addView(mAutoFocusButton,
+                new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        addView(mFlashButton,
+                new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+    }
+
+    @Override
+    protected void onMeasure(final int widthMeasureSpec, final int heightMeasureSpec) {
+        int childCount = getChildCount();
+        if (childCount > MAX_CHILD_COUNT) {
+            throw new IllegalStateException("CodeScannerView can have zero or one child");
+        }
+        measureChildWithMargins(mPreviewView, widthMeasureSpec, 0, heightMeasureSpec, 0);
+        measureChildWithMargins(mViewFinderView, widthMeasureSpec, 0, heightMeasureSpec, 0);
+        measureChildWithMargins(mAutoFocusButton, widthMeasureSpec, 0, heightMeasureSpec, 0);
+        measureChildWithMargins(mFlashButton, widthMeasureSpec, 0, heightMeasureSpec, 0);
+        if (childCount == MAX_CHILD_COUNT) {
+            Rect frameRect = mViewFinderView.getFrameRect();
+            measureChildWithMargins(getChildAt(HINT_VIEW_INDEX), widthMeasureSpec, 0,
+                    heightMeasureSpec, frameRect != null ? frameRect.getBottom() : 0);
+        }
+        setMeasuredDimension(getDefaultSize(getSuggestedMinimumWidth(), widthMeasureSpec),
+                getDefaultSize(getSuggestedMinimumHeight(), heightMeasureSpec));
     }
 
     @Override
     protected void onLayout(final boolean changed, final int left, final int top, final int right,
             final int bottom) {
+        int childCount = getChildCount();
+        if (childCount > MAX_CHILD_COUNT) {
+            throw new IllegalStateException("CodeScannerView can have zero or one child");
+        }
         final int width = right - left;
         final int height = bottom - top;
         final Point previewSize = mPreviewSize;
@@ -236,6 +265,20 @@ public final class CodeScannerView extends ViewGroup {
         final int buttonSize = mButtonSize;
         mAutoFocusButton.layout(0, 0, buttonSize, buttonSize);
         mFlashButton.layout(width - buttonSize, 0, width, buttonSize);
+        if (childCount == MAX_CHILD_COUNT) {
+            final Rect frameRect = mViewFinderView.getFrameRect();
+            final int viewTop = frameRect != null ? frameRect.getBottom() : 0;
+            final View hintView = getChildAt(HINT_VIEW_INDEX);
+            final int paddingLeft = getPaddingLeft();
+            final int paddingTop = getPaddingTop();
+            if (hintView.getVisibility() != GONE) {
+                final LayoutParams lp = (LayoutParams) hintView.getLayoutParams();
+                final int childLeft = paddingLeft + lp.leftMargin;
+                final int childTop = paddingTop + lp.topMargin + viewTop;
+                hintView.layout(childLeft, childTop, childLeft + hintView.getMeasuredWidth(),
+                        childTop + hintView.getMeasuredHeight());
+            }
+        }
     }
 
     @Override
@@ -263,6 +306,34 @@ public final class CodeScannerView extends ViewGroup {
                             frameRect));
         }
         return super.onTouchEvent(event);
+    }
+
+    @Override
+    protected boolean checkLayoutParams(@Nullable final ViewGroup.LayoutParams p) {
+        return p instanceof LayoutParams;
+    }
+
+    @NonNull
+    @Override
+    public ViewGroup.LayoutParams generateLayoutParams(@Nullable final AttributeSet attrs) {
+        return new LayoutParams(getContext(), attrs);
+    }
+
+    @NonNull
+    @Override
+    protected ViewGroup.LayoutParams generateLayoutParams(@NonNull final ViewGroup.LayoutParams p) {
+        if (p instanceof MarginLayoutParams) {
+            return new LayoutParams((MarginLayoutParams) p);
+        } else {
+            return new LayoutParams(p);
+        }
+    }
+
+    @NonNull
+    @Override
+    protected ViewGroup.LayoutParams generateDefaultLayoutParams() {
+        return new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     /**
@@ -612,6 +683,25 @@ public final class CodeScannerView extends ViewGroup {
 
     interface SizeListener {
         void onSizeChanged(int width, int height);
+    }
+
+    public static class LayoutParams extends MarginLayoutParams {
+
+        public LayoutParams(@NonNull Context c, @Nullable AttributeSet attrs) {
+            super(c, attrs);
+        }
+
+        public LayoutParams(int width, int height) {
+            super(width, height);
+        }
+
+        public LayoutParams(@NonNull MarginLayoutParams source) {
+            super(source);
+        }
+
+        public LayoutParams(@NonNull ViewGroup.LayoutParams source) {
+            super(source);
+        }
     }
 
     private final class AutoFocusClickListener implements OnClickListener {
