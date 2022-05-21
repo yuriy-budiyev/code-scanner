@@ -23,6 +23,8 @@
  */
 package com.budiyev.android.codescanner;
 
+import java.util.Objects;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -70,10 +72,15 @@ public final class CodeScannerView extends ViewGroup {
     private static final float DEFAULT_FRAME_VERTICAL_BIAS = 0.5f;
     private static final float BUTTON_SIZE_DP = 56f;
     private static final float FOCUS_AREA_SIZE_DP = 20f;
+    private static final ButtonPosition DEFAULT_AUTO_FOCUS_BUTTON_POSITION =
+            ButtonPosition.TOP_START;
+    private static final ButtonPosition DEFAULT_FLASH_BUTTON_POSITION = ButtonPosition.TOP_END;
     private SurfaceView mPreviewView;
     private ViewFinderView mViewFinderView;
     private ImageView mAutoFocusButton;
+    private ButtonPosition mAutoFocusButtonPosition;
     private ImageView mFlashButton;
+    private ButtonPosition mFlashButtonPosition;
     private Point mPreviewSize;
     private SizeListener mSizeListener;
     private CodeScanner mCodeScanner;
@@ -160,7 +167,9 @@ public final class CodeScannerView extends ViewGroup {
             mAutoFocusButton.setColorFilter(DEFAULT_AUTO_FOCUS_BUTTON_COLOR);
             mFlashButton.setColorFilter(DEFAULT_FLASH_BUTTON_COLOR);
             mAutoFocusButton.setVisibility(DEFAULT_AUTO_FOCUS_BUTTON_VISIBILITY);
+            mAutoFocusButtonPosition = DEFAULT_AUTO_FOCUS_BUTTON_POSITION;
             mFlashButton.setVisibility(DEFAULT_FLASH_BUTTON_VISIBILITY);
+            mFlashButtonPosition = DEFAULT_FLASH_BUTTON_POSITION;
         } else {
             TypedArray a = null;
             try {
@@ -189,12 +198,18 @@ public final class CodeScannerView extends ViewGroup {
                 setAutoFocusButtonVisible(
                         a.getBoolean(R.styleable.CodeScannerView_autoFocusButtonVisible,
                                 DEFAULT_AUTO_FOCUS_BUTTON_VISIBLE));
-                setFlashButtonVisible(a.getBoolean(R.styleable.CodeScannerView_flashButtonVisible,
-                        DEFAULT_FLASH_BUTTON_VISIBLE));
                 setAutoFocusButtonColor(a.getColor(R.styleable.CodeScannerView_autoFocusButtonColor,
                         DEFAULT_AUTO_FOCUS_BUTTON_COLOR));
+                setAutoFocusButtonPosition(buttonPositionFromAttr(
+                        a.getInt(R.styleable.CodeScannerView_autoFocusButtonPosition,
+                                indexOfButtonPosition(DEFAULT_AUTO_FOCUS_BUTTON_POSITION))));
+                setFlashButtonVisible(a.getBoolean(R.styleable.CodeScannerView_flashButtonVisible,
+                        DEFAULT_FLASH_BUTTON_VISIBLE));
                 setFlashButtonColor(a.getColor(R.styleable.CodeScannerView_flashButtonColor,
                         DEFAULT_FLASH_BUTTON_COLOR));
+                setFlashButtonPosition(buttonPositionFromAttr(
+                        a.getInt(R.styleable.CodeScannerView_flashButtonPosition,
+                                indexOfButtonPosition(DEFAULT_FLASH_BUTTON_POSITION))));
             } finally {
                 if (a != null) {
                     a.recycle();
@@ -202,13 +217,13 @@ public final class CodeScannerView extends ViewGroup {
             }
         }
         addView(mPreviewView,
-                new MarginLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         addView(mViewFinderView,
-                new MarginLayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
+                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         addView(mAutoFocusButton,
-                new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+                new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         addView(mFlashButton,
-                new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+                new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
     }
 
     @Override
@@ -545,24 +560,6 @@ public final class CodeScannerView extends ViewGroup {
     }
 
     /**
-     * Whether if auto focus button is currently visible
-     *
-     * @see #setAutoFocusButtonVisible
-     */
-    public boolean isAutoFocusButtonVisible() {
-        return mAutoFocusButton.getVisibility() == VISIBLE;
-    }
-
-    /**
-     * Set whether auto focus button is visible or not
-     *
-     * @param visible Visibility
-     */
-    public void setAutoFocusButtonVisible(final boolean visible) {
-        mAutoFocusButton.setVisibility(visible ? VISIBLE : INVISIBLE);
-    }
-
-    /**
      * Whether if mask is currently visible
      *
      * @see #setMaskVisible
@@ -581,21 +578,21 @@ public final class CodeScannerView extends ViewGroup {
     }
 
     /**
-     * Whether if flash button is currently visible
+     * Whether if auto focus button is currently visible
      *
-     * @see #setFlashButtonVisible
+     * @see #setAutoFocusButtonVisible
      */
-    public boolean isFlashButtonVisible() {
-        return mFlashButton.getVisibility() == VISIBLE;
+    public boolean isAutoFocusButtonVisible() {
+        return mAutoFocusButton.getVisibility() == VISIBLE;
     }
 
     /**
-     * Set whether flash button is visible or not
+     * Set whether auto focus button is visible or not
      *
      * @param visible Visibility
      */
-    public void setFlashButtonVisible(final boolean visible) {
-        mFlashButton.setVisibility(visible ? VISIBLE : INVISIBLE);
+    public void setAutoFocusButtonVisible(final boolean visible) {
+        mAutoFocusButton.setVisibility(visible ? VISIBLE : INVISIBLE);
     }
 
     /**
@@ -618,6 +615,38 @@ public final class CodeScannerView extends ViewGroup {
         mAutoFocusButton.setColorFilter(color);
     }
 
+    @NonNull
+    public ButtonPosition getAutoFocusButtonPosition() {
+        return mAutoFocusButtonPosition;
+    }
+
+    public void setAutoFocusButtonPosition(@NonNull final ButtonPosition position) {
+        Objects.requireNonNull(position);
+        final boolean changed = position != mAutoFocusButtonPosition;
+        mAutoFocusButtonPosition = position;
+        if (changed) {
+            requestLayout();
+        }
+    }
+
+    /**
+     * Whether if flash button is currently visible
+     *
+     * @see #setFlashButtonVisible
+     */
+    public boolean isFlashButtonVisible() {
+        return mFlashButton.getVisibility() == VISIBLE;
+    }
+
+    /**
+     * Set whether flash button is visible or not
+     *
+     * @param visible Visibility
+     */
+    public void setFlashButtonVisible(final boolean visible) {
+        mFlashButton.setVisibility(visible ? VISIBLE : INVISIBLE);
+    }
+
     /**
      * Get current flash button color
      *
@@ -636,6 +665,20 @@ public final class CodeScannerView extends ViewGroup {
     public void setFlashButtonColor(@ColorInt final int color) {
         mFlashButtonColor = color;
         mFlashButton.setColorFilter(color);
+    }
+
+    @NonNull
+    public ButtonPosition getFlashButtonPosition() {
+        return mFlashButtonPosition;
+    }
+
+    public void setFlashButtonPosition(@NonNull final ButtonPosition position) {
+        Objects.requireNonNull(position);
+        final boolean changed = position != mFlashButtonPosition;
+        mFlashButtonPosition = position;
+        if (changed) {
+            requestLayout();
+        }
     }
 
     @NonNull
@@ -679,6 +722,41 @@ public final class CodeScannerView extends ViewGroup {
     void setFlashEnabled(final boolean enabled) {
         mFlashButton.setImageResource(enabled ? R.drawable.ic_code_scanner_flash_on :
                 R.drawable.ic_code_scanner_flash_off);
+    }
+
+    @NonNull
+    private static ButtonPosition buttonPositionFromAttr(final int value) {
+        switch (value) {
+            case 1: {
+                return ButtonPosition.TOP_END;
+            }
+            case 2: {
+                return ButtonPosition.BOTTOM_START;
+            }
+            case 3: {
+                return ButtonPosition.BOTTOM_END;
+            }
+            default: {
+                return ButtonPosition.TOP_START;
+            }
+        }
+    }
+
+    private static int indexOfButtonPosition(@NonNull final ButtonPosition value) {
+        switch (value) {
+            case TOP_END: {
+                return 1;
+            }
+            case BOTTOM_START: {
+                return 2;
+            }
+            case BOTTOM_END: {
+                return 3;
+            }
+            default: {
+                return 0;
+            }
+        }
     }
 
     interface SizeListener {

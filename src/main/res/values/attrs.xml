@@ -3,10 +3,6 @@
     <declare-styleable name="CodeScannerView">
         <attr name="maskColor" format="color"/>
         <attr name="frameColor" format="color"/>
-        <attr name="autoFocusButtonColor" format="color"/>
-        <attr name="flashButtonColor" format="color"/>
-        <attr name="autoFocusButtonVisible" format="boolean"/>
-        <attr name="flashButtonVisible" format="boolean"/>
         <attr name="frameThickness" format="dimension"/>
         <attr name="frameCornersSize" format="dimension"/>
         <attr name="frameCornersRadius" format="dimension"/>
@@ -14,5 +10,21 @@
         <attr name="frameAspectRatioHeight" format="float"/>
         <attr name="frameSize" format="float"/>
         <attr name="frameVerticalBias" format="float"/>
+        <attr name="autoFocusButtonColor" format="color"/>
+        <attr name="autoFocusButtonVisible" format="boolean"/>
+        <attr name="autoFocusButtonPosition" format="enum">
+            <enum name="topStart" value="0"/>
+            <enum name="topEnd" value="1"/>
+            <enum name="bottomStart" value="2"/>
+            <enum name="bottomEnd" value="3"/>
+        </attr>
+        <attr name="flashButtonColor" format="color"/>
+        <attr name="flashButtonVisible" format="boolean"/>
+        <attr name="flashButtonPosition" format="enum">
+            <enum name="topStart" value="0"/>
+            <enum name="topEnd" value="1"/>
+            <enum name="bottomStart" value="2"/>
+            <enum name="bottomEnd" value="3"/>
+        </attr>
     </declare-styleable>
 </resources>
