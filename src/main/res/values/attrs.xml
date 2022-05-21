@@ -14,6 +14,8 @@
         <attr name="autoFocusButtonVisible" format="boolean"/>
         <attr name="autoFocusButtonPaddingHorizontal" format="dimension"/>
         <attr name="autoFocusButtonPaddingVertical" format="dimension"/>
+        <attr name="autoFocusButtonOnIcon" format="reference"/>
+        <attr name="autoFocusButtonOffIcon" format="reference"/>
         <attr name="autoFocusButtonPosition" format="enum">
             <enum name="topStart" value="0"/>
             <enum name="topEnd" value="1"/>
@@ -24,6 +26,8 @@
         <attr name="flashButtonVisible" format="boolean"/>
         <attr name="flashButtonPaddingHorizontal" format="dimension"/>
         <attr name="flashButtonPaddingVertical" format="dimension"/>
+        <attr name="flashButtonOnIcon" format="reference"/>
+        <attr name="flashButtonOffIcon" format="reference"/>
         <attr name="flashButtonPosition" format="enum">
             <enum name="topStart" value="0"/>
             <enum name="topEnd" value="1"/>

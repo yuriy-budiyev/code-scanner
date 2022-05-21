@@ -29,6 +29,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.LayoutDirection;
@@ -83,11 +84,15 @@ public final class CodeScannerView extends ViewGroup {
     private int mAutoFocusButtonPaddingHorizontal;
     private int mAutoFocusButtonPaddingVertical;
     private int mAutoFocusButtonColor;
+    private Drawable mAutoFocusButtonOnIcon;
+    private Drawable mAutoFocusButtonOffIcon;
     private ImageView mFlashButton;
     private ButtonPosition mFlashButtonPosition;
     private int mFlashButtonPaddingHorizontal;
     private int mFlashButtonPaddingVertical;
     private int mFlashButtonColor;
+    private Drawable mFlashButtonOnIcon;
+    private Drawable mFlashButtonOffIcon;
     private Point mPreviewSize;
     private SizeListener mSizeListener;
     private CodeScanner mCodeScanner;
@@ -145,11 +150,9 @@ public final class CodeScannerView extends ViewGroup {
         mFocusAreaSize = Math.round(density * FOCUS_AREA_SIZE_DP);
         mAutoFocusButton = new ImageView(context);
         mAutoFocusButton.setScaleType(ImageView.ScaleType.CENTER);
-        mAutoFocusButton.setImageResource(R.drawable.ic_code_scanner_auto_focus_on);
         mAutoFocusButton.setOnClickListener(new AutoFocusClickListener());
         mFlashButton = new ImageView(context);
         mFlashButton.setScaleType(ImageView.ScaleType.CENTER);
-        mFlashButton.setImageResource(R.drawable.ic_code_scanner_flash_on);
         mFlashButton.setOnClickListener(new FlashClickListener());
         if (attrs == null) {
             mViewFinderView.setFrameAspectRatio(DEFAULT_FRAME_ASPECT_RATIO_WIDTH,
@@ -176,6 +179,12 @@ public final class CodeScannerView extends ViewGroup {
                     defaultButtonPadding, defaultButtonPadding);
             mFlashButton.setPadding(defaultButtonPadding, defaultButtonPadding,
                     defaultButtonPadding, defaultButtonPadding);
+            mAutoFocusButtonOnIcon =
+                    Utils.getDrawable(context, R.drawable.ic_code_scanner_auto_focus_on);
+            mAutoFocusButtonOffIcon =
+                    Utils.getDrawable(context, R.drawable.ic_code_scanner_auto_focus_off);
+            mFlashButtonOnIcon = Utils.getDrawable(context, R.drawable.ic_code_scanner_flash_on);
+            mFlashButtonOffIcon = Utils.getDrawable(context, R.drawable.ic_code_scanner_flash_off);
         } else {
             TypedArray a = null;
             try {
@@ -215,6 +224,14 @@ public final class CodeScannerView extends ViewGroup {
                 setAutoFocusButtonPaddingVertical(a.getDimensionPixelOffset(
                         R.styleable.CodeScannerView_autoFocusButtonPaddingVertical,
                         defaultButtonPadding));
+                final Drawable autoFocusButtonOnIcon =
+                        a.getDrawable(R.styleable.CodeScannerView_autoFocusButtonOnIcon);
+                setAutoFocusButtonOnIcon(autoFocusButtonOnIcon != null ? autoFocusButtonOnIcon :
+                        Utils.getDrawable(context, R.drawable.ic_code_scanner_auto_focus_on));
+                final Drawable autoFocusButtonOffIcon =
+                        a.getDrawable(R.styleable.CodeScannerView_autoFocusButtonOffIcon);
+                setAutoFocusButtonOffIcon(autoFocusButtonOffIcon != null ? autoFocusButtonOffIcon :
+                        Utils.getDrawable(context, R.drawable.ic_code_scanner_auto_focus_off));
                 setFlashButtonVisible(a.getBoolean(R.styleable.CodeScannerView_flashButtonVisible,
                         DEFAULT_FLASH_BUTTON_VISIBLE));
                 setFlashButtonColor(a.getColor(R.styleable.CodeScannerView_flashButtonColor,
@@ -228,11 +245,23 @@ public final class CodeScannerView extends ViewGroup {
                 setFlashButtonPaddingVertical(a.getDimensionPixelOffset(
                         R.styleable.CodeScannerView_flashButtonPaddingVertical,
                         defaultButtonPadding));
+                final Drawable flashButtonOnIcon =
+                        a.getDrawable(R.styleable.CodeScannerView_flashButtonOnIcon);
+                setFlashButtonOnIcon(flashButtonOnIcon != null ? flashButtonOnIcon :
+                        Utils.getDrawable(context, R.drawable.ic_code_scanner_flash_on));
+                final Drawable flashButtonOffIcon =
+                        a.getDrawable(R.styleable.CodeScannerView_flashButtonOffIcon);
+                setFlashButtonOffIcon(flashButtonOffIcon != null ? flashButtonOffIcon :
+                        Utils.getDrawable(context, R.drawable.ic_code_scanner_flash_off));
             } finally {
                 if (a != null) {
                     a.recycle();
                 }
             }
+        }
+        if (isInEditMode()) {
+            setAutoFocusEnabled(true);
+            setFlashEnabled(true);
         }
         addView(mPreviewView,
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -309,49 +338,6 @@ public final class CodeScannerView extends ViewGroup {
                 final int childTop = paddingTop + lp.topMargin + viewTop;
                 hintView.layout(childLeft, childTop, childLeft + hintView.getMeasuredWidth(),
                         childTop + hintView.getMeasuredHeight());
-            }
-        }
-    }
-
-    private void layoutButton(final View button, final ButtonPosition position,
-            final int parentWidth, final int parentHeight) {
-        final int width = button.getMeasuredWidth();
-        final int height = button.getMeasuredHeight();
-        final int layoutDirection = getLayoutDirection();
-        switch (position) {
-            case TOP_START: {
-                if (layoutDirection == LayoutDirection.RTL) {
-                    button.layout(parentWidth - width, 0, parentWidth, height);
-                } else {
-                    button.layout(0, 0, width, height);
-                }
-                break;
-            }
-            case TOP_END: {
-                if (layoutDirection == LayoutDirection.RTL) {
-                    button.layout(0, 0, width, height);
-                } else {
-                    button.layout(parentWidth - width, 0, parentWidth, height);
-                }
-                break;
-            }
-            case BOTTOM_START: {
-                if (layoutDirection == LayoutDirection.RTL) {
-                    button.layout(parentWidth - width, parentHeight - height, parentWidth,
-                            parentHeight);
-                } else {
-                    button.layout(0, parentHeight - height, width, parentHeight);
-                }
-                break;
-            }
-            case BOTTOM_END: {
-                if (layoutDirection == LayoutDirection.RTL) {
-                    button.layout(0, parentHeight - height, width, parentHeight);
-                } else {
-                    button.layout(parentWidth - width, parentHeight - height, parentWidth,
-                            parentHeight);
-                }
-                break;
             }
         }
     }
@@ -760,6 +746,36 @@ public final class CodeScannerView extends ViewGroup {
         return mFlashButton.getVisibility() == VISIBLE;
     }
 
+    @NonNull
+    public Drawable getAutoFocusButtonOnIcon() {
+        return mAutoFocusButtonOnIcon;
+    }
+
+    public void setAutoFocusButtonOnIcon(@NonNull final Drawable icon) {
+        Objects.requireNonNull(icon);
+        final boolean changed = icon != mAutoFocusButtonOnIcon;
+        mAutoFocusButtonOnIcon = icon;
+        final CodeScanner codeScanner = mCodeScanner;
+        if (changed && codeScanner != null) {
+            setAutoFocusEnabled(codeScanner.isAutoFocusEnabled());
+        }
+    }
+
+    @NonNull
+    public Drawable getAutoFocusButtonOffIcon() {
+        return mAutoFocusButtonOffIcon;
+    }
+
+    public void setAutoFocusButtonOffIcon(@NonNull final Drawable icon) {
+        Objects.requireNonNull(icon);
+        final boolean changed = icon != mAutoFocusButtonOffIcon;
+        mAutoFocusButtonOffIcon = icon;
+        final CodeScanner codeScanner = mCodeScanner;
+        if (changed && codeScanner != null) {
+            setAutoFocusEnabled(codeScanner.isAutoFocusEnabled());
+        }
+    }
+
     /**
      * Set whether flash button is visible or not
      *
@@ -866,6 +882,36 @@ public final class CodeScannerView extends ViewGroup {
     }
 
     @NonNull
+    public Drawable getFlashButtonOnIcon() {
+        return mFlashButtonOnIcon;
+    }
+
+    public void setFlashButtonOnIcon(@NonNull final Drawable icon) {
+        Objects.requireNonNull(icon);
+        final boolean changed = icon != mFlashButtonOnIcon;
+        mFlashButtonOnIcon = icon;
+        final CodeScanner codeScanner = mCodeScanner;
+        if (changed && codeScanner != null) {
+            setFlashEnabled(codeScanner.isFlashEnabled());
+        }
+    }
+
+    @NonNull
+    public Drawable getFlashButtonOffIcon() {
+        return mFlashButtonOffIcon;
+    }
+
+    public void setFlashButtonOffIcon(@NonNull final Drawable icon) {
+        Objects.requireNonNull(icon);
+        final boolean changed = icon != mFlashButtonOffIcon;
+        mFlashButtonOffIcon = icon;
+        final CodeScanner codeScanner = mCodeScanner;
+        if (changed && codeScanner != null) {
+            setFlashEnabled(codeScanner.isFlashEnabled());
+        }
+    }
+
+    @NonNull
     SurfaceView getPreviewView() {
         return mPreviewView;
     }
@@ -899,13 +945,55 @@ public final class CodeScannerView extends ViewGroup {
     }
 
     void setAutoFocusEnabled(final boolean enabled) {
-        mAutoFocusButton.setImageResource(enabled ? R.drawable.ic_code_scanner_auto_focus_on :
-                R.drawable.ic_code_scanner_auto_focus_off);
+        mAutoFocusButton.setImageDrawable(
+                enabled ? mAutoFocusButtonOnIcon : mAutoFocusButtonOffIcon);
     }
 
     void setFlashEnabled(final boolean enabled) {
-        mFlashButton.setImageResource(enabled ? R.drawable.ic_code_scanner_flash_on :
-                R.drawable.ic_code_scanner_flash_off);
+        mFlashButton.setImageDrawable(enabled ? mFlashButtonOnIcon : mFlashButtonOffIcon);
+    }
+
+    private void layoutButton(final View button, final ButtonPosition position,
+            final int parentWidth, final int parentHeight) {
+        final int width = button.getMeasuredWidth();
+        final int height = button.getMeasuredHeight();
+        final int layoutDirection = getLayoutDirection();
+        switch (position) {
+            case TOP_START: {
+                if (layoutDirection == LayoutDirection.RTL) {
+                    button.layout(parentWidth - width, 0, parentWidth, height);
+                } else {
+                    button.layout(0, 0, width, height);
+                }
+                break;
+            }
+            case TOP_END: {
+                if (layoutDirection == LayoutDirection.RTL) {
+                    button.layout(0, 0, width, height);
+                } else {
+                    button.layout(parentWidth - width, 0, parentWidth, height);
+                }
+                break;
+            }
+            case BOTTOM_START: {
+                if (layoutDirection == LayoutDirection.RTL) {
+                    button.layout(parentWidth - width, parentHeight - height, parentWidth,
+                            parentHeight);
+                } else {
+                    button.layout(0, parentHeight - height, width, parentHeight);
+                }
+                break;
+            }
+            case BOTTOM_END: {
+                if (layoutDirection == LayoutDirection.RTL) {
+                    button.layout(0, parentHeight - height, width, parentHeight);
+                } else {
+                    button.layout(parentWidth - width, parentHeight - height, parentWidth,
+                            parentHeight);
+                }
+                break;
+            }
+        }
     }
 
     private void invalidateAutoFocusButtonPadding() {

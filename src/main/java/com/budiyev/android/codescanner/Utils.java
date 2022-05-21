@@ -29,13 +29,16 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.hardware.Camera.Area;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
 import android.hardware.Camera.Size;
+import android.os.Build;
 import android.view.Surface;
 import android.view.WindowManager;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.zxing.BinaryBitmap;
@@ -349,6 +352,17 @@ final class Utils {
         @Override
         public void onError(@NonNull final Throwable thrown) {
             // Do nothing
+        }
+    }
+
+    @NonNull
+    @SuppressWarnings("deprecation")
+    public static Drawable getDrawable(@NonNull final Context context,
+            @DrawableRes final int resId) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return context.getDrawable(resId);
+        } else {
+            return context.getResources().getDrawable(resId);
         }
     }
 
