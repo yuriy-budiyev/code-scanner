@@ -52,7 +52,7 @@ dependencyResolutionManagement {
 Step 2. Add dependency:
 ```gradle
 dependencies {
-    implementation 'com.github.yuriy-budiyev:code-scanner:2.2.0'
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.0'
 }
 ```
 Add camera permission and hardware feature to AndroidManifest.xml (Don't forget about dynamic permissions on API >= 23):

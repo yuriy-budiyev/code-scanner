@@ -746,11 +746,21 @@ public final class CodeScannerView extends ViewGroup {
         return mFlashButton.getVisibility() == VISIBLE;
     }
 
+    /**
+     * Auto focus button on icon
+     *
+     * @see #setAutoFocusButtonOnIcon
+     */
     @NonNull
     public Drawable getAutoFocusButtonOnIcon() {
         return mAutoFocusButtonOnIcon;
     }
 
+    /**
+     * Auto focus button on icon
+     *
+     * @param icon Icon drawable
+     */
     public void setAutoFocusButtonOnIcon(@NonNull final Drawable icon) {
         Objects.requireNonNull(icon);
         final boolean changed = icon != mAutoFocusButtonOnIcon;
@@ -761,11 +771,21 @@ public final class CodeScannerView extends ViewGroup {
         }
     }
 
+    /**
+     * Auto focus button off icon
+     *
+     * @see #setAutoFocusButtonOffIcon
+     */
     @NonNull
     public Drawable getAutoFocusButtonOffIcon() {
         return mAutoFocusButtonOffIcon;
     }
 
+    /**
+     * Auto focus button off icon
+     *
+     * @param icon Icon drawable
+     */
     public void setAutoFocusButtonOffIcon(@NonNull final Drawable icon) {
         Objects.requireNonNull(icon);
         final boolean changed = icon != mAutoFocusButtonOffIcon;
@@ -881,11 +901,21 @@ public final class CodeScannerView extends ViewGroup {
         }
     }
 
+    /**
+     * Flash button on icon
+     *
+     * @see #setFlashButtonOnIcon
+     */
     @NonNull
     public Drawable getFlashButtonOnIcon() {
         return mFlashButtonOnIcon;
     }
 
+    /**
+     * Flash button on icon
+     *
+     * @param icon Icon drawable
+     */
     public void setFlashButtonOnIcon(@NonNull final Drawable icon) {
         Objects.requireNonNull(icon);
         final boolean changed = icon != mFlashButtonOnIcon;
@@ -896,11 +926,21 @@ public final class CodeScannerView extends ViewGroup {
         }
     }
 
+    /**
+     * Flash button off icon
+     *
+     * @see #setFlashButtonOffIcon
+     */
     @NonNull
     public Drawable getFlashButtonOffIcon() {
         return mFlashButtonOffIcon;
     }
 
+    /**
+     * Flash button off icon
+     *
+     * @param icon Icon drawable
+     */
     public void setFlashButtonOffIcon(@NonNull final Drawable icon) {
         Objects.requireNonNull(icon);
         final boolean changed = icon != mFlashButtonOffIcon;
