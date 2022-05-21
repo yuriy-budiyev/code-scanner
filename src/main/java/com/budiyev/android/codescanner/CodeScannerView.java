@@ -135,21 +135,16 @@ public final class CodeScannerView extends ViewGroup {
     private void initialize(@NonNull final Context context, @Nullable final AttributeSet attrs,
             @AttrRes final int defStyleAttr, @StyleRes final int defStyleRes) {
         mPreviewView = new SurfaceView(context);
-        mPreviewView.setLayoutParams(
-                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         mViewFinderView = new ViewFinderView(context);
-        mViewFinderView.setLayoutParams(
-                new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         final float density = context.getResources().getDisplayMetrics().density;
-        mButtonSize = Math.round(density * BUTTON_SIZE_DP);
+        final int buttonSize = Math.round(density * BUTTON_SIZE_DP);
+        mButtonSize = buttonSize;
         mFocusAreaSize = Math.round(density * FOCUS_AREA_SIZE_DP);
         mAutoFocusButton = new ImageView(context);
-        mAutoFocusButton.setLayoutParams(new LayoutParams(mButtonSize, mButtonSize));
         mAutoFocusButton.setScaleType(ImageView.ScaleType.CENTER);
         mAutoFocusButton.setImageResource(R.drawable.ic_code_scanner_auto_focus_on);
         mAutoFocusButton.setOnClickListener(new AutoFocusClickListener());
         mFlashButton = new ImageView(context);
-        mFlashButton.setLayoutParams(new LayoutParams(mButtonSize, mButtonSize));
         mFlashButton.setScaleType(ImageView.ScaleType.CENTER);
         mFlashButton.setImageResource(R.drawable.ic_code_scanner_flash_on);
         mFlashButton.setOnClickListener(new FlashClickListener());
@@ -220,10 +215,8 @@ public final class CodeScannerView extends ViewGroup {
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         addView(mViewFinderView,
                 new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-        addView(mAutoFocusButton,
-                new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        addView(mFlashButton,
-                new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        addView(mAutoFocusButton, new LayoutParams(buttonSize, buttonSize));
+        addView(mFlashButton, new LayoutParams(buttonSize, buttonSize));
     }
 
     @Override
