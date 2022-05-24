@@ -8,6 +8,7 @@
         <attr name="frameThickness" format="dimension"/>
         <attr name="frameCornersSize" format="dimension"/>
         <attr name="frameCornersRadius" format="dimension"/>
+        <attr name="frameCornersCapRounded" format="boolean"/>
         <attr name="frameAspectRatioWidth" format="float"/>
         <attr name="frameAspectRatioHeight" format="float"/>
         <attr name="frameSize" format="float"/>

@@ -263,6 +263,15 @@ final class ViewFinderView extends View {
         }
     }
 
+    boolean isFrameCornersCapRounded() {
+        return mFramePaint.getStrokeCap() == Paint.Cap.ROUND;
+    }
+
+    void setFrameCornersCapRounded(final boolean rounded) {
+        mFramePaint.setStrokeCap(rounded ? Paint.Cap.ROUND : Paint.Cap.BUTT);
+        invalidate();
+    }
+
     @Px
     int getFrameCornersSize() {
         return mFrameCornersSize;

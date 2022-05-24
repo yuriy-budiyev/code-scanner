@@ -59,6 +59,7 @@ public final class CodeScannerView extends ViewGroup {
     private static final boolean DEFAULT_FLASH_BUTTON_VISIBLE = true;
     private static final boolean DEFAULT_MASK_VISIBLE = true;
     private static final boolean DEFAULT_FRAME_VISIBLE = true;
+    private static final boolean DEFAULT_FRAME_CORNERS_CAP_ROUNDED = false;
     private static final int DEFAULT_MASK_COLOR = 0x77000000;
     private static final int DEFAULT_FRAME_COLOR = Color.WHITE;
     private static final int DEFAULT_AUTO_FOCUS_BUTTON_COLOR = Color.WHITE;
@@ -164,6 +165,7 @@ public final class CodeScannerView extends ViewGroup {
             setFrameThickness(Math.round(DEFAULT_FRAME_THICKNESS_DP * density));
             setFrameCornersSize(Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * density));
             setFrameCornersRadius(Math.round(DEFAULT_FRAME_CORNERS_RADIUS_DP * density));
+            setFrameCornersCapRounded(DEFAULT_FRAME_CORNERS_CAP_ROUNDED);
             setFrameSize(DEFAULT_FRAME_SIZE);
             setFrameVerticalBias(DEFAULT_FRAME_VERTICAL_BIAS);
             setAutoFocusButtonColor(DEFAULT_AUTO_FOCUS_BUTTON_COLOR);
@@ -204,6 +206,9 @@ public final class CodeScannerView extends ViewGroup {
                 setFrameCornersRadius(
                         a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameCornersRadius,
                                 Math.round(DEFAULT_FRAME_CORNERS_RADIUS_DP * density)));
+                setFrameCornersCapRounded(
+                        a.getBoolean(R.styleable.CodeScannerView_frameCornersCapRounded,
+                                DEFAULT_FRAME_CORNERS_CAP_ROUNDED));
                 setFrameAspectRatio(a.getFloat(R.styleable.CodeScannerView_frameAspectRatioWidth,
                                 DEFAULT_FRAME_ASPECT_RATIO_WIDTH),
                         a.getFloat(R.styleable.CodeScannerView_frameAspectRatioHeight,
@@ -536,6 +541,24 @@ public final class CodeScannerView extends ViewGroup {
             throw new IllegalArgumentException("Frame corners radius can't be negative");
         }
         mViewFinderView.setFrameCornersRadius(radius);
+    }
+
+    /**
+     * Whether if frame corners cap is currently rounded
+     *
+     * @see #setFrameVisible
+     */
+    public boolean isFrameCornersCapRounded() {
+        return mViewFinderView.isFrameCornersCapRounded();
+    }
+
+    /**
+     * Set whether frame corners cap is rounded or not
+     *
+     * @param rounded Rounded cap
+     */
+    public void setFrameCornersCapRounded(final boolean rounded) {
+        mViewFinderView.setFrameCornersCapRounded(rounded);
     }
 
     /**
