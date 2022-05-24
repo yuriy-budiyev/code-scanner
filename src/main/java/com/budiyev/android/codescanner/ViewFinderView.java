@@ -47,6 +47,8 @@ final class ViewFinderView extends View {
     private float mFrameRatioHeight = 1f;
     private float mFrameSize = 0.75f;
     private float mFrameVerticalBias = 0.5f;
+    private boolean mMaskVisible = true;
+    private boolean mFrameVisible = true;
 
     public ViewFinderView(@NonNull final Context context) {
         super(context);
@@ -85,71 +87,81 @@ final class ViewFinderView extends View {
         final float bottom = frame.getBottom();
         final float frameCornersSize = mFrameCornersSize;
         final float frameCornersRadius = mFrameCornersRadius;
+        final boolean maskVisible = mMaskVisible;
+        final boolean frameVisible = mFrameVisible;
         final Path path = mPath;
         if (frameCornersRadius > 0) {
             final float normalizedRadius =
                     Math.min(frameCornersRadius, Math.max(frameCornersSize - 1, 0));
-            path.reset();
-            path.moveTo(left, top + normalizedRadius);
-            path.quadTo(left, top, left + normalizedRadius, top);
-            path.lineTo(right - normalizedRadius, top);
-            path.quadTo(right, top, right, top + normalizedRadius);
-            path.lineTo(right, bottom - normalizedRadius);
-            path.quadTo(right, bottom, right - normalizedRadius, bottom);
-            path.lineTo(left + normalizedRadius, bottom);
-            path.quadTo(left, bottom, left, bottom - normalizedRadius);
-            path.lineTo(left, top + normalizedRadius);
-            path.moveTo(0, 0);
-            path.lineTo(width, 0);
-            path.lineTo(width, height);
-            path.lineTo(0, height);
-            path.lineTo(0, 0);
-            canvas.drawPath(path, mMaskPaint);
-            path.reset();
-            path.moveTo(left, top + frameCornersSize);
-            path.lineTo(left, top + normalizedRadius);
-            path.quadTo(left, top, left + normalizedRadius, top);
-            path.lineTo(left + frameCornersSize, top);
-            path.moveTo(right - frameCornersSize, top);
-            path.lineTo(right - normalizedRadius, top);
-            path.quadTo(right, top, right, top + normalizedRadius);
-            path.lineTo(right, top + frameCornersSize);
-            path.moveTo(right, bottom - frameCornersSize);
-            path.lineTo(right, bottom - normalizedRadius);
-            path.quadTo(right, bottom, right - normalizedRadius, bottom);
-            path.lineTo(right - frameCornersSize, bottom);
-            path.moveTo(left + frameCornersSize, bottom);
-            path.lineTo(left + normalizedRadius, bottom);
-            path.quadTo(left, bottom, left, bottom - normalizedRadius);
-            path.lineTo(left, bottom - frameCornersSize);
-            canvas.drawPath(path, mFramePaint);
+            if (maskVisible) {
+                path.reset();
+                path.moveTo(left, top + normalizedRadius);
+                path.quadTo(left, top, left + normalizedRadius, top);
+                path.lineTo(right - normalizedRadius, top);
+                path.quadTo(right, top, right, top + normalizedRadius);
+                path.lineTo(right, bottom - normalizedRadius);
+                path.quadTo(right, bottom, right - normalizedRadius, bottom);
+                path.lineTo(left + normalizedRadius, bottom);
+                path.quadTo(left, bottom, left, bottom - normalizedRadius);
+                path.lineTo(left, top + normalizedRadius);
+                path.moveTo(0, 0);
+                path.lineTo(width, 0);
+                path.lineTo(width, height);
+                path.lineTo(0, height);
+                path.lineTo(0, 0);
+                canvas.drawPath(path, mMaskPaint);
+            }
+            if (frameVisible) {
+                path.reset();
+                path.moveTo(left, top + frameCornersSize);
+                path.lineTo(left, top + normalizedRadius);
+                path.quadTo(left, top, left + normalizedRadius, top);
+                path.lineTo(left + frameCornersSize, top);
+                path.moveTo(right - frameCornersSize, top);
+                path.lineTo(right - normalizedRadius, top);
+                path.quadTo(right, top, right, top + normalizedRadius);
+                path.lineTo(right, top + frameCornersSize);
+                path.moveTo(right, bottom - frameCornersSize);
+                path.lineTo(right, bottom - normalizedRadius);
+                path.quadTo(right, bottom, right - normalizedRadius, bottom);
+                path.lineTo(right - frameCornersSize, bottom);
+                path.moveTo(left + frameCornersSize, bottom);
+                path.lineTo(left + normalizedRadius, bottom);
+                path.quadTo(left, bottom, left, bottom - normalizedRadius);
+                path.lineTo(left, bottom - frameCornersSize);
+                canvas.drawPath(path, mFramePaint);
+            }
         } else {
-            path.reset();
-            path.moveTo(left, top);
-            path.lineTo(right, top);
-            path.lineTo(right, bottom);
-            path.lineTo(left, bottom);
-            path.lineTo(left, top);
-            path.moveTo(0, 0);
-            path.lineTo(width, 0);
-            path.lineTo(width, height);
-            path.lineTo(0, height);
-            path.lineTo(0, 0);
-            canvas.drawPath(path, mMaskPaint);
-            path.reset();
-            path.moveTo(left, top + frameCornersSize);
-            path.lineTo(left, top);
-            path.lineTo(left + frameCornersSize, top);
-            path.moveTo(right - frameCornersSize, top);
-            path.lineTo(right, top);
-            path.lineTo(right, top + frameCornersSize);
-            path.moveTo(right, bottom - frameCornersSize);
-            path.lineTo(right, bottom);
-            path.lineTo(right - frameCornersSize, bottom);
-            path.moveTo(left + frameCornersSize, bottom);
-            path.lineTo(left, bottom);
-            path.lineTo(left, bottom - frameCornersSize);
-            canvas.drawPath(path, mFramePaint);
+            if (maskVisible) {
+                path.reset();
+                path.moveTo(left, top);
+                path.lineTo(right, top);
+                path.lineTo(right, bottom);
+                path.lineTo(left, bottom);
+                path.lineTo(left, top);
+                path.moveTo(0, 0);
+                path.lineTo(width, 0);
+                path.lineTo(width, height);
+                path.lineTo(0, height);
+                path.lineTo(0, 0);
+                canvas.drawPath(path, mMaskPaint);
+            }
+            if (frameVisible) {
+                path.reset();
+                path.moveTo(left, top + frameCornersSize);
+                path.lineTo(left, top);
+                path.lineTo(left + frameCornersSize, top);
+                path.moveTo(right - frameCornersSize, top);
+                path.lineTo(right, top);
+                path.lineTo(right, top + frameCornersSize);
+                path.moveTo(right, bottom - frameCornersSize);
+                path.lineTo(right, bottom);
+                path.lineTo(right - frameCornersSize, bottom);
+                path.moveTo(left + frameCornersSize, bottom);
+                path.lineTo(left, bottom);
+                path.lineTo(left, bottom - frameCornersSize);
+                canvas.drawPath(path, mFramePaint);
+            }
         }
     }
 
@@ -208,6 +220,17 @@ final class ViewFinderView extends View {
         }
     }
 
+    boolean isMaskVisible() {
+        return mMaskVisible;
+    }
+
+    void setMaskVisible(final boolean visible) {
+        mMaskVisible = visible;
+        if (isLaidOut()) {
+            invalidate();
+        }
+    }
+
     @ColorInt
     int getFrameColor() {
         return mFramePaint.getColor();
@@ -218,6 +241,14 @@ final class ViewFinderView extends View {
         if (isLaidOut()) {
             invalidate();
         }
+    }
+
+    boolean isFrameVisible() {
+        return mFrameVisible;
+    }
+
+    void setFrameVisible(final boolean visible) {
+        mFrameVisible = visible;
     }
 
     @Px

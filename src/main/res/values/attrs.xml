@@ -2,7 +2,9 @@
 <resources>
     <declare-styleable name="CodeScannerView">
         <attr name="maskColor" format="color"/>
+        <attr name="maskVisible" format="boolean"/>
         <attr name="frameColor" format="color"/>
+        <attr name="frameVisible" format="boolean"/>
         <attr name="frameThickness" format="dimension"/>
         <attr name="frameCornersSize" format="dimension"/>
         <attr name="frameCornersRadius" format="dimension"/>
