@@ -4,9 +4,11 @@
 [![Android Arsenal](https://img.shields.io/badge/Android%20Arsenal-Code%20Scanner-blue.svg?style=flat)](https://android-arsenal.com/details/1/6095)
 [![API](https://img.shields.io/badge/API-19%2B-blue.svg?style=flat)](https://android-arsenal.com/api?level=19)
 
-Code scanner library for [Android](https://developer.android.com), based on [ZXing](https://github.com/zxing/zxing)
+Code scanner library for [Android](https://developer.android.com), based
+on [ZXing](https://github.com/zxing/zxing)
 
 ### Features
+
 * Auto focus and flash light control
 * Portrait and landscape screen orientations
 * Back and front facing cameras
@@ -15,6 +17,7 @@ Code scanner library for [Android](https://developer.android.com), based on [ZXi
 * Touch focus
 
 ### Supported formats
+
 | 1D product | 1D industrial | 2D
 | ---------- | ------------- | --------------
 | UPC-A      | Code 39       | QR Code
@@ -59,33 +62,29 @@ dependencies {
 }
 ```
 
-Add camera permission and hardware feature to AndroidManifest.xml (Don't forget about dynamic permissions on API >= 23):
+Add camera permission and hardware feature to AndroidManifest.xml (Don't forget about dynamic
+permissions on API >= 23):
 
 ```xml
+
 <uses-permission android:name="android.permission.CAMERA"/>
 
-<uses-feature
-    android:name="android.hardware.camera"
-    android:required="false"/>
+<uses-feature android:name="android.hardware.camera" android:required="false"/>
 ```
 
 Define a view in your layout file:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <com.budiyev.android.codescanner.CodeScannerView
-        android:id="@+id/scanner_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+    <com.budiyev.android.codescanner.CodeScannerView android:id="@+id/scanner_view"
+        android:layout_width="match_parent" android:layout_height="match_parent"/>
 </FrameLayout>
 ```
 
-You can use XML attributes to set view parameters:
+You can use XML attributes to set CodeScannerView parameters:
 
 ```
 maskColor
@@ -118,39 +117,50 @@ flashButtonPosition
 And add following code to your activity:
 
 Kotlin
+
 ```kotlin
-class MainActivity : AppCompatActivity() {
+class MainActivity: AppCompatActivity() {
     private lateinit var codeScanner: CodeScanner
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         val scannerView = findViewById<CodeScannerView>(R.id.scanner_view)
-        
-        codeScanner = CodeScanner(this, scannerView)
-        
+
+        codeScanner = CodeScanner(
+            this,
+            scannerView
+        )
+
         // Parameters (default values)
         codeScanner.camera = CodeScanner.CAMERA_BACK // or CAMERA_FRONT or specific camera id
         codeScanner.formats = CodeScanner.ALL_FORMATS // list of type BarcodeFormat,
-                                                      // ex. listOf(BarcodeFormat.QR_CODE)
+        // ex. listOf(BarcodeFormat.QR_CODE)
         codeScanner.autoFocusMode = AutoFocusMode.SAFE // or CONTINUOUS
         codeScanner.scanMode = ScanMode.SINGLE // or CONTINUOUS or PREVIEW
         codeScanner.isAutoFocusEnabled = true // Whether to enable auto focus or not
         codeScanner.isFlashEnabled = false // Whether to enable flash or not
-        
+
         // Callbacks
         codeScanner.decodeCallback = DecodeCallback {
             runOnUiThread {
-                Toast.makeText(this, "Scan result: ${it.text}", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this,
+                    "Scan result: ${it.text}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
         codeScanner.errorCallback = ErrorCallback { // or ErrorCallback.SUPPRESS
             runOnUiThread {
-                Toast.makeText(this, "Camera initialization error: ${it.message}",
-                        Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this,
+                    "Camera initialization error: ${it.message}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
-        
+
         scannerView.setOnClickListener {
             codeScanner.startPreview()
         }
@@ -186,7 +196,8 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MainActivity.this, result.getText(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, result.getText(), Toast.LENGTH_SHORT)
+                                .show();
                     }
                 });
             }
@@ -196,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 mCodeScanner.startPreview();
             }
-        });       
+        });
     }
 
     @Override
@@ -218,21 +229,38 @@ or fragment:
 Kotlin
 
 ```kotlin
-class MainFragment : Fragment() {
+class MainFragment: Fragment() {
     private lateinit var codeScanner: CodeScanner
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, 
-            savedInstanceState: Bundle?): View {
-        return inflater.inflate(R.layout.fragment_main, container, false)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return inflater.inflate(
+            R.layout.fragment_main,
+            container,
+            false
+        )
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?
+    ) {
         val scannerView = view.findViewById<CodeScannerView>(R.id.scanner_view)
         val activity = requireActivity()
-        codeScanner = CodeScanner(activity, scannerView)
+        codeScanner = CodeScanner(
+            activity,
+            scannerView
+        )
         codeScanner.decodeCallback = DecodeCallback {
             activity.runOnUiThread {
-                Toast.makeText(activity, it.text, Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    activity,
+                    it.text,
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
         scannerView.setOnClickListener {
@@ -282,7 +310,7 @@ public class MainFragment extends Fragment {
             public void onClick(View view) {
                 mCodeScanner.startPreview();
             }
-        });        
+        });
         return root;
     }
 
@@ -301,4 +329,5 @@ public class MainFragment extends Fragment {
 ```
 
 ### Preview
+
 ![Preview screenshot](https://raw.githubusercontent.com/yuriy-budiyev/code-scanner/master/images/code_scanner_preview.png)
