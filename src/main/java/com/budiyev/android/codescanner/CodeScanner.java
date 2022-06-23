@@ -96,12 +96,7 @@ public final class CodeScanner {
     private final Object mInitializeLock = new Object();
     private final Context mContext;
     private final Handler mMainThreadHandler;
-    private final CodeScannerView mScannerView;
-    private final SurfaceHolder mSurfaceHolder;
-    private final SurfaceHolder.Callback mSurfaceCallback;
-    private final Camera.PreviewCallback mPreviewCallback;
-    private final Camera.AutoFocusCallback mTouchFocusCallback;
-    private final Camera.AutoFocusCallback mSafeAutoFocusCallback;
+
     private final Runnable mSafeAutoFocusTask;
     private final Runnable mStopPreviewTask;
     private final DecoderStateListener mDecoderStateListener;
@@ -109,9 +104,19 @@ public final class CodeScanner {
     private volatile List<BarcodeFormat> mFormats = DEFAULT_FORMATS;
     private volatile ScanMode mScanMode = DEFAULT_SCAN_MODE;
     private volatile AutoFocusMode mAutoFocusMode = DEFAULT_AUTO_FOCUS_MODE;
+
+    @Nullable
+    private volatile CodeScannerView mScannerView = null;
+
+    @Nullable
     private volatile DecodeCallback mDecodeCallback = null;
+
+    @Nullable
     private volatile ErrorCallback mErrorCallback = null;
+
+    @Nullable
     private volatile DecoderWrapper mDecoderWrapper = null;
+
     private volatile boolean mInitialization = false;
     private volatile boolean mInitialized = false;
     private volatile boolean mStoppingPreview = false;
@@ -134,42 +139,16 @@ public final class CodeScanner {
      * CodeScanner, associated with the first back-facing camera on the device
      *
      * @param context Context
-     * @param view    A view to display the preview
-     * @see CodeScannerView
      */
     @MainThread
-    public CodeScanner(@NonNull final Context context, @NonNull final CodeScannerView view) {
+    public CodeScanner(@NonNull final Context context) {
+        Objects.requireNonNull(context, "Parameter \"context\" is null");
         mContext = context;
-        mScannerView = view;
-        mSurfaceHolder = view.getPreviewView().getHolder();
         mMainThreadHandler = new Handler();
-        mSurfaceCallback = new SurfaceCallback();
-        mPreviewCallback = new PreviewCallback();
-        mTouchFocusCallback = new TouchFocusCallback();
-        mSafeAutoFocusCallback = new SafeAutoFocusCallback();
         mSafeAutoFocusTask = new SafeAutoFocusTask();
         mStopPreviewTask = new StopPreviewTask();
         mDecoderStateListener = new DecoderStateListener();
         mExceptionHandler = new ExceptionHandler();
-        mScannerView.setCodeScanner(this);
-        mScannerView.setSizeListener(new ScannerSizeListener());
-    }
-
-    /**
-     * CodeScanner, associated with particular hardware camera
-     *
-     * @param context  Context
-     * @param view     A view to display the preview
-     * @param cameraId Camera id (between {@code 0} and
-     *                 {@link Camera#getNumberOfCameras()} - {@code 1})
-     *                 or {@link #CAMERA_BACK} or {@link #CAMERA_FRONT}
-     * @see CodeScannerView
-     */
-    @MainThread
-    public CodeScanner(@NonNull final Context context, @NonNull final CodeScannerView view,
-            final int cameraId) {
-        this(context, view);
-        mCameraId = cameraId;
     }
 
     /**
@@ -200,6 +179,37 @@ public final class CodeScanner {
                         initialize();
                     }
                 }
+            }
+        }
+    }
+
+    @Nullable
+    public CodeScannerView getView() {
+        return mScannerView;
+    }
+
+    public void setView(@Nullable final CodeScannerView view) {
+        synchronized (mInitializeLock) {
+            final CodeScannerView oldView = mScannerView;
+            if (oldView == view) {
+                return;
+            }
+            final boolean initialized = mInitialized;
+            final boolean previewActive = mPreviewActive;
+            if (initialized) {
+                releaseResources();
+            }
+            if (oldView != null) {
+                oldView.setCodeScanner(null);
+                oldView.setSizeListener(null);
+            }
+            mScannerView = view;
+            if (view != null) {
+                view.setCodeScanner(this);
+                view.setSizeListener(new ScannerSizeListener());
+            }
+            if (initialized && previewActive) {
+                initialize();
             }
         }
     }
@@ -457,7 +467,7 @@ public final class CodeScanner {
             }
         }
         if (!mPreviewActive) {
-            mSurfaceHolder.addCallback(mSurfaceCallback);
+            //mSurfaceHolder.addCallback(mSurfaceCallback);
             startPreviewInternal(false);
         }
     }
@@ -468,7 +478,7 @@ public final class CodeScanner {
     @MainThread
     public void stopPreview() {
         if (mInitialized && mPreviewActive) {
-            mSurfaceHolder.removeCallback(mSurfaceCallback);
+            //mSurfaceHolder.removeCallback(mSurfaceCallback);
             stopPreviewInternal(false);
         }
     }
@@ -504,7 +514,7 @@ public final class CodeScanner {
                             imageWidth = imageHeight;
                             imageHeight = width;
                         }
-                        final Rect imageArea =
+                        /*final Rect imageArea =
                                 Utils.getImageFrameRect(imageWidth, imageHeight, viewFocusArea,
                                         decoderWrapper.getPreviewSize(),
                                         decoderWrapper.getViewSize());
@@ -515,8 +525,8 @@ public final class CodeScanner {
                                 orientation);
                         Utils.configureFocusModeForTouch(parameters);
                         camera.setParameters(parameters);
-                        camera.autoFocus(mTouchFocusCallback);
-                        mTouchFocusing = true;
+                        camera.autoFocus(mTouchFocusCallback);*/
+                        //mTouchFocusing = true;
                     }
                 } catch (final Exception ignored) {
                 }
@@ -535,7 +545,10 @@ public final class CodeScanner {
     }
 
     private void initialize() {
-        initialize(mScannerView.getWidth(), mScannerView.getHeight());
+        final CodeScannerView scannerView = mScannerView;
+        if (scannerView != null) {
+            initialize(scannerView.getWidth(), scannerView.getHeight());
+        }
     }
 
     private void initialize(final int width, final int height) {
@@ -558,8 +571,8 @@ public final class CodeScanner {
             final DecoderWrapper decoderWrapper = mDecoderWrapper;
             if (decoderWrapper != null) {
                 final Camera camera = decoderWrapper.getCamera();
-                camera.setPreviewCallback(mPreviewCallback);
-                camera.setPreviewDisplay(mSurfaceHolder);
+                /*camera.setPreviewCallback(mPreviewCallback);
+                camera.setPreviewDisplay(mSurfaceHolder);*/
                 if (!internal && decoderWrapper.isFlashSupported() && mFlashEnabled) {
                     setFlashEnabledInternal(true);
                 }
@@ -666,9 +679,12 @@ public final class CodeScanner {
                     Utils.disableAutoFocus(parameters);
                 }
                 if (autoFocusEnabled) {
-                    final Rect frameRect = mScannerView.getFrameRect();
-                    if (frameRect != null) {
-                        Utils.configureDefaultFocusArea(parameters, decoderWrapper, frameRect);
+                    final CodeScannerView scannerView = mScannerView;
+                    if (scannerView != null) {
+                        final Rect frameRect = scannerView.getFrameRect();
+                        if (frameRect != null) {
+                            Utils.configureDefaultFocusArea(parameters, decoderWrapper, frameRect);
+                        }
                     }
                 }
                 camera.setParameters(parameters);
@@ -698,10 +714,10 @@ public final class CodeScanner {
         } else {
             try {
                 final Camera camera = decoderWrapper.getCamera();
-                camera.cancelAutoFocus();
-                camera.autoFocus(mSafeAutoFocusCallback);
+                /*camera.cancelAutoFocus();
+                camera.autoFocus(mSafeAutoFocusCallback);*/
                 mSafeAutoFocusAttemptsCount = 0;
-                mSafeAutoFocusing = true;
+                //mSafeAutoFocusing = true;
             } catch (final Exception e) {
                 mSafeAutoFocusing = false;
             }
