@@ -23,22 +23,11 @@
  */
 package com.budiyev.android.codescanner;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
-import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.hardware.Camera.Area;
-import android.hardware.Camera.CameraInfo;
-import android.hardware.Camera.Parameters;
-import android.hardware.Camera.Size;
-import android.os.Build;
-import android.view.Surface;
-import android.view.WindowManager;
+import android.util.Size;
 
-import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.zxing.BinaryBitmap;
@@ -51,17 +40,62 @@ import com.google.zxing.common.HybridBinarizer;
 
 final class Utils {
 
-    private static final float MIN_DISTORTION = 0.3f;
-    private static final float MAX_DISTORTION = 3f;
-    private static final float DISTORTION_STEP = 0.1f;
-    private static final int MIN_PREVIEW_PIXELS = 589824;
-    private static final int MIN_FPS = 10000;
-    private static final int MAX_FPS = 30000;
+    private static final Comparator<Size> CAMERA_SIZE_COMPARATOR = new CameraSizeComparator();
 
     private Utils() {
     }
 
     @NonNull
+    public static Size findSuitablePreviewSize(@NonNull final Size[] sizes, final int targetWidth,
+            final int targetHeight) {
+        Arrays.sort(sizes, CAMERA_SIZE_COMPARATOR);
+        final float r = (float) targetWidth / (float) targetHeight;
+        for (float d = 0.1f; d <= 3.0f; d += 0.1f) {
+            for (final Size s : sizes) {
+                final int w = s.getWidth();
+                final int h = s.getHeight();
+                if (w * h >= 600000 && Math.abs(r - (float) w / (float) h) <= d) {
+                    return s;
+                }
+            }
+        }
+        throw new CodeScannerException("Unable to configure camera preview size");
+    }
+
+    /*public static int getDisplayOrientation(@NonNull final Context context,
+            final int facing) {
+        final WindowManager windowManager =
+                (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        if (windowManager == null) {
+            throw new CodeScannerException("Unable to access window manager");
+        }
+        final int degrees;
+        final int rotation = windowManager.getDefaultDisplay().getRotation();
+        switch (rotation) {
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
+            default:
+                if (rotation % 90 == 0) {
+                    degrees = (360 + rotation) % 360;
+                } else {
+                    throw new CodeScannerException("Invalid display rotation");
+                }
+        }
+        return ((facing== CameraMetadata.LENS_FACING_FRONT ? 180 : 360) +
+                camear orientation - degrees) % 360;
+    }*/
+
+   /* @NonNull
     public static Point findSuitableImageSize(@NonNull final Parameters parameters,
             final int frameWidth, final int frameHeight) {
         final List<Size> sizes = parameters.getSupportedPreviewSizes();
@@ -230,42 +264,11 @@ final class Utils {
         }
     }
 
-    public static int getDisplayOrientation(@NonNull final Context context,
-            @NonNull final CameraInfo cameraInfo) {
-        final WindowManager windowManager =
-                (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        if (windowManager == null) {
-            throw new CodeScannerException("Unable to access window manager");
-        }
-        final int degrees;
-        final int rotation = windowManager.getDefaultDisplay().getRotation();
-        switch (rotation) {
-            case Surface.ROTATION_0:
-                degrees = 0;
-                break;
-            case Surface.ROTATION_90:
-                degrees = 90;
-                break;
-            case Surface.ROTATION_180:
-                degrees = 180;
-                break;
-            case Surface.ROTATION_270:
-                degrees = 270;
-                break;
-            default:
-                if (rotation % 90 == 0) {
-                    degrees = (360 + rotation) % 360;
-                } else {
-                    throw new CodeScannerException("Invalid display rotation");
-                }
-        }
-        return ((cameraInfo.facing == CameraInfo.CAMERA_FACING_FRONT ? 180 : 360) +
-                cameraInfo.orientation - degrees) % 360;
-    }
+
 
     public static boolean isPortrait(final int orientation) {
         return orientation == 90 || orientation == 270;
-    }
+    }*/
 
     @NonNull
     public static Point getPreviewSize(final int imageWidth, final int imageHeight,
@@ -355,29 +358,19 @@ final class Utils {
         }
     }
 
-    @NonNull
-    @SuppressWarnings("deprecation")
-    public static Drawable getDrawable(@NonNull final Context context,
-            @DrawableRes final int resId) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return context.getDrawable(resId);
-        } else {
-            return context.getResources().getDrawable(resId);
-        }
-    }
-
     private static int mapCoordinate(final int value, final int size) {
         return 2000 * value / size - 1000;
     }
 
     private static final class CameraSizeComparator implements Comparator<Size> {
+
         @Override
         public int compare(@NonNull final Size a, @NonNull final Size b) {
-            return Integer.compare(b.height * b.width, a.height * a.width);
+            return Integer.compare(b.getHeight() * b.getWidth(), a.getHeight() * a.getWidth());
         }
     }
 
-    private static final class FpsRangeComparator implements Comparator<int[]> {
+    /*private static final class FpsRangeComparator implements Comparator<int[]> {
         @Override
         public int compare(final int[] a, final int[] b) {
             int comparison = Integer.compare(b[Parameters.PREVIEW_FPS_MAX_INDEX],
@@ -388,5 +381,5 @@ final class Utils {
             }
             return comparison;
         }
-    }
+    }*/
 }
