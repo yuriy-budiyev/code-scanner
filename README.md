@@ -6,7 +6,7 @@
 
 Code scanner library for [Android](https://developer.android.com), based on [ZXing](https://github.com/zxing/zxing)
 
-The library will migrate co Camera2 API soon, minimum SDK version will be raised to 21
+The library will migrate to Camera2 API soon, minimum SDK version will be raised to 21
 
 ### Features
 * Auto focus and flash light control
