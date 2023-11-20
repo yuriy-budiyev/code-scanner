@@ -28,7 +28,6 @@ Code scanner library for [Android](https://developer.android.com), based on [ZXi
 ### Usage ([sample](https://github.com/yuriy-budiyev/lib-demo-app))
 
 Step 1. Add it in your root build.gradle at the end of repositories:
-
 ```gradle
 allprojects {
 
@@ -40,7 +39,6 @@ allprojects {
 ```
 
 or in settings.gradle file:
-
 ```gradle
 dependencyResolutionManagement {
 
@@ -52,15 +50,12 @@ dependencyResolutionManagement {
 ```
 
 Step 2. Add dependency:
-
 ```gradle
 dependencies {
-    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.1'
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.0'
 }
 ```
-
 Add camera permission and hardware feature to AndroidManifest.xml (Don't forget about dynamic permissions on API >= 23):
-
 ```xml
 <uses-permission android:name="android.permission.CAMERA"/>
 
@@ -68,53 +63,34 @@ Add camera permission and hardware feature to AndroidManifest.xml (Don't forget 
     android:name="android.hardware.camera"
     android:required="false"/>
 ```
-
 Define a view in your layout file:
-
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.budiyev.android.codescanner.CodeScannerView
         android:id="@+id/scanner_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        app:autoFocusButtonColor="@android:color/white"
+        app:autoFocusButtonVisible="true"
+        app:flashButtonColor="@android:color/white"
+        app:flashButtonVisible="true"
+        app:frameColor="@android:color/white"
+        app:frameCornersSize="50dp"
+        app:frameCornersRadius="0dp"
+        app:frameAspectRatioWidth="1"
+        app:frameAspectRatioHeight="1"
+        app:frameSize="0.75"
+        app:frameThickness="2dp"
+        app:frameVerticalBias="0.5"
+        app:maskColor="#77000000"/>
 </FrameLayout>
 ```
-
-You can use XML attributes to set view parameters:
-
-```
-maskColor
-maskVisible
-frameColor
-frameVisible
-frameThickness
-frameCornersSize
-frameCornersRadius
-frameAspectRatioWidth
-frameAspectRatioHeight
-frameSize
-frameVerticalBias
-autoFocusButtonColor
-autoFocusButtonVisible
-autoFocusButtonPaddingHorizontal
-autoFocusButtonPaddingVertical
-autoFocusButtonOnIcon
-autoFocusButtonOffIcon
-autoFocusButtonPosition
-flashButtonColor
-flashButtonVisible
-flashButtonPaddingHorizontal
-flashButtonPaddingVertical
-flashButtonOnIcon
-flashButtonOffIcon
-flashButtonPosition
-```
-
 And add following code to your activity:
 
 Kotlin
@@ -169,7 +145,6 @@ class MainActivity : AppCompatActivity() {
 ```
 
 Java
-
 ```java
 public class MainActivity extends AppCompatActivity {
     private CodeScanner mCodeScanner;
