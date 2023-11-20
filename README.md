@@ -55,7 +55,7 @@ Step 2. Add dependency:
 
 ```gradle
 dependencies {
-    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.1'
 }
 ```
 
