@@ -182,11 +182,12 @@ public final class CodeScannerView extends ViewGroup {
             setAutoFocusButtonPaddingVertical(defaultButtonPadding);
             setFlashButtonPaddingHorizontal(defaultButtonPadding);
             setFlashButtonPaddingVertical(defaultButtonPadding);
-            setAutoFocusButtonOnIcon(context.getDrawable(R.drawable.ic_code_scanner_auto_focus_on));
+            setAutoFocusButtonOnIcon(
+                    Utils.getDrawable(context, R.drawable.ic_code_scanner_auto_focus_on));
             setAutoFocusButtonOffIcon(
-                    context.getDrawable(R.drawable.ic_code_scanner_auto_focus_off));
-            setFlashButtonOnIcon(context.getDrawable(R.drawable.ic_code_scanner_flash_on));
-            setFlashButtonOffIcon(context.getDrawable(R.drawable.ic_code_scanner_flash_off));
+                    Utils.getDrawable(context, R.drawable.ic_code_scanner_auto_focus_off));
+            setFlashButtonOnIcon(Utils.getDrawable(context, R.drawable.ic_code_scanner_flash_on));
+            setFlashButtonOffIcon(Utils.getDrawable(context, R.drawable.ic_code_scanner_flash_off));
         } else {
             TypedArray a = null;
             try {
@@ -236,11 +237,11 @@ public final class CodeScannerView extends ViewGroup {
                 final Drawable autoFocusButtonOnIcon =
                         a.getDrawable(R.styleable.CodeScannerView_autoFocusButtonOnIcon);
                 setAutoFocusButtonOnIcon(autoFocusButtonOnIcon != null ? autoFocusButtonOnIcon :
-                        context.getDrawable(R.drawable.ic_code_scanner_auto_focus_on));
+                        Utils.getDrawable(context, R.drawable.ic_code_scanner_auto_focus_on));
                 final Drawable autoFocusButtonOffIcon =
                         a.getDrawable(R.styleable.CodeScannerView_autoFocusButtonOffIcon);
                 setAutoFocusButtonOffIcon(autoFocusButtonOffIcon != null ? autoFocusButtonOffIcon :
-                        context.getDrawable(R.drawable.ic_code_scanner_auto_focus_off));
+                        Utils.getDrawable(context, R.drawable.ic_code_scanner_auto_focus_off));
                 setFlashButtonVisible(a.getBoolean(R.styleable.CodeScannerView_flashButtonVisible,
                         DEFAULT_FLASH_BUTTON_VISIBLE));
                 setFlashButtonColor(a.getColor(R.styleable.CodeScannerView_flashButtonColor,
@@ -257,11 +258,11 @@ public final class CodeScannerView extends ViewGroup {
                 final Drawable flashButtonOnIcon =
                         a.getDrawable(R.styleable.CodeScannerView_flashButtonOnIcon);
                 setFlashButtonOnIcon(flashButtonOnIcon != null ? flashButtonOnIcon :
-                        context.getDrawable(R.drawable.ic_code_scanner_flash_on));
+                        Utils.getDrawable(context, R.drawable.ic_code_scanner_flash_on));
                 final Drawable flashButtonOffIcon =
                         a.getDrawable(R.styleable.CodeScannerView_flashButtonOffIcon);
                 setFlashButtonOffIcon(flashButtonOffIcon != null ? flashButtonOffIcon :
-                        context.getDrawable(R.drawable.ic_code_scanner_flash_off));
+                        Utils.getDrawable(context, R.drawable.ic_code_scanner_flash_off));
             } finally {
                 if (a != null) {
                     a.recycle();
