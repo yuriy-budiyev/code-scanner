@@ -23,7 +23,6 @@
  */
 package com.budiyev.android.codescanner;
 
-import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,8 +34,6 @@ import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.hardware.Camera.CameraInfo;
 import android.hardware.Camera.Parameters;
-import android.media.Image;
-import android.media.ImageReader;
 import android.os.Handler;
 import android.os.Process;
 import android.view.SurfaceHolder;
@@ -753,54 +750,6 @@ public final class CodeScanner {
         }
     }
 
-    private final class PreviewListener implements ImageReader.OnImageAvailableListener {
-
-        @Override
-        public void onImageAvailable(ImageReader reader) {
-            if (!mInitialized || mStoppingPreview || mScanMode == ScanMode.PREVIEW) {
-                return;
-            }
-            final DecoderWrapper decoderWrapper = mDecoderWrapper;
-            if (decoderWrapper == null) {
-                return;
-            }
-            final Decoder decoder = decoderWrapper.getDecoder();
-            if (decoder.getState() != Decoder.State.IDLE) {
-                return;
-            }
-            final CodeScannerView scannerView = mScannerView;
-            if (scannerView == null) {
-                return;
-            }
-            final Rect frameRect = scannerView.getFrameRect();
-            if (frameRect == null || frameRect.getWidth() < 1 || frameRect.getHeight() < 1) {
-                return;
-            }
-            final Image image = reader.acquireLatestImage();
-            if (image == null) {
-                return;
-            }
-            final Image.Plane[] planes = image.getPlanes();
-            if (planes == null || planes.length == 0) {
-                return;
-            }
-            final ByteBuffer buffer = planes[0].getBuffer();
-            if (buffer == null) {
-                return;
-            }
-            final int capacity = buffer.capacity();
-            if (capacity == 0) {
-                return;
-            }
-            final byte[] data = new byte[capacity];
-            buffer.get(data, 0, data.length);
-            decoder.decode(new DecodeTask(data, decoderWrapper.getImageSize(),
-                    decoderWrapper.getPreviewSize(), decoderWrapper.getViewSize(), frameRect,
-                    decoderWrapper.getDisplayOrientation(),
-                    decoderWrapper.shouldReverseHorizontal()));
-        }
-    }
-
     private final class PreviewCallback implements Camera.PreviewCallback {
         @Override
         public void onPreviewFrame(final byte[] data, final Camera camera) {
@@ -930,13 +879,10 @@ public final class CodeScanner {
             final Point viewSize = new Point(mWidth, mHeight);
             if (autoFocusSupported && mAutoFocusEnabled) {
                 Utils.setAutoFocusMode(parameters, mAutoFocusMode);
-                final CodeScannerView scannerView = mScannerView;
-                if (scannerView != null) {
-                    final Rect frameRect = scannerView.getFrameRect();
-                    if (frameRect != null) {
-                        Utils.configureDefaultFocusArea(parameters, frameRect, previewSize,
-                                viewSize, imageWidth, imageHeight, orientation);
-                    }
+                final Rect frameRect = mScannerView.getFrameRect();
+                if (frameRect != null) {
+                    Utils.configureDefaultFocusArea(parameters, frameRect, previewSize, viewSize,
+                            imageWidth, imageHeight, orientation);
                 }
             }
             final List<String> flashModes = parameters.getSupportedFlashModes();
@@ -1026,13 +972,9 @@ public final class CodeScanner {
             if (!mInitialized) {
                 return;
             }
-            final CodeScannerView scannerView = mScannerView;
-            if (scannerView == null) {
-                return;
-            }
-            scannerView.setPreviewSize(mPreviewSize);
-            scannerView.setAutoFocusEnabled(isAutoFocusEnabled());
-            scannerView.setFlashEnabled(isFlashEnabled());
+            mScannerView.setPreviewSize(mPreviewSize);
+            mScannerView.setAutoFocusEnabled(isAutoFocusEnabled());
+            mScannerView.setFlashEnabled(isFlashEnabled());
             startPreview();
         }
     }
