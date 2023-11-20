@@ -57,8 +57,8 @@ public final class CodeScannerView extends ViewGroup {
 
     private static final boolean DEFAULT_AUTO_FOCUS_BUTTON_VISIBLE = true;
     private static final boolean DEFAULT_FLASH_BUTTON_VISIBLE = true;
-    private static final boolean DEFAULT_MASK_VISIBLE = true;
-    private static final boolean DEFAULT_FRAME_VISIBLE = true;
+    private static final int DEFAULT_AUTO_FOCUS_BUTTON_VISIBILITY = VISIBLE;
+    private static final int DEFAULT_FLASH_BUTTON_VISIBILITY = VISIBLE;
     private static final int DEFAULT_MASK_COLOR = 0x77000000;
     private static final int DEFAULT_FRAME_COLOR = Color.WHITE;
     private static final int DEFAULT_AUTO_FOCUS_BUTTON_COLOR = Color.WHITE;
@@ -155,33 +155,36 @@ public final class CodeScannerView extends ViewGroup {
         mFlashButton.setScaleType(ImageView.ScaleType.CENTER);
         mFlashButton.setOnClickListener(new FlashClickListener());
         if (attrs == null) {
-            setFrameAspectRatio(DEFAULT_FRAME_ASPECT_RATIO_WIDTH,
+            mViewFinderView.setFrameAspectRatio(DEFAULT_FRAME_ASPECT_RATIO_WIDTH,
                     DEFAULT_FRAME_ASPECT_RATIO_HEIGHT);
-            setMaskColor(DEFAULT_MASK_COLOR);
-            setMaskVisible(DEFAULT_MASK_VISIBLE);
-            setFrameColor(DEFAULT_FRAME_COLOR);
-            setFrameVisible(DEFAULT_FRAME_VISIBLE);
-            setFrameThickness(Math.round(DEFAULT_FRAME_THICKNESS_DP * density));
-            setFrameCornersSize(Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * density));
-            setFrameCornersRadius(Math.round(DEFAULT_FRAME_CORNERS_RADIUS_DP * density));
-            setFrameSize(DEFAULT_FRAME_SIZE);
-            setFrameVerticalBias(DEFAULT_FRAME_VERTICAL_BIAS);
-            setAutoFocusButtonColor(DEFAULT_AUTO_FOCUS_BUTTON_COLOR);
-            setFlashButtonColor(DEFAULT_FLASH_BUTTON_COLOR);
-            setAutoFocusButtonVisible(DEFAULT_AUTO_FOCUS_BUTTON_VISIBLE);
-            setAutoFocusButtonPosition(DEFAULT_AUTO_FOCUS_BUTTON_POSITION);
-            setFlashButtonVisible(DEFAULT_FLASH_BUTTON_VISIBLE);
-            setFlashButtonPosition(DEFAULT_FLASH_BUTTON_POSITION);
-            setAutoFocusButtonPaddingHorizontal(defaultButtonPadding);
-            setAutoFocusButtonPaddingVertical(defaultButtonPadding);
-            setFlashButtonPaddingHorizontal(defaultButtonPadding);
-            setFlashButtonPaddingVertical(defaultButtonPadding);
-            setAutoFocusButtonOnIcon(
-                    Utils.getDrawable(context, R.drawable.ic_code_scanner_auto_focus_on));
-            setAutoFocusButtonOffIcon(
-                    Utils.getDrawable(context, R.drawable.ic_code_scanner_auto_focus_off));
-            setFlashButtonOnIcon(Utils.getDrawable(context, R.drawable.ic_code_scanner_flash_on));
-            setFlashButtonOffIcon(Utils.getDrawable(context, R.drawable.ic_code_scanner_flash_off));
+            mViewFinderView.setMaskColor(DEFAULT_MASK_COLOR);
+            mViewFinderView.setFrameColor(DEFAULT_FRAME_COLOR);
+            mViewFinderView.setFrameThickness(Math.round(DEFAULT_FRAME_THICKNESS_DP * density));
+            mViewFinderView.setFrameCornersSize(Math.round(DEFAULT_FRAME_CORNER_SIZE_DP * density));
+            mViewFinderView.setFrameCornersRadius(
+                    Math.round(DEFAULT_FRAME_CORNERS_RADIUS_DP * density));
+            mViewFinderView.setFrameSize(DEFAULT_FRAME_SIZE);
+            mViewFinderView.setFrameVerticalBias(DEFAULT_FRAME_VERTICAL_BIAS);
+            mAutoFocusButton.setColorFilter(DEFAULT_AUTO_FOCUS_BUTTON_COLOR);
+            mFlashButton.setColorFilter(DEFAULT_FLASH_BUTTON_COLOR);
+            mAutoFocusButton.setVisibility(DEFAULT_AUTO_FOCUS_BUTTON_VISIBILITY);
+            mAutoFocusButtonPosition = DEFAULT_AUTO_FOCUS_BUTTON_POSITION;
+            mFlashButton.setVisibility(DEFAULT_FLASH_BUTTON_VISIBILITY);
+            mFlashButtonPosition = DEFAULT_FLASH_BUTTON_POSITION;
+            mAutoFocusButtonPaddingHorizontal = defaultButtonPadding;
+            mAutoFocusButtonPaddingVertical = defaultButtonPadding;
+            mFlashButtonPaddingHorizontal = defaultButtonPadding;
+            mFlashButtonPaddingVertical = defaultButtonPadding;
+            mAutoFocusButton.setPadding(defaultButtonPadding, defaultButtonPadding,
+                    defaultButtonPadding, defaultButtonPadding);
+            mFlashButton.setPadding(defaultButtonPadding, defaultButtonPadding,
+                    defaultButtonPadding, defaultButtonPadding);
+            mAutoFocusButtonOnIcon =
+                    Utils.getDrawable(context, R.drawable.ic_code_scanner_auto_focus_on);
+            mAutoFocusButtonOffIcon =
+                    Utils.getDrawable(context, R.drawable.ic_code_scanner_auto_focus_off);
+            mFlashButtonOnIcon = Utils.getDrawable(context, R.drawable.ic_code_scanner_flash_on);
+            mFlashButtonOffIcon = Utils.getDrawable(context, R.drawable.ic_code_scanner_flash_off);
         } else {
             TypedArray a = null;
             try {
@@ -189,12 +192,8 @@ public final class CodeScannerView extends ViewGroup {
                         .obtainStyledAttributes(attrs, R.styleable.CodeScannerView, defStyleAttr,
                                 defStyleRes);
                 setMaskColor(a.getColor(R.styleable.CodeScannerView_maskColor, DEFAULT_MASK_COLOR));
-                setMaskVisible(a.getBoolean(R.styleable.CodeScannerView_maskVisible,
-                        DEFAULT_MASK_VISIBLE));
                 setFrameColor(
                         a.getColor(R.styleable.CodeScannerView_frameColor, DEFAULT_FRAME_COLOR));
-                setFrameVisible(a.getBoolean(R.styleable.CodeScannerView_frameVisible,
-                        DEFAULT_FRAME_VISIBLE));
                 setFrameThickness(
                         a.getDimensionPixelOffset(R.styleable.CodeScannerView_frameThickness,
                                 Math.round(DEFAULT_FRAME_THICKNESS_DP * density)));
@@ -418,24 +417,6 @@ public final class CodeScannerView extends ViewGroup {
     }
 
     /**
-     * Whether if mask is currently visible
-     *
-     * @see #setMaskVisible
-     */
-    public boolean isMaskVisible() {
-        return mViewFinderView.isMaskVisible();
-    }
-
-    /**
-     * Set whether mask is visible or not
-     *
-     * @param visible Visibility
-     */
-    public void setMaskVisible(final boolean visible) {
-        mViewFinderView.setMaskVisible(visible);
-    }
-
-    /**
      * Get current frame color
      *
      * @see #setFrameColor
@@ -452,24 +433,6 @@ public final class CodeScannerView extends ViewGroup {
      */
     public void setFrameColor(@ColorInt final int color) {
         mViewFinderView.setFrameColor(color);
-    }
-
-    /**
-     * Whether if frame is currently visible
-     *
-     * @see #setFrameVisible
-     */
-    public boolean isFrameVisible() {
-        return mViewFinderView.isFrameVisible();
-    }
-
-    /**
-     * Set whether frame is visible or not
-     *
-     * @param visible Visibility
-     */
-    public void setFrameVisible(final boolean visible) {
-        mViewFinderView.setFrameVisible(visible);
     }
 
     /**
@@ -640,6 +603,24 @@ public final class CodeScannerView extends ViewGroup {
                     "Frame aspect ratio values should be greater than zero");
         }
         mViewFinderView.setFrameAspectRatio(ratioWidth, ratioHeight);
+    }
+
+    /**
+     * Whether if mask is currently visible
+     *
+     * @see #setMaskVisible
+     */
+    public boolean isMaskVisible() {
+        return mViewFinderView.getVisibility() == VISIBLE;
+    }
+
+    /**
+     * Set whether mask is visible or not
+     *
+     * @param visible Visibility
+     */
+    public void setMaskVisible(final boolean visible) {
+        mViewFinderView.setVisibility(visible ? VISIBLE : INVISIBLE);
     }
 
     /**
