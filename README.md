@@ -95,7 +95,6 @@ frameVisible
 frameThickness
 frameCornersSize
 frameCornersRadius
-frameCornersCapRounded
 frameAspectRatioWidth
 frameAspectRatioHeight
 frameSize
