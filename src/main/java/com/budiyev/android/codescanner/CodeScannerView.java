@@ -33,7 +33,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.LayoutDirection;
 import android.view.MotionEvent;
-import android.view.SurfaceView;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -76,7 +76,7 @@ public final class CodeScannerView extends ViewGroup {
     private static final ButtonPosition DEFAULT_AUTO_FOCUS_BUTTON_POSITION =
             ButtonPosition.TOP_START;
     private static final ButtonPosition DEFAULT_FLASH_BUTTON_POSITION = ButtonPosition.TOP_END;
-    private SurfaceView mPreviewView;
+    private TextureView mPreviewView;
     private ViewFinderView mViewFinderView;
     private ImageView mAutoFocusButton;
     private ButtonPosition mAutoFocusButtonPosition;
@@ -148,7 +148,7 @@ public final class CodeScannerView extends ViewGroup {
 
     private void initialize(@NonNull final Context context, @Nullable final AttributeSet attrs,
             @AttrRes final int defStyleAttr, @StyleRes final int defStyleRes) {
-        mPreviewView = new SurfaceView(context);
+        mPreviewView = new TextureView(context);
         mViewFinderView = new ViewFinderView(context);
         final float density = context.getResources().getDisplayMetrics().density;
         final int defaultButtonPadding = Math.round(density * DEFAULT_BUTTON_PADDING_DP);
@@ -311,28 +311,7 @@ public final class CodeScannerView extends ViewGroup {
         }
         final int width = right - left;
         final int height = bottom - top;
-        final Point previewSize = mPreviewSize;
-        if (previewSize == null) {
-            mPreviewView.layout(0, 0, width, height);
-        } else {
-            int frameLeft = 0;
-            int frameTop = 0;
-            int frameRight = width;
-            int frameBottom = height;
-            final int previewWidth = previewSize.getX();
-            if (previewWidth > width) {
-                final int d = (previewWidth - width) / 2;
-                frameLeft -= d;
-                frameRight += d;
-            }
-            final int previewHeight = previewSize.getY();
-            if (previewHeight > height) {
-                final int d = (previewHeight - height) / 2;
-                frameTop -= d;
-                frameBottom += d;
-            }
-            mPreviewView.layout(frameLeft, frameTop, frameRight, frameBottom);
-        }
+        mPreviewView.layout(0, 0, width, height);
         mViewFinderView.layout(0, 0, width, height);
         layoutButton(mAutoFocusButton, mAutoFocusButtonPosition, width, height);
         layoutButton(mFlashButton, mFlashButtonPosition, width, height);
@@ -998,7 +977,7 @@ public final class CodeScannerView extends ViewGroup {
     }
 
     @NonNull
-    SurfaceView getPreviewView() {
+    TextureView getPreviewView() {
         return mPreviewView;
     }
 
