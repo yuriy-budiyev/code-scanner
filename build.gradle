@@ -82,7 +82,7 @@ tasks.register('sourcesJar', Jar) {
 
 tasks.register('javadoc', Javadoc) {
     options.charSet = 'UTF-8'
-    failOnError false
+    failOnError = false
     source = android.sourceSets.main.java.sourceFiles
     classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
 }
