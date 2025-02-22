@@ -59,6 +59,13 @@ android {
             proguardFiles(getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro')
         }
     }
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
 }
 
 dependencies {
@@ -91,15 +98,15 @@ artifacts {
     archives javadocJar
 }
 
-/*afterEvaluate {
+afterEvaluate {
     publishing {
         publications {
             release(MavenPublication) {
-                from components.release
+                from(components['release'])
                 artifactId = 'code-scanner'
                 groupId = publishedGroupId
                 version = libraryVersion
             }
         }
     }
-}*/
+}
